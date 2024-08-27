@@ -21,7 +21,7 @@ class LinkClassificationGame extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.blueAccent,
-        body: LinkCheckerScreen(),
+        body: GameScreen(),
       ),
     );
   }
