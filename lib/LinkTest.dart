@@ -5,7 +5,6 @@ class LinkCheckerScreen extends StatefulWidget {
   _LinkCheckerScreenState createState() => _LinkCheckerScreenState();
 }
 
-// تأكد من إنشاء هذا الملف وحفظه في نفس المسار
 class LinkChecker {
   static Future<String> checkLink(String link) async {
     // هنا يمكنك وضع كود لفحص الرابط باستخدام البايثون أو أي طريقة أخرى
@@ -32,40 +31,50 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على حجم الشاشة الحالي
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    // تحديد لون الصندوق بناءً على النتيجة
     Color boxColor;
     if (result == 'الرابط آمن') {
       boxColor = Colors.green;
     } else if (result == 'الرابط غير آمن') {
-      boxColor = Colors.orange;
+      boxColor = Colors.red;
     } else {
-      boxColor = Colors.transparent; // اللون الافتراضي قبل ظهور النتيجة
+      boxColor = Colors.transparent;
     }
 
     return Scaffold(
-      backgroundColor:
-          Colors.lightBlue[50], // تحديد خلفية الشاشة باللون الأزرق الفاتح
-      appBar: AppBar(title: Text('فحص الرابط')),
+      backgroundColor: Colors.lightBlue[50],
       body: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.05, // عرض الحواف يساوي 5% من عرض الشاشة
-          vertical: screenHeight * 0.02, // طول الحواف يساوي 2% من طول الشاشة
+          horizontal: screenWidth * 0.05,
+          vertical: screenHeight * 0.02,
         ),
         child: Column(
           children: [
+            // اسم اللعبة في منتصف الصفحة من الأعلى
+            Container(
+              alignment: Alignment.topCenter,
+              margin: EdgeInsets.only(bottom: screenHeight * 0.06),
+              child: Text(
+                'فحص الروابط',
+                style: TextStyle(
+                  fontSize: screenHeight * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+            ),
+            // حقل إدخال الرابط
             Container(
               decoration: BoxDecoration(
-                color: Colors.white, // خلفية الحقل بيضاء
-                borderRadius: BorderRadius.circular(20.0), // حواف مستديرة
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25), // لون الظل
-                    offset: Offset(0, 4), // تحديد موقع الظل
-                    blurRadius: 8.0, // تحديد مدى انتشار الظل
+                    color: Colors.black.withOpacity(0.25),
+                    offset: Offset(0, 4),
+                    blurRadius: 8.0,
                   ),
                 ],
               ),
@@ -73,25 +82,23 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                 controller: _linkController,
                 decoration: InputDecoration(
                   hintText: 'أدخل الرابط هنا',
-                  prefixIcon: Icon(Icons.link),
+                  prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0), // حواف مستديرة
+                    borderRadius: BorderRadius.circular(20.0),
                     borderSide: BorderSide.none,
                   ),
                 ),
-                style: TextStyle(
-                    color: Colors.blue), // لون النص الذي يكتب داخل الحقل
+                style: TextStyle(color: Colors.blue),
               ),
             ),
+            SizedBox(height: screenHeight * 0.03),
+            // زر فحص الرابط
             SizedBox(
-                height: screenHeight *
-                    0.03), // المسافة بين العناصر تساوي 3% من طول الشاشة
-            SizedBox(
-              width: screenWidth * 0.5, // عرض الزر يساوي 50% من عرض الشاشة
-              height: screenHeight * 0.07, // ارتفاع الزر يساوي 7% من طول الشاشة
+              width: screenWidth * 0.5,
+              height: screenHeight * 0.07,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // لون الزر أحمر
+                  backgroundColor: Colors.red,
                 ),
                 onPressed: checkLink,
                 child: Row(
@@ -100,20 +107,21 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                     Text(
                       'افحص الرابط',
                       style: TextStyle(
-                        color: Colors.white, // لون النص أبيض
-                        fontSize: screenHeight * 0.025, // حجم النص
+                        color: Colors.white,
+                        fontSize: screenHeight * 0.025,
                       ),
                     ),
-                    SizedBox(width: 8), // مسافة صغيرة بين النص والسهم
+                    SizedBox(width: 7),
                     Icon(
-                      Icons.arrow_forward, // السهم داخل الزر
-                      color: Colors.white, // لون السهم أبيض
+                      Icons.arrow_forward,
+                      color: Colors.white,
                     ),
                   ],
                 ),
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
+            // عرض نتيجة الفحص
             if (result.isNotEmpty)
               Container(
                 width: double.infinity,
