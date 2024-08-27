@@ -2,6 +2,7 @@ import 'package:cybergame/gameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import "gameScreen.dart";
+import "LinkTest.dart";
 
 void main() {
   // تعيين اتجاه الشاشة إلى الوضع الأفقي فقط
@@ -20,7 +21,7 @@ class LinkClassificationGame extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.blueAccent,
-        body: GameScreen(),
+        body: LinkCheckerScreen(),
       ),
     );
   }
