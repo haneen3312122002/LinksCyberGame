@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
 }
 
+//لعبة اختيار اللينك الامن
 class _GameScreenState extends State<GameScreen> {
   late List<String> allLinks;
   late List<String> secureLinks;
@@ -33,7 +35,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void _checkResult() {
     if (secureLinks.isEmpty && insecureLinks.isEmpty) {
-      _showWarningDialog();
+      _showCustomDialog(context, false, "الرجاء تعبئة السلات أولاً.");
       return;
     }
 
@@ -43,62 +45,29 @@ class _GameScreenState extends State<GameScreen> {
 
     if (success) {
       _playSound('success');
-      _showResultDialog(true);
+      _showCustomDialog(context, true, "لقد صنفت الروابط بشكل صحيح!");
     } else {
       _playSound('error');
-      _showResultDialog(false);
+      _showCustomDialog(context, false, "هناك خطأ في التصنيف.");
     }
   }
 
-  void _showWarningDialog() {
-    showDialog(
+  void _showCustomDialog(BuildContext context, bool isSuccess, String message) {
+    AwesomeDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('تحذير'),
-          content: Text('الرجاء تعبئة السلات أولاً قبل التحقق من النتائج.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('حسنًا'),
-            ),
-          ],
-        );
+      dialogType: isSuccess ? DialogType.success : DialogType.error,
+      animType: AnimType.scale,
+      title: isSuccess ? 'نجاح!' : 'فشل!',
+      desc: message,
+      btnOkOnPress: () {
+        _resetGame();
       },
-    );
-  }
-
-  void _showResultDialog(bool isSuccess) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(isSuccess ? 'نجاح!' : 'فشل!'),
-          content: Text(isSuccess
-              ? 'لقد صنفت الروابط بشكل صحيح!'
-              : 'هناك خطأ في التصنيف.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _resetGame();
-              },
-              child: Text('إعادة اللعبة'),
-            ),
-            if (isSuccess)
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // يمكنك الانتقال إلى المرحلة التالية هنا
-                },
-                child: Text('المرحلة التالية'),
-              ),
-          ],
-        );
-      },
-    );
+      btnOkText: isSuccess ? 'المرحلة التالية' : 'إعادة اللعبة',
+      btnOkColor: isSuccess ? Colors.green : Colors.red,
+      headerAnimationLoop: false,
+      dismissOnTouchOutside: false, // يمكن تغيير هذه القيمة حسب الحاجة
+      dismissOnBackKeyPress: false, // يمكن تغيير هذه القيمة حسب الحاجة
+    ).show();
   }
 
   void _returnLink(String link) {
@@ -113,6 +82,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        // حساب العرض والطول بناءً على حجم الشاشة
         double linkHeight = constraints.maxHeight * 0.1;
         double trashBinSize = constraints.maxWidth * 0.25;
 
@@ -215,9 +185,19 @@ class LinkWidget extends StatelessWidget {
         ),
       ),
       childWhenDragging: Container(
-        height: 0,
-        width: 0,
-        color: Colors.transparent,
+        height: height,
+        padding: EdgeInsets.all(10),
+        color: Colors.yellow, // الحفاظ على اللون الأصفر
+        child: Row(
+          children: [
+            Icon(Icons.link),
+            SizedBox(width: 5),
+            Text(
+              link,
+              style: TextStyle(fontSize: height * 0.25),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -264,36 +244,26 @@ class TrashBinWidget extends StatelessWidget {
                 color: Colors.white,
                 size: size * 0.5,
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: links.length,
-                  itemBuilder: (context, index) {
-                    final link = links[index];
-                    return GestureDetector(
+              ...links.map((link) => Container(
+                    color: Colors.yellow, // هنا نضيف اللون الأصفر
+                    child: GestureDetector(
                       onLongPress: () => onLinkRemoved(link),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 4.0, horizontal: 8.0),
-                        margin: EdgeInsets.symmetric(vertical: 2.0),
-                        color: Colors.yellow,
-                        child: Text(
-                          link,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: size * 0.1,
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                      child: Text(
+                        link,
+                        style: TextStyle(
+                          color: Colors
+                              .black, // تغيير اللون إلى الأسود ليكون واضحا على الخلفية الصفراء
+                          fontSize: size * 0.1,
                         ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  )),
             ],
           ),
         );
       },
-      onWillAccept: (data) => true,
+      onWillAccept: (data) => true, // السماح بإدخال أي رابط
       onAccept: (data) {
         onLinkAccepted(data!);
       },
