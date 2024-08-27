@@ -5,6 +5,7 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
+//لعبة اختيار اللينك الامن
 class _GameScreenState extends State<GameScreen> {
   late List<String> allLinks;
   late List<String> secureLinks;
