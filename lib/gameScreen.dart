@@ -1,21 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:guarded_button/guarded_button.dart';
 
 class GameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
 }
 
-//لعبة اختيار اللينك الامن
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<GameScreen>
+    with SingleTickerProviderStateMixin {
   late List<String> allLinks;
   late List<String> secureLinks;
   late List<String> insecureLinks;
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _resetGame();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> _playSound(String sound) async {}
@@ -65,8 +83,8 @@ class _GameScreenState extends State<GameScreen> {
       btnOkText: isSuccess ? 'المرحلة التالية' : 'إعادة اللعبة',
       btnOkColor: isSuccess ? Colors.green : Colors.red,
       headerAnimationLoop: false,
-      dismissOnTouchOutside: false, // يمكن تغيير هذه القيمة حسب الحاجة
-      dismissOnBackKeyPress: false, // يمكن تغيير هذه القيمة حسب الحاجة
+      dismissOnTouchOutside: false,
+      dismissOnBackKeyPress: false,
     ).show();
   }
 
@@ -82,7 +100,6 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // حساب العرض والطول بناءً على حجم الشاشة
         double linkHeight = constraints.maxHeight * 0.1;
         double trashBinSize = constraints.maxWidth * 0.25;
 
@@ -125,13 +142,30 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
             SizedBox(height: constraints.maxHeight * 0.05),
-            ElevatedButton(
-              onPressed: _checkResult,
-              child: Text('تحقق من النتائج'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                    horizontal: constraints.maxWidth * 0.1,
-                    vertical: constraints.maxHeight * 0.02),
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: GestureDetector(
+                onTapDown: (_) => _animationController.forward(),
+                onTapUp: (_) => _animationController.reverse(),
+                onTapCancel: () => _animationController.reverse(),
+                child: GuardedElevatedButton(
+                  guard: Guard(), // Add your Guard logic if needed
+                  onPressed: _checkResult,
+                  onLongPress: () {}, // Optional long press action
+                  child: Text(
+                    'تحقق من النتائج',
+                    style: TextStyle(color: Colors.white),
+                  ),
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 243, 176,
+                        255), // Change the button color to purple
+                    padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth * 0.1,
+                      vertical: constraints.maxHeight * 0.02,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -187,7 +221,7 @@ class LinkWidget extends StatelessWidget {
       childWhenDragging: Container(
         height: height,
         padding: EdgeInsets.all(10),
-        color: Colors.yellow, // الحفاظ على اللون الأصفر
+        color: Colors.yellow,
         child: Row(
           children: [
             Icon(Icons.link),
@@ -245,14 +279,13 @@ class TrashBinWidget extends StatelessWidget {
                 size: size * 0.5,
               ),
               ...links.map((link) => Container(
-                    color: Colors.yellow, // هنا نضيف اللون الأصفر
+                    color: Colors.yellow,
                     child: GestureDetector(
                       onLongPress: () => onLinkRemoved(link),
                       child: Text(
                         link,
                         style: TextStyle(
-                          color: Colors
-                              .black, // تغيير اللون إلى الأسود ليكون واضحا على الخلفية الصفراء
+                          color: Colors.black,
                           fontSize: size * 0.1,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -263,7 +296,7 @@ class TrashBinWidget extends StatelessWidget {
           ),
         );
       },
-      onWillAccept: (data) => true, // السماح بإدخال أي رابط
+      onWillAccept: (data) => true,
       onAccept: (data) {
         onLinkAccepted(data!);
       },
