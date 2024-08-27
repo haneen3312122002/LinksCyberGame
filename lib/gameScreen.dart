@@ -5,7 +5,6 @@ class GameScreen extends StatefulWidget {
   _GameScreenState createState() => _GameScreenState();
 }
 
-//لعبة اختيار اللينك الامن
 class _GameScreenState extends State<GameScreen> {
   late List<String> allLinks;
   late List<String> secureLinks;
@@ -33,6 +32,11 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _checkResult() {
+    if (secureLinks.isEmpty && insecureLinks.isEmpty) {
+      _showWarningDialog();
+      return;
+    }
+
     bool success = secureLinks.every((link) => link.startsWith('https')) &&
         insecureLinks.every(
             (link) => link.startsWith('http') && !link.startsWith('https'));
@@ -44,6 +48,26 @@ class _GameScreenState extends State<GameScreen> {
       _playSound('error');
       _showResultDialog(false);
     }
+  }
+
+  void _showWarningDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('تحذير'),
+          content: Text('الرجاء تعبئة السلات أولاً قبل التحقق من النتائج.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('حسنًا'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showResultDialog(bool isSuccess) {
@@ -89,7 +113,6 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // حساب العرض والطول بناءً على حجم الشاشة
         double linkHeight = constraints.maxHeight * 0.1;
         double trashBinSize = constraints.maxWidth * 0.25;
 
@@ -192,19 +215,9 @@ class LinkWidget extends StatelessWidget {
         ),
       ),
       childWhenDragging: Container(
-        height: height,
-        padding: EdgeInsets.all(10),
-        color: Colors.grey,
-        child: Row(
-          children: [
-            Icon(Icons.link),
-            SizedBox(width: 5),
-            Text(
-              link,
-              style: TextStyle(fontSize: height * 0.25),
-            ),
-          ],
-        ),
+        height: 0,
+        width: 0,
+        color: Colors.transparent,
       ),
     );
   }
@@ -251,22 +264,36 @@ class TrashBinWidget extends StatelessWidget {
                 color: Colors.white,
                 size: size * 0.5,
               ),
-              ...links.map((link) => GestureDetector(
-                    onLongPress: () => onLinkRemoved(link),
-                    child: Text(
-                      link,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: size * 0.1,
+              Expanded(
+                child: ListView.builder(
+                  itemCount: links.length,
+                  itemBuilder: (context, index) {
+                    final link = links[index];
+                    return GestureDetector(
+                      onLongPress: () => onLinkRemoved(link),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 4.0, horizontal: 8.0),
+                        margin: EdgeInsets.symmetric(vertical: 2.0),
+                        color: Colors.yellow,
+                        child: Text(
+                          link,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: size * 0.1,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         );
       },
-      onWillAccept: (data) => true, // السماح بإدخال أي رابط
+      onWillAccept: (data) => true,
       onAccept: (data) {
         onLinkAccepted(data!);
       },
