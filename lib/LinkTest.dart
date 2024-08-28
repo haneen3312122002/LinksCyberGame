@@ -21,7 +21,8 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   @override
   void initState() {
     super.initState();
-    _videoController = VideoPlayerController.asset("videos/background.mp4")
+    _videoController = VideoPlayerController.network(
+        "https://drive.google.com/uc?export=download&id=1-05mgdwRXtJ-uBu4PCWVNCNtoGkvZmlo")
       ..initialize().then((_) {
         setState(() {});
         _videoController.setLooping(true);
