@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:guarded_button/guarded_button.dart';
+import 'LinkTest.dart';
 
 class GameScreen extends StatefulWidget {
   @override
@@ -80,8 +81,18 @@ class _GameScreenState extends State<GameScreen>
       btnOkOnPress: () {
         _resetGame();
       },
-      btnOkText: isSuccess ? 'المرحلة التالية' : 'إعادة اللعبة',
-      btnOkColor: isSuccess ? Colors.green : Colors.red,
+      btnOkText: isSuccess ? 'اعادة اللعبة' : 'إعادة اللعبة',
+      btnOkColor: isSuccess ? Color.fromARGB(255, 0, 119, 255) : Colors.red,
+      btnCancelOnPress: isSuccess
+          ? () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LinkCheckerScreen()),
+              );
+            }
+          : null,
+      btnCancelText: isSuccess ? 'التحدي التالي' : null,
+      btnCancelColor: Color.fromARGB(255, 3, 255, 28),
       headerAnimationLoop: false,
       dismissOnTouchOutside: false,
       dismissOnBackKeyPress: false,
