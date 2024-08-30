@@ -1,9 +1,10 @@
-import 'package:cybergame/gameScreen.dart';
+import 'package:cybergame/gameScree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import "gameScreen.dart";
+import "gameScree.dart";
 import "LinkTest.dart";
 import 'package:flutter_awesome_bottom_sheet/flutter_awesome_bottom_sheet.dart';
+import 'LinksVideoScreen.dart';
 
 void main() {
   // تعيين اتجاه الشاشة إلى الوضع الأفقي فقط
@@ -22,7 +23,7 @@ class LinkClassificationGame extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-        body: GameScreen(),
+        body: VideoScreen(),
       ),
     );
   }
@@ -56,8 +57,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: Scaffold(
-        backgroundColor: Colors.blueAccent,
-        body: GameScreen(), // استدعاء الصفحة الرئيسية
+        backgroundColor: const Color.fromARGB(255, 88, 147, 249),
+        body: VideoScreen(), // استدعاء الصفحة الرئيسية
       ),
     );
   }

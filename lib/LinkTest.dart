@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_awesome_bottom_sheet/flutter_awesome_bottom_sheet.dart';
-import 'package:video_player/video_player.dart';
 
 class LinkCheckerScreen extends StatefulWidget {
   @override
@@ -16,25 +14,6 @@ class LinkChecker {
 class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   final TextEditingController _linkController = TextEditingController();
   String result = '';
-  late VideoPlayerController _videoController;
-
-  @override
-  void initState() {
-    super.initState();
-    _videoController = VideoPlayerController.network(
-        "https://drive.google.com/uc?export=download&id=1-05mgdwRXtJ-uBu4PCWVNCNtoGkvZmlo")
-      ..initialize().then((_) {
-        setState(() {});
-        _videoController.setLooping(true);
-        _videoController.play();
-      });
-  }
-
-  @override
-  void dispose() {
-    _videoController.dispose();
-    super.dispose();
-  }
 
   void checkLink() async {
     String link = _linkController.text;
@@ -63,18 +42,13 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
       backgroundColor: Colors.lightBlue[50],
       body: Stack(
         children: [
-          // إضافة الفيديو كخلفية
-          if (_videoController.value.isInitialized)
-            SizedBox.expand(
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _videoController.value.size.width,
-                  height: _videoController.value.size.height,
-                  child: VideoPlayer(_videoController),
-                ),
-              ),
+          // إضافة GIF كخلفية
+          SizedBox.expand(
+            child: Image.asset(
+              "assets/linksBack.gif",
+              fit: BoxFit.cover,
             ),
+          ),
           // باقي عناصر اللعبة
           Padding(
             padding: EdgeInsets.symmetric(
