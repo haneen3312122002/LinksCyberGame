@@ -1,0 +1,47 @@
+import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+
+class SoundTest extends StatefulWidget {
+  @override
+  _SoundTestState createState() => _SoundTestState();
+}
+
+class _SoundTestState extends State<SoundTest> {
+  late AudioPlayer _audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+  }
+
+  Future<void> _playSound() async {
+    try {
+      await _audioPlayer.setAsset('assets/the_char.mp3');
+      _audioPlayer.play();
+    } catch (e) {
+      print("Failed to play sound: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sound Test'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: _playSound,
+          child: Text('Play Sound'),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+}

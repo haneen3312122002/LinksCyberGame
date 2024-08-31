@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 class LinkCheckerScreen extends StatefulWidget {
   @override
@@ -7,13 +8,36 @@ class LinkCheckerScreen extends StatefulWidget {
 
 class LinkChecker {
   static Future<String> checkLink(String link) async {
-    return 'الرابط آمن'; // يمكن تغيير هذه القيمة لاختبار الحالة الأخرى
+    // يمكنك تغيير النتيجة هنا لاختبار الحالة الأخرى
+    return 'الرابط آمن';
   }
 }
 
 class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   final TextEditingController _linkController = TextEditingController();
   String result = '';
+  late AudioPlayer _audioPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playSound(String filePath) async {
+    try {
+      await _audioPlayer.setAsset(filePath);
+      _audioPlayer.play();
+    } catch (e) {
+      print("Failed to play sound: $e");
+    }
+  }
 
   void checkLink() async {
     String link = _linkController.text;
@@ -22,6 +46,10 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
     setState(() {
       result = linkResult;
     });
+
+    if (linkResult == 'الرابط آمن') {
+      await _playSound('assets/secure.mp3');
+    }
   }
 
   @override

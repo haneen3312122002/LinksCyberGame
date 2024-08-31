@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:just_audio/just_audio.dart';
 import 'LinkTest.dart';
 
 class GameScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _GameScreenState extends State<GameScreen>
   late List<String> insecureLinks;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -28,11 +30,14 @@ class _GameScreenState extends State<GameScreen>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    _audioPlayer = AudioPlayer();
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -49,7 +54,7 @@ class _GameScreenState extends State<GameScreen>
     });
   }
 
-  void _checkResult() {
+  Future<void> _checkResult() async {
     if (secureLinks.isEmpty && insecureLinks.isEmpty) {
       _showCustomDialog(context, false, "الرجاء تعبئة السلات أولاً.");
       return;
@@ -60,9 +65,20 @@ class _GameScreenState extends State<GameScreen>
             (link) => link.startsWith('http') && !link.startsWith('https'));
 
     if (success) {
+      await _playSound('assets/victory.mp3');
       _showCustomDialog(context, true, "لقد صنفت الروابط بشكل صحيح!");
     } else {
+      await _playSound('assets/loss.mp3');
       _showCustomDialog(context, false, "هناك خطأ في التصنيف.");
+    }
+  }
+
+  Future<void> _playSound(String filePath) async {
+    try {
+      await _audioPlayer.setAsset(filePath);
+      _audioPlayer.play();
+    } catch (e) {
+      print("Failed to play sound: $e");
     }
   }
 
@@ -109,8 +125,8 @@ class _GameScreenState extends State<GameScreen>
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/back.png', // تأكد من أن الصورة موجودة في المسار الصحيح
-              fit: BoxFit.cover, // لتغطية كامل الشاشة بالصورة
+              'assets/back.png',
+              fit: BoxFit.cover,
             ),
           ),
           LayoutBuilder(
@@ -133,29 +149,31 @@ class _GameScreenState extends State<GameScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TrashBinWidget(
-                        imageAsset:
-                            'assets/blueBasket.png', // صورة السلة الزرقاء
+                        imageAsset: 'assets/blueBasket.png',
                         isSecure: true,
                         links: secureLinks,
-                        onLinkAccepted: (link) {
+                        onLinkAccepted: (link) async {
                           setState(() {
                             secureLinks.add(link);
                             allLinks.remove(link);
                           });
+                          await _playSound(
+                              'assets/put.mp3'); // تشغيل الصوت عند وضع الرابط
                         },
                         onLinkRemoved: _returnLink,
                         size: trashBinSize,
                       ),
                       TrashBinWidget(
-                        imageAsset:
-                            'assets/redBasket.png', // صورة السلة الحمراء
+                        imageAsset: 'assets/redBasket.png',
                         isSecure: false,
                         links: insecureLinks,
-                        onLinkAccepted: (link) {
+                        onLinkAccepted: (link) async {
                           setState(() {
                             insecureLinks.add(link);
                             allLinks.remove(link);
                           });
+                          await _playSound(
+                              'assets/put.mp3'); // تشغيل الصوت عند وضع الرابط
                         },
                         onLinkRemoved: _returnLink,
                         size: trashBinSize,
@@ -176,8 +194,8 @@ class _GameScreenState extends State<GameScreen>
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                              255, 243, 176, 255), // لون الزر بنفسجي
+                          backgroundColor:
+                              const Color.fromARGB(255, 243, 176, 255),
                           padding: EdgeInsets.symmetric(
                             horizontal: constraints.maxWidth * 0.1,
                             vertical: constraints.maxHeight * 0.02,
@@ -207,31 +225,41 @@ class LinkWidget extends StatefulWidget {
 }
 
 class _LinkWidgetState extends State<LinkWidget> {
+  late AudioPlayer _clickPlayer;
+
+  @override
+  void initState() {
+    super.initState();
+    _clickPlayer = AudioPlayer();
+  }
+
+  @override
+  void dispose() {
+    _clickPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playClickSound() async {
+    try {
+      await _clickPlayer.setAsset('assets/click.mp3');
+      _clickPlayer.play();
+    } catch (e) {
+      print("Failed to play click sound: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Draggable<String>(
-      data: widget.link,
-      child: Container(
-        height: widget.height,
-        padding: EdgeInsets.all(10),
-        color: Colors.yellow,
-        child: Row(
-          children: [
-            Icon(Icons.link),
-            SizedBox(width: 5),
-            Text(
-              widget.link,
-              style: TextStyle(fontSize: widget.height * 0.25),
-            ),
-          ],
-        ),
-      ),
-      feedback: Material(
-        color: Colors.transparent,
+    return GestureDetector(
+      onTap: () async {
+        await _playClickSound(); // تشغيل الصوت عند الضغط على الرابط
+      },
+      child: Draggable<String>(
+        data: widget.link,
         child: Container(
           height: widget.height,
           padding: EdgeInsets.all(10),
-          color: Colors.yellow.withOpacity(0.7),
+          color: Colors.yellow,
           child: Row(
             children: [
               Icon(Icons.link),
@@ -243,20 +271,38 @@ class _LinkWidgetState extends State<LinkWidget> {
             ],
           ),
         ),
-      ),
-      childWhenDragging: Container(
-        height: widget.height,
-        padding: EdgeInsets.all(10),
-        color: Colors.yellow,
-        child: Row(
-          children: [
-            Icon(Icons.link),
-            SizedBox(width: 5),
-            Text(
-              widget.link,
-              style: TextStyle(fontSize: widget.height * 0.25),
+        feedback: Material(
+          color: Colors.transparent,
+          child: Container(
+            height: widget.height,
+            padding: EdgeInsets.all(10),
+            color: Colors.yellow.withOpacity(0.7),
+            child: Row(
+              children: [
+                Icon(Icons.link),
+                SizedBox(width: 5),
+                Text(
+                  widget.link,
+                  style: TextStyle(fontSize: widget.height * 0.25),
+                ),
+              ],
             ),
-          ],
+          ),
+        ),
+        childWhenDragging: Container(
+          height: widget.height,
+          padding: EdgeInsets.all(10),
+          color: Colors.yellow,
+          child: Row(
+            children: [
+              Icon(Icons.link),
+              SizedBox(width: 5),
+              Text(
+                widget.link,
+                style: TextStyle(fontSize: widget.height * 0.25),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -306,9 +352,7 @@ class _TrashBinWidgetState extends State<TrashBinWidget> {
       },
       onWillAccept: (data) => true,
       onAccept: (data) {
-        setState(() {
-          widget.onLinkAccepted(data!);
-        });
+        widget.onLinkAccepted(data!);
       },
     );
   }
@@ -318,16 +362,33 @@ class _TrashBinWidgetState extends State<TrashBinWidget> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(widget.isSecure
-              ? 'محتويات السلة الآمنة'
-              : 'محتويات السلة غير الآمنة'),
+          backgroundColor: widget.isSecure ? Colors.blue[50] : Colors.red[50],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: Text(
+            widget.isSecure
+                ? 'محتويات السلة الآمنة'
+                : 'محتويات السلة غير الآمنة',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: widget.isSecure ? Colors.blue : Colors.red,
+            ),
+          ),
           content: Container(
             width: double.maxFinite,
-            height: 300.0, // يمكن تخصيص الحجم حسب الحاجة
+            height: 300.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
             child: ListView.builder(
               itemCount: widget.links.length,
               itemBuilder: (context, index) {
                 return ListTile(
+                  leading: widget.isSecure
+                      ? Icon(Icons.lock, color: Colors.blue)
+                      : Icon(Icons.lock_open, color: Colors.red),
                   title: Text(widget.links[index]),
                   trailing: IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
@@ -335,7 +396,7 @@ class _TrashBinWidgetState extends State<TrashBinWidget> {
                       setState(() {
                         widget.onLinkRemoved(widget.links[index]);
                       });
-                      Navigator.of(context).pop(); // إغلاق الصندوق المنبثق
+                      Navigator.of(context).pop();
                     },
                   ),
                 );

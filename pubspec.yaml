@@ -57,4 +57,8 @@ flutter:
     - assets/redBasket.png
     - assets/back.png
     - assets/victory.mp3
+    - assets/the_char.mp3
     - assets/loss.mp3
+    - assets/secure.mp3
+    - assets/click.mp3
+    - assets/put.mp3

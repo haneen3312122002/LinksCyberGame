@@ -5,6 +5,7 @@ import "gameScree.dart";
 import "LinkTest.dart";
 import 'package:flutter_awesome_bottom_sheet/flutter_awesome_bottom_sheet.dart';
 import 'LinksVideoScreen.dart';
+import 'voicetest';
 
 void main() {
   // تعيين اتجاه الشاشة إلى الوضع الأفقي فقط
@@ -58,7 +59,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 88, 147, 249),
-        body: VideoScreen(), // استدعاء الصفحة الرئيسية
+        body: SoundTest(), // استدعاء الصفحة الرئيسية
       ),
     );
   }
