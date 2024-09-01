@@ -33,6 +33,7 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   Future<void> _playSound(String filePath) async {
     try {
       await _audioPlayer.setAsset(filePath);
+      _audioPlayer.setVolume(0.3); // ضبط مستوى الصوت
       _audioPlayer.play();
     } catch (e) {
       print("Failed to play sound: $e");
@@ -80,18 +81,19 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
           // باقي عناصر اللعبة
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.05,
-              vertical: screenHeight * 0.02,
+              horizontal: screenWidth * 0.04,
+              vertical: screenHeight * 0.01, // تقليل الهامش الرأسي
             ),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.topCenter,
-                  margin: EdgeInsets.only(bottom: screenHeight * 0.06),
+                  margin: EdgeInsets.only(
+                      bottom: screenHeight * 0.015), // تقليل الهامش السفلي
                   child: Text(
                     'فحص الروابط',
                     style: TextStyle(
-                      fontSize: screenHeight * 0.06,
+                      fontSize: screenHeight * 0.03, // تقليل حجم النص
                       fontWeight: FontWeight.bold,
                       color: Colors.blueAccent,
                     ),
@@ -100,7 +102,7 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.25),
@@ -115,17 +117,18 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                       hintText: 'أدخل الرابط هنا',
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(10.0),
                         borderSide: BorderSide.none,
                       ),
                     ),
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.03),
                 SizedBox(
-                  width: screenWidth * 0.5,
-                  height: screenHeight * 0.07,
+                    height: screenHeight * 0.015), // تقليل المسافة بين العناصر
+                SizedBox(
+                  width: screenWidth * 0.4, // تقليل عرض الزر
+                  height: screenHeight * 0.05, // تقليل ارتفاع الزر
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -138,10 +141,11 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                           'افحص الرابط',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: screenHeight * 0.025,
+                            fontSize:
+                                screenHeight * 0.02, // تقليل حجم النص داخل الزر
                           ),
                         ),
-                        SizedBox(width: 7),
+                        SizedBox(width: 5),
                         Icon(
                           Icons.arrow_forward,
                           color: Colors.white,
@@ -150,20 +154,22 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.03),
+                SizedBox(
+                    height: screenHeight * 0.015), // تقليل المسافة بين العناصر
                 if (result.isNotEmpty)
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(10.0), // تقليل الحشوة الداخلية
                     decoration: BoxDecoration(
                       color: boxColor,
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius:
+                          BorderRadius.circular(8.0), // تقليل الحواف الدائرية
                     ),
                     child: Text(
                       result,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: screenHeight * 0.025,
+                        fontSize: screenHeight * 0.02, // تقليل حجم النص
                       ),
                       textAlign: TextAlign.center,
                     ),

@@ -55,11 +55,13 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Future<void> _checkResult() async {
-    if (secureLinks.isEmpty && insecureLinks.isEmpty) {
+    // شرط: إذا كانت جميع الروابط لم تُصنف بعد
+    if (allLinks.isNotEmpty) {
       _showCustomDialog(context, false, "الرجاء تعبئة السلات أولاً.");
       return;
     }
 
+    // شرط: إذا كانت جميع السلال مُصنفة بالكامل
     bool success = secureLinks.every((link) => link.startsWith('https')) &&
         insecureLinks.every(
             (link) => link.startsWith('http') && !link.startsWith('https'));
@@ -69,13 +71,15 @@ class _GameScreenState extends State<GameScreen>
       _showCustomDialog(context, true, "لقد صنفت الروابط بشكل صحيح!");
     } else {
       await _playSound('assets/loss.mp3');
-      _showCustomDialog(context, false, "هناك خطأ في التصنيف.");
+      _showCustomDialog(
+          context, false, "لقد قمت بتصنيف جميع الروابط ولكن بشكل خاطئ.");
     }
   }
 
   Future<void> _playSound(String filePath) async {
     try {
       await _audioPlayer.setAsset(filePath);
+      _audioPlayer.setVolume(0.3); // ضبط مستوى الصوت
       _audioPlayer.play();
     } catch (e) {
       print("Failed to play sound: $e");
@@ -90,12 +94,14 @@ class _GameScreenState extends State<GameScreen>
       title: isSuccess ? 'نجاح!' : 'فشل!',
       desc: message,
       btnOkOnPress: () {
+        _audioPlayer.stop(); // إيقاف الصوت الجاري تشغيله
         _resetGame();
       },
       btnOkText: isSuccess ? 'اعادة اللعبة' : 'إعادة اللعبة',
       btnOkColor: isSuccess ? Color.fromARGB(255, 0, 119, 255) : Colors.red,
       btnCancelOnPress: isSuccess
           ? () {
+              _audioPlayer.stop(); // إيقاف الصوت الجاري تشغيله
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LinkCheckerScreen()),
@@ -242,6 +248,7 @@ class _LinkWidgetState extends State<LinkWidget> {
   Future<void> _playClickSound() async {
     try {
       await _clickPlayer.setAsset('assets/click.mp3');
+      _clickPlayer.setVolume(0.3); // ضبط مستوى الصوت
       _clickPlayer.play();
     } catch (e) {
       print("Failed to play click sound: $e");
