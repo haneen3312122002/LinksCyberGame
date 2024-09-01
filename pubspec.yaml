@@ -51,6 +51,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    #LinksGame:
     - assets/linksBack.gif
     - assets/the_char.mp4
     - assets/blueBasket.png
@@ -63,3 +64,5 @@ flutter:
     - assets/click.mp3
     - assets/put.mp3
     - assets/error.mp3
+    #DoorsGame:
+    - assets/doors.png
