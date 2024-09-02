@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+import 'DoorsScreen2.dart';
 
-class DoorsScreen extends StatefulWidget {
-  @override
-  _DoorsScreenState createState() => _DoorsScreenState();
-}
-
-class _DoorsScreenState extends State<DoorsScreen> {
+class DoorsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         // ضبط الصورة لتغطي كامل الخلفية
         Positioned.fill(
-          child: Image.asset(
-            'assets/doors.png',
-            fit: BoxFit.cover, // جعل الصورة تغطي كامل المساحة
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: Image.asset('assets/doors.png'),
           ),
         ),
         // الأبواب القابلة للضغط مع خلفية خلف النصوص
@@ -22,9 +19,10 @@ class _DoorsScreenState extends State<DoorsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'تحديد عنوان URL', true),
-              _buildDoor(context, 'إنهاء الاتصال', false),
-              _buildDoor(context, 'تحديد نوع الطلب', false),
+              _buildDoor(context, 'اختيار البروتوكول',
+                  isCorrect: true), // الباب الصحيح
+              _buildDoor(context, 'اضافة بيانات الطلب', isCorrect: false),
+              _buildDoor(context, 'ارسال الطلب', isCorrect: false),
             ],
           ),
         ),
@@ -32,18 +30,18 @@ class _DoorsScreenState extends State<DoorsScreen> {
     );
   }
 
-  Widget _buildDoor(BuildContext context, String label, bool isCorrect) {
+  Widget _buildDoor(BuildContext context, String label,
+      {required bool isCorrect}) {
     return GestureDetector(
       onTap: () {
         if (isCorrect) {
-          // تنفيذ الأكشن المناسب عند اختيار الخيار الصحيح
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('أحسنت! $label هو الخيار الصحيح.')),
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VideoScreen()),
           );
         } else {
-          // تنفيذ الأكشن المناسب عند اختيار خيار خاطئ
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
+            SnackBar(content: Text('$label تم الضغط عليه')),
           );
         }
       },
@@ -56,7 +54,7 @@ class _DoorsScreenState extends State<DoorsScreen> {
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 229, 130, 8)
                   .withOpacity(0.6), // خلفية نصف شفافة
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(80),
             ),
             child: Text(
               label,
@@ -69,6 +67,62 @@ class _DoorsScreenState extends State<DoorsScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class VideoScreen extends StatefulWidget {
+  @override
+  _VideoScreenState createState() => _VideoScreenState();
+}
+
+class _VideoScreenState extends State<VideoScreen> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset('assets/door1.mp4')
+      ..initialize().then((_) {
+        // تشغيل الفيديو تلقائياً
+        _controller.play();
+        setState(() {});
+      })
+      ..setLooping(false);
+
+    // الانتقال إلى الشاشة التالية عند انتهاء الفيديو
+    _controller.addListener(() {
+      if (_controller.value.position == _controller.value.duration) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoorsScreen2()),
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _controller.value.isInitialized
+          ? SizedBox.expand(
+              // لملء الشاشة بالكامل
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _controller.value.size.width,
+                  height: _controller.value.size.height,
+                  child: VideoPlayer(_controller),
+                ),
+              ),
+            )
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }

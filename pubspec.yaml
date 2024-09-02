@@ -66,3 +66,6 @@ flutter:
     - assets/error.mp3
     #DoorsGame:
     - assets/doors.png
+    - assets/door1.mp4
+    - assets/door2.mp4
+    - assets/door3.mp4

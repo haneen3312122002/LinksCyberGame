@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class DoorsScreen25 extends StatefulWidget {
+class DoorsScreen5 extends StatefulWidget {
   @override
   _DoorsScreen2State createState() => _DoorsScreen2State();
 }
 
-class _DoorsScreen2State extends State<DoorsScreen25> {
+class _DoorsScreen2State extends State<DoorsScreen5> {
   @override
   Widget build(BuildContext context) {
     return Stack(

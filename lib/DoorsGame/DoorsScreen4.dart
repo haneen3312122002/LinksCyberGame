@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+import 'DoorsScreen5.dart'; // تأكد من أن الصفحة DoorsScreen5 معرفة بشكل صحيح
 
 class DoorsScreen4 extends StatefulWidget {
   @override
-  _DoorsScreen2State createState() => _DoorsScreen2State();
+  _DoorsScreen4State createState() => _DoorsScreen4State();
 }
 
-class _DoorsScreen2State extends State<DoorsScreen4> {
+class _DoorsScreen4State extends State<DoorsScreen4> {
+  late VideoPlayerController _controller;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -22,7 +32,7 @@ class _DoorsScreen2State extends State<DoorsScreen4> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'إعداد الرؤوس', true),
+              _buildDoor(context, 'إعداد الرؤوس', true), // الجواب الصحيح
               _buildDoor(context, 'اختيار بروتوكول', false),
               _buildDoor(context, 'انتظار الرد', false),
             ],
@@ -36,12 +46,9 @@ class _DoorsScreen2State extends State<DoorsScreen4> {
     return GestureDetector(
       onTap: () {
         if (isCorrect) {
-          // تنفيذ الأكشن المناسب عند اختيار الخيار الصحيح
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('أحسنت! $label هو الخيار الصحيح.')),
-          );
+          _playVideoAndNavigate(
+              context); // تشغيل الفيديو والانتقال للصفحة التالية
         } else {
-          // تنفيذ الأكشن المناسب عند اختيار خيار خاطئ
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
           );
@@ -50,12 +57,11 @@ class _DoorsScreen2State extends State<DoorsScreen4> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 150), // تعديل لرفع النصوص قليلاً إلى الأعلى
+          SizedBox(height: 150),
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 229, 130, 8)
-                  .withOpacity(0.6), // خلفية نصف شفافة
+              color: const Color.fromARGB(255, 229, 130, 8).withOpacity(0.6),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
@@ -69,6 +75,45 @@ class _DoorsScreen2State extends State<DoorsScreen4> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _playVideoAndNavigate(BuildContext context) async {
+    _controller = VideoPlayerController.asset('assets/door1.mp4');
+    await _controller.initialize();
+
+    // إضافة مستمع لانتهاء الفيديو قبل تشغيله
+    _controller.addListener(() {
+      if (_controller.value.position == _controller.value.duration) {
+        Navigator.pop(context); // إغلاق الـ Dialog بعد انتهاء الفيديو
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoorsScreen5()),
+        );
+      }
+    });
+
+    // بدء تشغيل الفيديو تلقائيًا
+    _controller.play();
+
+    // عرض الفيديو بملء الشاشة بدون حدود سوداء
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // منع إغلاق الـ Dialog قبل انتهاء الفيديو
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.black,
+          insetPadding: EdgeInsets.all(0),
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: _controller.value.size.width,
+              height: _controller.value.size.height,
+              child: VideoPlayer(_controller),
+            ),
+          ),
+        );
+      },
     );
   }
 }

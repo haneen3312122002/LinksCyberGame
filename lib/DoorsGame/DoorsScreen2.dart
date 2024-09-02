@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
+import 'DoorsScreen3.dart';
 
 class DoorsScreen2 extends StatefulWidget {
   @override
@@ -6,6 +8,14 @@ class DoorsScreen2 extends StatefulWidget {
 }
 
 class _DoorsScreen2State extends State<DoorsScreen2> {
+  late VideoPlayerController _controller;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -36,10 +46,8 @@ class _DoorsScreen2State extends State<DoorsScreen2> {
     return GestureDetector(
       onTap: () {
         if (isCorrect) {
-          // تنفيذ الأكشن المناسب عند اختيار الخيار الصحيح
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('أحسنت! $label هو الخيار الصحيح.')),
-          );
+          // تشغيل الفيديو بملء الشاشة عند اختيار الإجابة الصحيحة
+          _playVideoAndNavigate(context);
         } else {
           // تنفيذ الأكشن المناسب عند اختيار خيار خاطئ
           ScaffoldMessenger.of(context).showSnackBar(
@@ -69,6 +77,49 @@ class _DoorsScreen2State extends State<DoorsScreen2> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _playVideoAndNavigate(BuildContext context) async {
+    _controller = VideoPlayerController.asset('assets/door1.mp4');
+
+    // عرض فيديو فقط بعد التهيئة الكاملة باستخدام FutureBuilder
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: FutureBuilder(
+            future: _controller.initialize(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                // إذا تم تهيئة الفيديو، قم بعرضه
+                _controller.play();
+                _controller.addListener(() {
+                  if (_controller.value.position ==
+                      _controller.value.duration) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => DoorsScreen3()),
+                    );
+                  }
+                });
+                return FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: _controller.value.size.width,
+                    height: _controller.value.size.height,
+                    child: VideoPlayer(_controller),
+                  ),
+                );
+              } else {
+                // أثناء التهيئة، اعرض مؤشر تحميل
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }
