@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class DoorsScreen extends StatefulWidget {
+class DoorsScreen6 extends StatefulWidget {
   @override
-  _DoorsScreenState createState() => _DoorsScreenState();
+  _DoorsScreen2State createState() => _DoorsScreen2State();
 }
 
-class _DoorsScreenState extends State<DoorsScreen> {
+class _DoorsScreen2State extends State<DoorsScreen6> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -22,9 +22,9 @@ class _DoorsScreenState extends State<DoorsScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'تحديد عنوان URL', true),
-              _buildDoor(context, 'إنهاء الاتصال', false),
+              _buildDoor(context, 'انتظار الرد', false),
               _buildDoor(context, 'تحديد نوع الطلب', false),
+              _buildDoor(context, 'إرسال الطلب', true),
             ],
           ),
         ),
