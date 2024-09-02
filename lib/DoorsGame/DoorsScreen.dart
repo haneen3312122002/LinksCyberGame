@@ -17,9 +17,9 @@ class DoorsScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'الباب 1'),
-              _buildDoor(context, 'الباب 2'),
-              _buildDoor(context, 'الباب 3'),
+              _buildDoor(context, 'إضافة بيانات الطلب', false),
+              _buildDoor(context, 'إرسال الطلب', false),
+              _buildDoor(context, 'اختيار بروتوكول', true),
             ],
           ),
         ),
@@ -27,13 +27,20 @@ class DoorsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDoor(BuildContext context, String label) {
+  Widget _buildDoor(BuildContext context, String label, bool isCorrect) {
     return GestureDetector(
       onTap: () {
-        // يمكنك تنفيذ الأكشن المناسب عند الضغط على الباب هنا
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$label تم الضغط عليه')),
-        );
+        if (isCorrect) {
+          // تنفيذ الأكشن المناسب عند اختيار الخيار الصحيح
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('أحسنت! $label هو الخيار الصحيح.')),
+          );
+        } else {
+          // تنفيذ الأكشن المناسب عند اختيار خيار خاطئ
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
+          );
+        }
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +51,7 @@ class DoorsScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 229, 130, 8)
                   .withOpacity(0.6), // خلفية نصف شفافة
-              borderRadius: BorderRadius.circular(80),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               label,
