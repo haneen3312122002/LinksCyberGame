@@ -33,8 +33,9 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildDoor(context, 'إضافة بيانات الطلب', false),
-              _buildDoor(context, 'تحديد نوع الطلب', true), // الجواب الصحيح
+              // الجواب الصحيح
               _buildDoor(context, 'إرسال الطلب', false),
+              _buildDoor(context, 'تحديد نوع الطلب', true),
             ],
           ),
         ),

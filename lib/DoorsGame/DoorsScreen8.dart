@@ -22,8 +22,8 @@ class _DoorsScreen2State extends State<DoorsScreen8> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'معالجة الرد', true),
               _buildDoor(context, 'إعداد الرؤوس', false),
+              _buildDoor(context, 'معالجة الرد', true),
               _buildDoor(context, 'معالجة الأخطاء', false),
             ],
           ),

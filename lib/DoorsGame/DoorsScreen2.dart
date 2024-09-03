@@ -32,8 +32,8 @@ class _DoorsScreen2State extends State<DoorsScreen2> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildDoor(context, 'تحديد عنوان URL', true),
               _buildDoor(context, 'إنهاء الاتصال', false),
+              _buildDoor(context, 'تحديد عنوان URL', true),
               _buildDoor(context, 'تحديد نوع الطلب', false),
             ],
           ),
