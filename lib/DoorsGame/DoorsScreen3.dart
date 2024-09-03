@@ -9,6 +9,7 @@ class DoorsScreen3 extends StatefulWidget {
 
 class _DoorsScreen3State extends State<DoorsScreen3> {
   late VideoPlayerController _controller;
+  final int currentStep = 3; // This is step 3
 
   @override
   void dispose() {
@@ -18,28 +19,58 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // ضبط الصورة لتغطي كامل الخلفية
-        Positioned.fill(
-          child: Image.asset(
-            'assets/doors.png',
-            fit: BoxFit.cover, // جعل الصورة تغطي كامل المساحة
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+              height: 40), // Add some space at the top before the progress bar
+          // Progress bar with rounded corners
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding
+            child: ClipRRect(
+              borderRadius:
+                  BorderRadius.all(Radius.circular(20)), // Rounded corners
+              child: LinearProgressIndicator(
+                value: currentStep / 10, // The progress (3 out of 10 steps)
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  currentStep == 3
+                      ? Colors.blue // Set the color of the current step to blue
+                      : Colors.yellow, // Future steps will stay yellow
+                ),
+                minHeight:
+                    20, // Optional: Increase the height of the progress bar
+              ),
+            ),
           ),
-        ),
-        // الأبواب القابلة للضغط مع خلفية خلف النصوص
-        Positioned.fill(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildDoor(context, 'إضافة بيانات الطلب', false),
-              // الجواب الصحيح
-              _buildDoor(context, 'إرسال الطلب', false),
-              _buildDoor(context, 'تحديد نوع الطلب', true),
-            ],
+          Expanded(
+            child: Stack(
+              children: [
+                // ضبط الصورة لتغطي كامل الخلفية
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/doors.png',
+                    fit: BoxFit.cover, // جعل الصورة تغطي كامل المساحة
+                  ),
+                ),
+                // الأبواب القابلة للضغط مع خلفية خلف النصوص
+                Positioned.fill(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildDoor(context, 'إضافة بيانات الطلب', false),
+                      _buildDoor(context, 'إرسال الطلب', false),
+                      _buildDoor(context, 'تحديد نوع الطلب',
+                          true), // Correct answer triggers door3.mp4
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -80,7 +111,8 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
   }
 
   Future<void> _playVideoAndNavigate(BuildContext context) async {
-    _controller = VideoPlayerController.asset('assets/door2.mp4');
+    _controller = VideoPlayerController.asset(
+        'assets/door3.mp4'); // Updated to play door3.mp4
     await _controller.initialize();
 
     // إضافة مستمع لانتهاء الفيديو قبل تشغيله
