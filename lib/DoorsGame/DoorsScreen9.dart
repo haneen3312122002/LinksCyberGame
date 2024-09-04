@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'DoorsScreen10.dart'; // Ensure this screen is properly defined
+import 'stage.dart'; // استدعاء كلاس Stage
+import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 
 class DoorsScreen9 extends StatefulWidget {
   @override
@@ -10,16 +12,24 @@ class DoorsScreen9 extends StatefulWidget {
 class _DoorsScreen9State extends State<DoorsScreen9> {
   late VideoPlayerController _controller;
   final int currentStep = 9; // This is step 9
+  final SoundManager soundManager = SoundManager(); // Instance of SoundManager
 
   @override
   void dispose() {
     _controller.dispose();
+    soundManager.dispose(); // التخلص من الصوت عند إغلاق الشاشة
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Stage(
+          stageName: 'المرحلة $currentStep', // استخدام Stage لعرض اسم المرحلة
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           SizedBox(height: 40), // Space before the progress bar
@@ -80,6 +90,8 @@ class _DoorsScreen9State extends State<DoorsScreen9> {
           _playVideoAndNavigate(
               context); // Play video and navigate to next screen
         } else {
+          soundManager
+              .playErrorSound(); // تشغيل صوت الخطأ عند اختيار إجابة خاطئة
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
           );

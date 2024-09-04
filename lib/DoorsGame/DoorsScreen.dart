@@ -1,54 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'DoorsScreen2.dart';
+import 'stage.dart'; // استدعاء Stage class
+import 'SoundManager.dart'; // استدعاء SoundManager class
 
 class DoorsScreen extends StatelessWidget {
-  final int currentStep = 1; // Example: Current step is 1 (out of 10)
+  final int currentStep = 1; // المرحلة الحالية هي 1 من 10
+  final Stage currentStage = Stage(
+      stageName:
+          "المرحلة 1"); // لا حاجة لذكر الخصائص هنا، سيتم توريث الخصائص الافتراضية
+  final SoundManager soundManager =
+      SoundManager(); // إنشاء instance من SoundManager
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title:
+            currentStage, // استخدام Stage widget لعرض اسم المرحلة مع الخصائص الافتراضية
+        centerTitle: true, // توسيط العنوان
+      ),
       body: Column(
         children: [
-          SizedBox(
-              height: 40), // Add some space at the top before the progress bar
-          // Progress bar with rounded corners
+          SizedBox(height: 40), // مساحة قبل شريط التقدم
+          // شريط التقدم مع زوايا دائرية
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding
+                const EdgeInsets.symmetric(horizontal: 16.0), // ضبط المسافات
             child: ClipRRect(
               borderRadius:
-                  BorderRadius.all(Radius.circular(20)), // Rounded corners
+                  BorderRadius.all(Radius.circular(20)), // زوايا دائرية
               child: LinearProgressIndicator(
-                value: currentStep / 10, // The progress (1 out of 10 steps)
+                value: currentStep / 10, // التقدم (1 من 10 خطوات)
                 backgroundColor: Colors.grey[300],
                 valueColor: AlwaysStoppedAnimation<Color>(
                   currentStep == 1
-                      ? Colors.blue // Set the color of the current step to blue
-                      : Colors.yellow, // Future steps will stay yellow
+                      ? Colors.blue // لون الخطوة الحالية
+                      : Colors.yellow, // الخطوات المستقبلية تبقى صفراء
                 ),
-                minHeight:
-                    20, // Optional: Increase the height of the progress bar
+                minHeight: 20, // ضبط ارتفاع شريط التقدم
               ),
             ),
           ),
           Expanded(
             child: Stack(
               children: [
-                // Background image covering the full screen
+                // الصورة الخلفية تغطي الشاشة بالكامل
                 Positioned.fill(
                   child: FittedBox(
                     fit: BoxFit.cover,
                     child: Image.asset('assets/doors.png'),
                   ),
                 ),
-                // Interactive doors with text
+                // الأبواب التفاعلية مع النصوص
                 Positioned.fill(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildDoor(context, 'اختيار البروتوكول',
-                          isCorrect: true), // Correct door
+                          isCorrect: true), // الباب الصحيح
                       _buildDoor(context, 'اضافة بيانات الطلب',
                           isCorrect: false),
                       _buildDoor(context, 'ارسال الطلب', isCorrect: false),
@@ -73,6 +83,8 @@ class DoorsScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => VideoScreen()),
           );
         } else {
+          soundManager
+              .playErrorSound(); // تشغيل صوت الخطأ عند اختيار الإجابة الخاطئة
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('$label تم الضغط عليه')),
           );
@@ -81,12 +93,12 @@ class DoorsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 150), // Adjust to lift the text slightly
+          SizedBox(height: 150), // رفع النص قليلاً
           Container(
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             decoration: BoxDecoration(
               color: const Color.fromARGB(255, 229, 130, 8)
-                  .withOpacity(0.6), // Semi-transparent background
+                  .withOpacity(0.6), // خلفية شبه شفافة
               borderRadius: BorderRadius.circular(80),
             ),
             child: Text(
@@ -145,7 +157,7 @@ class _VideoScreenState extends State<VideoScreen> {
     return Scaffold(
       body: _controller.value.isInitialized
           ? SizedBox.expand(
-              // To cover the entire screen
+              // لتغطية الشاشة بالكامل
               child: FittedBox(
                 fit: BoxFit.cover,
                 child: SizedBox(
@@ -155,7 +167,7 @@ class _VideoScreenState extends State<VideoScreen> {
                 ),
               ),
             )
-          : Center(child: CircularProgressIndicator()),
+          : Center(child: CircularProgressIndicator()), // عرض مؤشر التحميل
     );
   }
 }

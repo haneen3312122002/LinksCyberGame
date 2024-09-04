@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'stage.dart'; // استدعاء كلاس Stage
+import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 
 class DoorsScreen10 extends StatefulWidget {
   @override
@@ -8,10 +10,24 @@ class DoorsScreen10 extends StatefulWidget {
 
 class _DoorsScreen10State extends State<DoorsScreen10> {
   final int currentStep = 10; // This is step 10
+  final SoundManager soundManager = SoundManager(); // Instance of SoundManager
+
+  @override
+  void dispose() {
+    soundManager.dispose(); // التخلص من الصوت عند إغلاق الشاشة
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Stage(
+          stageName:
+              'المرحلة $currentStep', // استخدام Stage class لعرض اسم المرحلة
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           SizedBox(height: 40), // Space before the progress bar
@@ -69,6 +85,7 @@ class _DoorsScreen10State extends State<DoorsScreen10> {
         if (isCorrect) {
           _showWinDialog(); // Show winning dialog
         } else {
+          soundManager.playErrorSound(); // تشغيل صوت الخطأ عند الإجابة الخاطئة
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
           );

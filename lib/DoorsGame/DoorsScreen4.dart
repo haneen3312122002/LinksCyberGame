@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'DoorsScreen5.dart';
+import 'stage.dart'; // استدعاء كلاس Stage
+import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 
 class DoorsScreen4 extends StatefulWidget {
   @override
@@ -10,16 +12,25 @@ class DoorsScreen4 extends StatefulWidget {
 class _DoorsScreen4State extends State<DoorsScreen4> {
   late VideoPlayerController _controller;
   final int currentStep = 4; // This is step 4
+  final SoundManager soundManager = SoundManager(); // Instance of SoundManager
 
   @override
   void dispose() {
     _controller.dispose();
+    soundManager.dispose(); // تأكد من التخلص من الصوت عند إغلاق الشاشة
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Stage(
+          stageName:
+              'المرحلة $currentStep', // عرض اسم المرحلة باستخدام Stage class
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -61,7 +72,7 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
                     children: [
                       _buildDoor(context, 'انتظار الرد', false),
                       _buildDoor(context, 'اختيار بروتوكول', false),
-                      _buildDoor(context, 'اعداد الرؤوس',
+                      _buildDoor(context, 'Authorization',
                           true), // Correct answer triggers door4.mp4
                     ],
                   ),
@@ -81,6 +92,8 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
           _playVideoAndNavigate(
               context); // تشغيل الفيديو والانتقال للصفحة التالية
         } else {
+          soundManager
+              .playErrorSound(); // تشغيل صوت الخطأ عند اختيار إجابة خاطئة
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
           );
@@ -111,7 +124,8 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
   }
 
   Future<void> _playVideoAndNavigate(BuildContext context) async {
-    _controller = VideoPlayerController.asset('assets/door3.mp4');
+    _controller = VideoPlayerController.asset(
+        'assets/door3.mp4'); // Updated to play door4.mp4
 
     try {
       await _controller.initialize();

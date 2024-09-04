@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'DoorsScreen8.dart'; // Ensure this screen is properly defined
+import 'DoorsScreen8.dart'; // تأكد من تعريف DoorsScreen8 بشكل صحيح
+import 'stage.dart'; // استدعاء كلاس Stage
+import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 
 class DoorsScreen7 extends StatefulWidget {
   @override
@@ -10,16 +12,25 @@ class DoorsScreen7 extends StatefulWidget {
 class _DoorsScreen7State extends State<DoorsScreen7> {
   late VideoPlayerController _controller;
   final int currentStep = 7; // This is step 7
+  final SoundManager soundManager = SoundManager(); // Instance of SoundManager
 
   @override
   void dispose() {
     _controller.dispose();
+    soundManager.dispose(); // Dispose sound resources
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Stage(
+          stageName:
+              'المرحلة $currentStep', // استخدام Stage class لعرض اسم المرحلة
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           SizedBox(height: 40), // Space before the progress bar
@@ -49,8 +60,8 @@ class _DoorsScreen7State extends State<DoorsScreen7> {
                 Positioned.fill(
                   child: Image.asset(
                     'assets/doors.png',
-                    fit: BoxFit
-                        .cover, // Make sure the image covers the entire screen
+                    fit:
+                        BoxFit.cover, // Ensure the image covers the full screen
                   ),
                 ),
                 // Interactive doors with text
@@ -80,6 +91,7 @@ class _DoorsScreen7State extends State<DoorsScreen7> {
           _playVideoAndNavigate(
               context); // Play video and navigate to next screen
         } else {
+          soundManager.playErrorSound(); // تشغيل صوت الخطأ عند الإجابة الخاطئة
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('خاطئ! $label ليس الخيار الصحيح.')),
           );
