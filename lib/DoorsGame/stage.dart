@@ -11,8 +11,8 @@ class Stage extends StatelessWidget {
   // Constructor مع قيم افتراضية للخصائص
   Stage({
     required this.stageName,
-    this.textColor =
-        const Color.fromARGB(255, 250, 71, 0), // اللون الافتراضي للنص هو الأبيض
+    this.textColor = const Color.fromARGB(
+        255, 171, 143, 7), // اللون الافتراضي للنص هو الأبيض
     this.fontSize = 22.0, // الحجم الافتراضي للنص هو 22
     this.fontWeight = FontWeight.bold, // سمك الخط الافتراضي هو bold
     this.icon = Icons.timeline, // الأيقونة الافتراضية هي نجمة

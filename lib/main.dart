@@ -1,22 +1,18 @@
 import 'package:cybergame/LinksGame/gameScree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import "LinksGame/gameScree.dart";
-import "LinksGame/LinkTest.dart";
-import 'package:flutter_awesome_bottom_sheet/flutter_awesome_bottom_sheet.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 import 'LinksGame/LinksVideoScreen.dart';
 import 'DoorsGame/DoorsScreen.dart';
 
 void main() {
-  // walkooooooooooooooo wo b333deeeeeeen
-  // من قلب البروجيكت ابراهيم يرحب بالجميع
-
-  // تعيين اتجاه الشاشة إلى الوضع الأفقي فقط
+  // Ensure widget binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // إخفاء شريط الإشعارات وجعل التطبيق في وضع ملء الشاشة
+  // Hide the notification bar and set immersive mode
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
+  // Lock the orientation to landscape
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
@@ -28,11 +24,19 @@ void main() {
 class LinkClassificationGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-        body: DoorsScreen(),
-      ),
+    return ScreenUtilInit(
+      // Initialize ScreenUtil
+      designSize: const Size(812, 375), // Set your design size (width, height)
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          home: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 52, 126, 253),
+            body: DoorsScreen(),
+          ),
+        );
+      },
     );
   }
 }
@@ -42,62 +46,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 88, 147, 249),
-        body: GameScreen(),
-      ),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(812, 375), // Set your design size (width, height)
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 88, 147, 249),
+            body: GameScreen(),
+          ),
+        );
+      },
     );
   }
 }
