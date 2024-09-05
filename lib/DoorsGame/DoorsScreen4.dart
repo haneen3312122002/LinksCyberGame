@@ -131,7 +131,7 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
 
   Future<void> _playVideoAndNavigate(BuildContext context) async {
     _controller = VideoPlayerController.asset(
-        'assets/door3.mp4'); // Updated to play door4.mp4
+        'assets/door1.mp4'); // Updated to play door4.mp4
 
     try {
       await _controller.initialize();

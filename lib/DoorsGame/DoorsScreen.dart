@@ -133,7 +133,7 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/door1.mp4')
+    _controller = VideoPlayerController.asset('assets/door3.mp4')
       ..initialize().then((_) {
         // Start the video automatically
         _controller.play();

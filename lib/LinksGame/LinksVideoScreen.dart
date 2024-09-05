@@ -49,7 +49,7 @@ class _VideoScreenState extends State<VideoScreen> {
   }
 
   void _skipVideo() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => GameScreen()),
     );

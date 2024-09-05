@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:  # Add this line
+    sdk: flutter    
 
   cupertino_icons: ^1.0.6
   flutter_awesome_bottom_sheet: ^0.0.2
@@ -49,6 +51,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+
 
   # To add assets to your application, add an assets section, like this:
   assets:
@@ -70,3 +73,4 @@ flutter:
     - assets/door1.mp4
     - assets/door2.mp4
     - assets/door3.mp4
+    - assets/DoorsVideo.mp4
