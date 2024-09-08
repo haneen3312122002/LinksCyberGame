@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'api_service.dart'; // Import the API service
 
 class LinkCheckerScreen extends StatefulWidget {
   @override
   _LinkCheckerScreenState createState() => _LinkCheckerScreenState();
-}
-
-class LinkChecker {
-  static Future<String> checkLink(String link) async {
-    // يمكنك تغيير النتيجة هنا لاختبار الحالة الأخرى
-    return 'الرابط آمن';
-  }
 }
 
 class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
@@ -33,23 +27,33 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   Future<void> _playSound(String filePath) async {
     try {
       await _audioPlayer.setAsset(filePath);
-      _audioPlayer.setVolume(0.3); // ضبط مستوى الصوت
+      _audioPlayer.setVolume(0.3);
       _audioPlayer.play();
     } catch (e) {
       print("Failed to play sound: $e");
     }
   }
 
+  // Modified checkLink method to use ApiService
   void checkLink() async {
     String link = _linkController.text;
-    String linkResult = await LinkChecker.checkLink(link);
 
-    setState(() {
-      result = linkResult;
-    });
+    // Use the ApiService to check the link
+    try {
+      String linkResult = await ApiService.checkLink(link);
 
-    if (linkResult == 'الرابط آمن') {
-      await _playSound('assets/secure.mp3');
+      setState(() {
+        result = linkResult;
+      });
+
+      // Play sound if the link is secure
+      if (linkResult == 'الرابط آمن') {
+        await _playSound('assets/secure.mp3');
+      }
+    } catch (e) {
+      setState(() {
+        result = 'خطأ في الاتصال بالخادم'; // Error connecting to the server
+      });
     }
   }
 
@@ -71,29 +75,26 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
       backgroundColor: Colors.lightBlue[50],
       body: Stack(
         children: [
-          // إضافة GIF كخلفية
           SizedBox.expand(
             child: Image.asset(
               "assets/linksBack.gif",
               fit: BoxFit.cover,
             ),
           ),
-          // باقي عناصر اللعبة
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.04,
-              vertical: screenHeight * 0.01, // تقليل الهامش الرأسي
+              vertical: screenHeight * 0.01,
             ),
             child: Column(
               children: [
                 Container(
                   alignment: Alignment.topCenter,
-                  margin: EdgeInsets.only(
-                      bottom: screenHeight * 0.015), // تقليل الهامش السفلي
+                  margin: EdgeInsets.only(bottom: screenHeight * 0.015),
                   child: Text(
                     'فحص الروابط',
                     style: TextStyle(
-                      fontSize: screenHeight * 0.03, // تقليل حجم النص
+                      fontSize: screenHeight * 0.03,
                       fontWeight: FontWeight.bold,
                       color: Colors.blueAccent,
                     ),
@@ -124,11 +125,10 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.015),
                 SizedBox(
-                    height: screenHeight * 0.015), // تقليل المسافة بين العناصر
-                SizedBox(
-                  width: screenWidth * 0.4, // تقليل عرض الزر
-                  height: screenHeight * 0.05, // تقليل ارتفاع الزر
+                  width: screenWidth * 0.4,
+                  height: screenHeight * 0.05,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -141,8 +141,7 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                           'افحص الرابط',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize:
-                                screenHeight * 0.02, // تقليل حجم النص داخل الزر
+                            fontSize: screenHeight * 0.02,
                           ),
                         ),
                         SizedBox(width: 5),
@@ -154,22 +153,20 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: screenHeight * 0.015), // تقليل المسافة بين العناصر
+                SizedBox(height: screenHeight * 0.015),
                 if (result.isNotEmpty)
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(10.0), // تقليل الحشوة الداخلية
+                    padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: boxColor,
-                      borderRadius:
-                          BorderRadius.circular(8.0), // تقليل الحواف الدائرية
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Text(
                       result,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: screenHeight * 0.02, // تقليل حجم النص
+                        fontSize: screenHeight * 0.02,
                       ),
                       textAlign: TextAlign.center,
                     ),
