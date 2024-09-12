@@ -1,3 +1,4 @@
+import 'package:cybergame/LinksGame/LinkTest.dart';
 import 'package:cybergame/LinksGame/gameScree.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'CryptoGame/CryptoGameScreen.dart';
 
 void main() {
   // Ensure widget binding is initialized
+  // Helloooooooooooooohh
   WidgetsFlutterBinding.ensureInitialized();
 
   // Hide the notification bar and set immersive mode
@@ -55,7 +57,11 @@ class LinkClassificationGame extends StatelessWidget {
           },
           home: Scaffold(
             backgroundColor: const Color.fromARGB(255, 52, 126, 253),
+<<<<<<< HEAD
             body: CryptoGameScreen(),
+=======
+            body: LinkCheckerScreen(),
+>>>>>>> 0cb08778c235ebbc200e78f4a82945ec3a4b3ae6
           ),
           builder: (context, widget) {
             // Force RTL layout direction

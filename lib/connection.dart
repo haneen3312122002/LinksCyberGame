@@ -3,18 +3,19 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl =
-      '127.0.0.1:5000'; // Replace with your Flask server IP and port
+      'http://192.168.100.2:5000'; // Replace with your PC's local IP
 
-  // Function to send link to Flask and get the result
   static Future<String> checkLink(String link) async {
-    final url = Uri.parse('$baseUrl/check_link');
+    if (link.isEmpty) {
+      throw Exception('Link cannot be empty');
+    }
 
-    // Create the POST request
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'link': link}),
-    );
+    // Construct the URL with the link as a query parameter
+    final url =
+        Uri.parse('$baseUrl/check_link?link=${Uri.encodeComponent(link)}');
+
+    // Make the GET request
+    final response = await http.get(url);
 
     // Handle the response
     if (response.statusCode == 200) {

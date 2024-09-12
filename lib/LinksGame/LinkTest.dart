@@ -38,19 +38,20 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
   void checkLink() async {
     String link = _linkController.text;
 
-    // Use the ApiService to check the link
     try {
+      print('Checking link: $link'); // Log the link being checked
       String linkResult = await ApiService.checkLink(link);
+      print('Result: $linkResult'); // Log the result from the API
 
       setState(() {
         result = linkResult;
       });
 
-      // Play sound if the link is secure
-      if (linkResult == 'الرابط آمن') {
+      if (linkResult == 'good') {
         await _playSound('assets/secure.mp3');
       }
     } catch (e) {
+      print('Error: $e'); // Log any errors
       setState(() {
         result = 'خطأ في الاتصال بالخادم'; // Error connecting to the server
       });
@@ -63,9 +64,9 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     Color boxColor;
-    if (result == 'الرابط آمن') {
+    if (result == 'good') {
       boxColor = Colors.green;
-    } else if (result == 'الرابط غير آمن') {
+    } else if (result == 'Not good') {
       boxColor = Colors.red;
     } else {
       boxColor = Colors.transparent;
