@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   static const String baseUrl =
-      'http://192.168.100.2:5000'; // Replace with your PC's local IP
+      'http://192.168.100.100:5000'; // Replace with your PC's local IP
 
   static Future<String> checkLink(String link) async {
     if (link.isEmpty) {
