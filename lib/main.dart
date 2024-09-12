@@ -6,6 +6,7 @@ import 'LinksGame/LinksVideoScreen.dart';
 import 'DoorsGame/DoorsScreen.dart';
 import 'DoorsGame/DoorsMainVideo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Add localization for RTL
+import 'CryptoGame/CryptoGameScreen.dart';
 
 void main() {
   // Ensure widget binding is initialized
@@ -54,7 +55,7 @@ class LinkClassificationGame extends StatelessWidget {
           },
           home: Scaffold(
             backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-            body: DoorsVideoScreen(),
+            body: CryptoGameScreen(),
           ),
           builder: (context, widget) {
             // Force RTL layout direction

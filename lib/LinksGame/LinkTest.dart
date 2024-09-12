@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'api_service.dart'; // Import the API service
+import 'package:cybergame/connection.dart'; // Import the API service
 
 class LinkCheckerScreen extends StatefulWidget {
   @override

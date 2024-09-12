@@ -75,3 +75,5 @@ flutter:
     - assets/door2.mp4
     - assets/door3.mp4
     - assets/DoorsVideo.mp4
+    #CryptoGame:
+    - assets/casel.png  
