@@ -79,3 +79,8 @@ flutter:
     - assets/casel.png  
     #PartsPage:
     - assets/PartsPage.png
+    - assets/Cryptographygame.png
+    - assets/webSecurityPart.png
+    - assets/netWorkPart.png
+    - assets/CyberAttackPart.png
+    - assets/MobileSecurityPart.png

@@ -3,12 +3,17 @@ import 'package:cybergame/CryptoPart/CryptoHomePage.dart'; // Ensure CryptoHomeP
 
 class GamePartsCard extends StatelessWidget {
   final String partTitle;
+  final String imagePath; // مسار الصورة لكل كرت
 
-  GamePartsCard({required this.partTitle});
+  GamePartsCard({required this.partTitle, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width / 3; // Responsive card size
+    // تصغير الكرت بشكل ملحوظ
+    double cardWidth =
+        MediaQuery.of(context).size.width / 5; // جزء أصغر من العرض
+    double cardHeight =
+        MediaQuery.of(context).size.height / 6; // جزء أصغر من الطول
 
     return InkWell(
       onTap: () {
@@ -20,11 +25,10 @@ class GamePartsCard extends StatelessWidget {
         }
       },
       child: Container(
-        width: size,
-        height: size,
+        width: cardWidth, // تصغير عرض الكرت
+        height: cardHeight, // تصغير طول الكرت
         decoration: BoxDecoration(
-          color: Colors.blue.shade900, // Dark blue color
-          borderRadius: BorderRadius.circular(10), // Rounded corners
+          borderRadius: BorderRadius.circular(10), // زوايا دائرية
           border: Border.all(
             color: Colors.yellow,
             width: 1.0,
@@ -37,23 +41,33 @@ class GamePartsCard extends StatelessWidget {
               offset: Offset(0, 3),
             ),
           ],
-        ),
-        child: Center(
-          child: Text(
-            partTitle,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
+          image: DecorationImage(
+            image: AssetImage(imagePath), // تحميل الصورة حسب كل كرت
+            fit: BoxFit.cover, // جعل الصورة تغطي الكرت بالكامل
           ),
         ),
       ),
     );
   }
 }
+
 //.................................
 
 class CryptoGamesGrid extends StatelessWidget {
+  // قائمة الصور لكل كرت بالترتيب المطلوب
+  final List<String> imagesPaths = [
+    'assets/Cryptographygame.png',
+    'assets/webSecurityPart.png',
+    'assets/netWorkPart.png',
+    'assets/CyberAttackPart.png',
+    'assets/MobileSecurityPart.png',
+    'assets/CyberAttackPart.png', // يمكن تكرار الصور عند الحاجة
+    'assets/MobileSecurityPart.png',
+    'assets/CyberAttackPart.png', // يمكن تكرار الصور عند الحاجة
+    'assets/MobileSecurityPart.png',
+    'assets/Cryptographygame.png',
+  ];
+
   final List<String> partsTitles = [
     'Crypto part',
     'Part 2',
@@ -72,14 +86,17 @@ class CryptoGamesGrid extends StatelessWidget {
     return GridView.builder(
       padding: EdgeInsets.all(5),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Two cards per row
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        childAspectRatio: 1, // Keeps cards square
+        crossAxisCount: 2, // صف يحتوي على كرتين
+        crossAxisSpacing: 5, // تباعد أفقي بين الكروت
+        mainAxisSpacing: 5, // تباعد عمودي بين الكروت
+        childAspectRatio: 1, // الحفاظ على تناسب الكروت
       ),
       itemCount: partsTitles.length,
       itemBuilder: (context, index) {
-        return GamePartsCard(partTitle: partsTitles[index]);
+        return GamePartsCard(
+          partTitle: partsTitles[index],
+          imagePath: imagesPaths[index], // تعيين الصورة لكل كرت
+        );
       },
     );
   }
