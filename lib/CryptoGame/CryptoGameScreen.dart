@@ -14,27 +14,35 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
 
   // Define the correct password parts (for winning)
   final List<Block> correctPassword = [
-    Block(text: 'S', isCorrect: true),
-    Block(text: 't', isCorrect: true),
-    Block(text: 'r', isCorrect: true),
-    Block(text: 'o', isCorrect: true),
-    Block(text: 'n', isCorrect: true),
-    Block(text: 'g', isCorrect: true),
+    Block(text: 'S'),
+    Block(text: 't'),
+    Block(text: 'r'),
+    Block(text: 'o'),
+    Block(text: 'n'),
+    Block(text: 'g'),
+    Block(text: 'n'),
+    Block(text: 'g'),
   ];
 
-  // Menu will have correct and incorrect blocks
-  final List<Block> allBlocks = [
-    Block(text: 'S', isCorrect: true),
-    Block(text: 't', isCorrect: true),
-    Block(text: 'r', isCorrect: true),
-    Block(text: 'o', isCorrect: true),
-    Block(text: 'n', isCorrect: true),
-    Block(text: 'g', isCorrect: true),
-    Block(text: 'a', isCorrect: false),
-    Block(text: 'b', isCorrect: false),
-    Block(text: 'c', isCorrect: false),
-    Block(text: '1', isCorrect: false),
+  // Menu will have a set of blocks (no longer using isCorrect)
+  List<Block> allBlocks = [
+    Block(text: 'S'),
+    Block(text: 't'),
+    Block(text: 'r'),
+    Block(text: 'o'),
+    Block(text: 'n'),
+    Block(text: 'g'),
+    Block(text: 'a'),
+    Block(text: 'b'),
+    Block(text: 'c'),
+    Block(text: '1'),
   ];
+
+  void removeBlockFromMenu(Block block) {
+    setState(() {
+      allBlocks.remove(block); // Remove the block from the menu when dragged
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +61,10 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
                   left: 0,
                   right: 0,
                   child: WallArea(
-                      correctPassword:
-                          correctPassword), // Wall area at the bottom
+                    correctPassword: correctPassword,
+                    wallHeight: MediaQuery.of(context).size.height /
+                        2, // Half screen height
+                  ),
                 ),
               ],
             ),
@@ -64,7 +74,10 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
             Expanded(
               flex: 1, // Drawer takes up 1/4th of the screen width
               child: RightSideMenu(
-                  blocks: allBlocks), // Menu with draggable blocks
+                blocks: allBlocks,
+                onBlockDragged:
+                    removeBlockFromMenu, // Remove block from menu on drag
+              ),
             ),
         ],
       ),
