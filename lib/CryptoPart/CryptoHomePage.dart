@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'CryptoPart.dart'; // Assuming this is where CryptoHomePage is
+import 'package:cybergame/CryptoGame/CryptoGameScreen.dart';
+import 'CryptoPart.dart';
+import 'dart:ui' as ui; // Import for the ImageFilter
 
 class CryptoHomePage extends StatelessWidget {
   @override
@@ -8,11 +10,10 @@ class CryptoHomePage extends StatelessWidget {
       body: Stack(
         children: [
           BackgroundImage(), // Background image
-          SingleChildScrollView(
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              child: CryptoGamesGrid(), // Grid of game part cards
-            ),
+          PageView.builder(
+            itemCount:
+                10, // Number of pages (assuming each part has its own page)
+            itemBuilder: (context, index) => GameSection(index: index),
           ),
         ],
       ),
@@ -26,8 +27,16 @@ class BackgroundImage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/partsPage.png'), // Background image path
+          image: AssetImage('assets/casel.png'), // Background image path
           fit: BoxFit.cover, // Ensure the image covers the whole screen
+        ),
+      ),
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(
+            sigmaX: 13.0, sigmaY: 13.0), // Applying blur filter
+        child: Container(
+          color: Colors.black.withOpacity(
+              0.1), // Optional: Add a black overlay with some opacity if needed
         ),
       ),
     );

@@ -8,9 +8,15 @@ class HomePage extends StatelessWidget {
       body: Stack(
         children: [
           BackgroundImage(), // Full-screen background image
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: CryptoGamesGrid(), // Grid of game part cards
+          Positioned(
+            top: 160, // Increase this value to move the grid down
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: CryptoGamesGrid(), // Grid of game part cards
+            ),
           ),
         ],
       ),
@@ -18,7 +24,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-//.................................................
+//..................................................
 
 class BackgroundImage extends StatelessWidget {
   @override
@@ -26,7 +32,7 @@ class BackgroundImage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/partsPage.png'), // Full-screen background
+          image: AssetImage('assets/SpaceBack.png'), // Full-screen background
           fit: BoxFit.cover,
         ),
       ),
