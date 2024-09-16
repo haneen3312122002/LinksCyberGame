@@ -58,11 +58,11 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
     bool isCorrect = true; // Placeholder for actual solution checking logic
     if (isCorrect) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('حل صحيح!')),
+        SnackBar(content: Text('correct')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('حل خاطئ، حاول مجدداً!')),
+        SnackBar(content: Text('incorrect')),
       );
     }
   }
