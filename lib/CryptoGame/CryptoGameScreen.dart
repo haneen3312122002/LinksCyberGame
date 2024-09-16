@@ -14,34 +14,57 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
 
   // Define the correct password parts (for winning)
   final List<Block> correctPassword = [
-    Block(text: 'S'),
-    Block(text: 't'),
-    Block(text: 'r'),
-    Block(text: 'o'),
-    Block(text: 'n'),
-    Block(text: 'g'),
-    Block(text: 'n'),
-    Block(text: 'g'),
+    Block(text: '173'),
+    Block(text: 'Act'),
+    Block(text: '@'),
+    Block(text: '096'),
+    Block(text: '#'),
+    Block(text: 'rOOm'),
+    Block(text: '_67'),
+    Block(text: 'Lqw'),
   ];
 
-  // Menu will have a set of blocks (no longer using isCorrect)
+  // List of all blocks available to choose from
   List<Block> allBlocks = [
-    Block(text: 'S'),
-    Block(text: 't'),
-    Block(text: 'r'),
-    Block(text: 'o'),
-    Block(text: 'n'),
-    Block(text: 'g'),
-    Block(text: 'a'),
-    Block(text: 'b'),
-    Block(text: 'c'),
-    Block(text: '1'),
+    Block(text: 'Haneen'),
+    Block(text: '12122002'),
+    Block(text: '123456'),
+    Block(text: '0000'),
+    Block(text: '173'),
+    Block(text: 'Act'),
+    Block(text: '@'),
+    Block(text: '096'),
+    Block(text: '#'),
+    Block(text: 'rOOm'),
+    Block(text: '_67'),
+    Block(text: 'Lqw'),
+    Block(text: 'ahmad'),
+    Block(text: '!'),
+    Block(text: '0909'),
+    Block(text: '079315564'),
+    Block(text: 'admin'),
+    Block(text: 'user'),
   ];
 
+  // Remove block from menu when dragged
   void removeBlockFromMenu(Block block) {
     setState(() {
-      allBlocks.remove(block); // Remove the block from the menu when dragged
+      allBlocks.remove(block);
     });
+  }
+
+  // Check if the solution is correct
+  void _checkSolution() {
+    bool isCorrect = true; // Placeholder for actual solution checking logic
+    if (isCorrect) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حل صحيح!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('حل خاطئ، حاول مجدداً!')),
+      );
+    }
   }
 
   @override
@@ -49,10 +72,8 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
     return Scaffold(
       body: Row(
         children: [
-          // Game content shifted to the left
           Expanded(
-            flex:
-                isDrawerVisible ? 3 : 4, // Adjust width when drawer is visible
+            flex: isDrawerVisible ? 3 : 4,
             child: Stack(
               children: [
                 BackgroundPhoto(), // Castle background
@@ -62,32 +83,47 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
                   right: 0,
                   child: WallArea(
                     correctPassword: correctPassword,
-                    wallHeight: MediaQuery.of(context).size.height /
-                        2, // Half screen height
+                    wallHeight: MediaQuery.of(context).size.height / 2,
+                    isDrawerVisible: isDrawerVisible,
                   ),
                 ),
               ],
             ),
           ),
-          // Right-side drawer that stays open
           if (isDrawerVisible)
             Expanded(
-              flex: 1, // Drawer takes up 1/4th of the screen width
+              flex: 1,
               child: RightSideMenu(
                 blocks: allBlocks,
-                onBlockDragged:
-                    removeBlockFromMenu, // Remove block from menu on drag
+                onBlockDragged: removeBlockFromMenu,
               ),
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            isDrawerVisible = !isDrawerVisible; // Toggle drawer visibility
-          });
-        },
-        child: Icon(isDrawerVisible ? Icons.arrow_forward : Icons.arrow_back),
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .endFloat, // وضع الزر في الأسفل على اليمين
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _checkSolution, // دالة التحقق من الحل
+            child: Icon(Icons.check), // أيقونة علامة الصح
+            backgroundColor: Colors.green, // لون الخلفية الأخضر
+          ),
+          SizedBox(height: 16), // مسافة بين الأزرار
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                isDrawerVisible = !isDrawerVisible; // Toggle drawer visibility
+              });
+            },
+            child: Icon(isDrawerVisible
+                ? Icons.arrow_forward
+                : Icons.arrow_back), // أيقونة التحكم في القائمة
+            backgroundColor: Colors.blue, // لون خلفية الزر
+          ),
+        ],
       ),
     );
   }

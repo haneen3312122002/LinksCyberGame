@@ -4,125 +4,120 @@ import 'Block.dart'; // Import Block class
 class WallArea extends StatefulWidget {
   final List<Block> correctPassword;
   final double wallHeight;
+  final bool isDrawerVisible; // حالة القائمة لمعرفة إذا كانت مرئية أم لا
 
-  WallArea({required this.correctPassword, required this.wallHeight});
+  WallArea({
+    required this.correctPassword,
+    required this.wallHeight,
+    required this.isDrawerVisible,
+  });
 
   @override
   _WallAreaState createState() => _WallAreaState();
 }
 
 class _WallAreaState extends State<WallArea> {
-  List<Block> droppedBlocks = [];
+  Map<int, Block> droppedBlocks = {};
 
   @override
   Widget build(BuildContext context) {
-    // حساب نصف ربع العرض والطول
     double blockWidth =
-        MediaQuery.of(context).size.width / 4 / 2; // نصف ربع عرض الشاشة
-    double blockHeight = widget.wallHeight / 3 / 2; // نصف ربع طول المكان المخصص
+        MediaQuery.of(context).size.width / (widget.isDrawerVisible ? 8 : 6);
+    double blockHeight = widget.wallHeight / 4;
 
-    return DragTarget<Block>(
-      onAccept: (block) {
-        setState(() {
-          droppedBlocks.add(block);
-        });
-
-        // Check if the user has won
-        if (droppedBlocks.length == widget.correctPassword.length) {
-          _checkWinCondition();
-        }
-      },
-      builder: (context, candidateData, rejectedData) {
-        return Container(
-          width: double.infinity, // Full width of the screen
-          height: widget.wallHeight, // نصف طول الخلفية
-          color: Colors.transparent, // Invisible drop area
-          child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.end, // بدء البناء من الصف السفلي
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      width: double.infinity,
+      height: widget.wallHeight,
+      color: Colors.transparent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(4, (rowIndex) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // الصف السفلي (أول خمسة بلوكات)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: _buildBlocksForRow(0, 5, blockWidth, blockHeight),
-              ),
-              // الصف العلوي (بقية البلوكات بعد ملء الصف السفلي)
-              if (droppedBlocks.length >
-                  5) // عرض الصف العلوي إذا كان هناك أكثر من 5 بلوكات
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: _buildBlocksForRow(
-                      5, droppedBlocks.length, blockWidth, blockHeight),
-                ),
+              _buildFixedBlock(blockWidth, blockHeight),
+              _buildFixedBlock(blockWidth, blockHeight),
+              ..._buildBlocksForRow(
+                  rowIndex * 2, (rowIndex + 1) * 2, blockWidth, blockHeight),
+              _buildFixedBlock(blockWidth, blockHeight),
+              _buildFixedBlock(blockWidth, blockHeight),
             ],
-          ),
-        );
-      },
+          );
+        }),
+      ),
     );
   }
 
-  // دالة لبناء البلوكات لكل صف بناءً على البداية والنهاية
   List<Widget> _buildBlocksForRow(
       int start, int end, double blockWidth, double blockHeight) {
     List<Widget> rowBlocks = [];
-    for (int i = start; i < end && i < droppedBlocks.length; i++) {
-      rowBlocks.add(Container(
-        margin: EdgeInsets.all(1.0), // Add some space between blocks
-        width: blockWidth - 8, // Block width (نصف ربع العرض)
-        height: blockHeight - 8, // Block height (نصف ربع الطول)
-        decoration: BoxDecoration(
-          color: Colors.brown, // Fixed brown color for all blocks
-          border: Border.all(
-            color: Colors.black, // إطار أسود
-            width: 4.0, // عرض الإطار
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.5), // لون الظل
-              spreadRadius: 2, // انتشار الظل
-              blurRadius: 6, // تشويش الظل
-              offset: Offset(6, 6), // إزاحة الظل
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(droppedBlocks[i].text,
-              style: TextStyle(color: Colors.white, fontSize: 20)),
-        ),
-      ));
+    for (int i = start; i < end; i++) {
+      if (droppedBlocks.containsKey(i)) {
+        rowBlocks.add(
+            _buildDroppedBlock(droppedBlocks[i]!, blockWidth, blockHeight));
+      } else {
+        rowBlocks.add(_buildDropTarget(i, blockWidth, blockHeight));
+      }
     }
     return rowBlocks;
   }
 
-  void _checkWinCondition() {
-    bool isCorrect = true;
-    for (int i = 0; i < droppedBlocks.length; i++) {
-      if (droppedBlocks[i].text != widget.correctPassword[i].text) {
-        isCorrect = false;
-        break;
-      }
-    }
-
-    if (isCorrect) {
-      _showWinDialog(context);
-    }
+  Widget _buildFixedBlock(double blockWidth, double blockHeight) {
+    return Container(
+      width: blockWidth - 4, // Reduced margin for tighter spacing
+      height: blockHeight,
+      decoration: BoxDecoration(
+        color: Colors.brown,
+        border: Border.all(color: Colors.black, width: 4.0),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: Offset(6, 6))
+        ],
+      ),
+    );
   }
 
-  void _showWinDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('You Win!'),
-          content: Text('You have built a strong password wall!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
+  Widget _buildDroppedBlock(
+      Block block, double blockWidth, double blockHeight) {
+    return Container(
+      width: blockWidth - 4, // Reduced margin for tighter spacing
+      height: blockHeight,
+      decoration: BoxDecoration(
+        color: Colors.brown,
+        border: Border.all(color: Colors.black, width: 4.0),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 6,
+              offset: Offset(6, 6))
+        ],
+      ),
+      child: Center(
+        child: Text(block.text,
+            style: TextStyle(color: Colors.white, fontSize: 13)),
+      ),
+    );
+  }
+
+  Widget _buildDropTarget(int index, double blockWidth, double blockHeight) {
+    return DragTarget<Block>(
+      onAccept: (block) {
+        setState(() {
+          droppedBlocks[index] = block;
+        });
+      },
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          width: blockWidth - 4, // Increased drop target area
+          height: blockHeight,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey, width: 2.0),
+          ),
         );
       },
     );
