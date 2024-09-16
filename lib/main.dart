@@ -7,7 +7,7 @@ import 'LinksGame/LinksVideoScreen.dart';
 import 'DoorsGame/DoorsScreen.dart';
 import 'DoorsGame/DoorsMainVideo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Add localization for RTL
-import 'CryptoGame/CryptoGameScreen.dart';
+import 'PasswordGame/CryptoGameScreen.dart';
 import 'HomePage/HomePage.dart';
 
 void main() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cybergame/CryptoGame/CryptoGameScreen.dart';
+import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 
 class GameSection extends StatelessWidget {
   final int index; // Index of the section

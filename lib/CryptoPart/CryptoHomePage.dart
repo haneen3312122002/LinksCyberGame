@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cybergame/CryptoGame/CryptoGameScreen.dart';
+import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'CryptoPart.dart';
 import 'dart:ui' as ui; // Import for the ImageFilter
 
