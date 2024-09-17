@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Block.dart';
-import '../CryptoGame/photo.dart'; // Ensure BackgroundPhoto is implemented
+import '/PasswordGame/photo.dart'; // Ensure BackgroundPhoto is implemented
 import 'RightMin.dart'; // Ensure RightSideMenu is implemented
 import 'Wall.dart'; // Ensure WallArea is implemented
 

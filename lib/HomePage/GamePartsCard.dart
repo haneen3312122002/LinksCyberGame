@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cybergame/CryptoPart/CryptoHomePage.dart'; // Ensure CryptoHomePage is correctly imported
+import 'package:cybergame/GameParts/CryptoPart/CryptoHomePage.dart'; // Ensure CryptoHomePage is correctly imported
+import '/GameParts/NetworkPart/NetworkHome.dart';
 
 class GamePartsCard extends StatelessWidget {
   final String partTitle;
@@ -19,6 +20,11 @@ class GamePartsCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CryptoHomePage()),
+          );
+        } else if (partTitle == 'network games' || partTitle == 'Part 3') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NetworkHomePage()),
           );
         }
       },
@@ -67,7 +73,7 @@ class CryptoGamesGrid extends StatelessWidget {
   final List<String> partsTitles = [
     'Crypto part',
     'Part 2',
-    'Part 3',
+    'network games',
     'Part 4',
     'Part 5',
     'Part 6',
