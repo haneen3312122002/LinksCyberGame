@@ -32,7 +32,7 @@ class BackgroundImage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/SpaceBack.png'), // Full-screen background
+          image: AssetImage('assets/backGround.png'), // Full-screen background
           fit: BoxFit.cover,
         ),
       ),

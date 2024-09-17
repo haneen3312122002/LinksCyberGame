@@ -8,7 +8,6 @@ class GameSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine the size of the circle based on the screen size
     double circleDiameter = MediaQuery.of(context).size.width *
         0.3; // Circle diameter as 30% of screen width
 
@@ -18,17 +17,16 @@ class GameSection extends StatelessWidget {
             .topCenter, // Align children along the vertical center
         children: [
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.6 -
+            top: MediaQuery.of(context).size.height * 0.7 -
                 circleDiameter, // Position to overlap the rectangle
             child: Container(
               width: circleDiameter,
               height: circleDiameter,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.green, // Temporary color for the circle
                 border: Border.all(
                   color: Colors.yellow, // Use similar style as the rectangle
-                  width: 3.0,
+                  width: 2.0,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -38,16 +36,16 @@ class GameSection extends StatelessWidget {
                     offset: Offset(0, 3),
                   ),
                 ],
-              ),
-              child: Center(
-                child: Icon(Icons.photo,
-                    size: circleDiameter / 2,
-                    color: Colors.white), // Placeholder icon
+                image: DecorationImage(
+                  image:
+                      AssetImage('assets/casel.png'), // Background image path
+                  fit: BoxFit.cover, // Ensure the image covers the whole circle
+                ),
               ),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 200),
+            margin: EdgeInsets.only(top: 300),
             width:
                 MediaQuery.of(context).size.width * 0.6, // 60% of screen width
             height: MediaQuery.of(context).size.height *
