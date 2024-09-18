@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
+import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart'; // استيراد الكلاس الجديد
 
 class NetworkGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -75,13 +76,20 @@ class NetworkGameSection extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => NetworkGameScreen()),
                   );
+                } else if (index == 1) {
+                  // Navigate to SessionLayerScreen when index is 1 for "Session Layer Game"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SessionLayerScreen()),
+                  );
                 }
               },
               child: Center(
                 child: Text(
                   index == 0
                       ? 'لعبة تركيب الشبكات'
-                      : 'Part ${index + 1}', // Display custom text for part 1
+                      : ' لعبة طبقة الجلسات ', // النص الجديد لجزء 2
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
