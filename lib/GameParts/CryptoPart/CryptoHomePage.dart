@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
-import 'CryptoPart.dart';
 import 'dart:ui' as ui; // Import for the ImageFilter
+import 'CryptoPart.dart';
 
 class CryptoHomePage extends StatelessWidget {
   @override
@@ -13,7 +12,7 @@ class CryptoHomePage extends StatelessWidget {
           PageView.builder(
             itemCount:
                 10, // Number of pages (assuming each part has its own page)
-            itemBuilder: (context, index) => GameSection(index: index),
+            itemBuilder: (context, index) => CryptoGameSection(index: index),
           ),
         ],
       ),

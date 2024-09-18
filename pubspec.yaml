@@ -85,10 +85,7 @@ flutter:
     - assets/CyberAttackPart.png
     - assets/MobileSecurityPart.png
     - assets/SpaceBack.png
-    #networkGame:
+    #homepage:
+    - assets/Background1.png 
+    #networkPage:
     - assets/NetworkBackground.png 
-    - assets/ether.png
-    - assets/router.png
-    - assets/switch.png
-    - assets/modem.png
-    - assets/fiber.png

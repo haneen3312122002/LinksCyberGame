@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
+import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 
-class GameSection extends StatelessWidget {
+class CryptoGameSection extends StatelessWidget {
   final int index; // Index of the section
 
-  GameSection({required this.index});
+  CryptoGameSection({required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,9 @@ class GameSection extends StatelessWidget {
               height: circleDiameter,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.green, // Temporary color for the circle
+                color: Colors.green, // Temporary background color
                 border: Border.all(
-                  color: Colors.yellow, // Use similar style as the rectangle
+                  color: Colors.yellow, // Border style
                   width: 3.0,
                 ),
                 boxShadow: [
@@ -39,10 +40,13 @@ class GameSection extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Center(
-                child: Icon(Icons.photo,
-                    size: circleDiameter / 2,
-                    color: Colors.white), // Placeholder icon
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/casel.png', // Path to your image
+                  fit: BoxFit.cover, // Fit image to cover the circle
+                  width: circleDiameter,
+                  height: circleDiameter,
+                ),
               ),
             ),
           ),
@@ -67,10 +71,13 @@ class GameSection extends StatelessWidget {
             ),
             child: InkWell(
               onTap: () {
-                Navigator.push(
+                if (index == 0) {
+                  // Navigate to NetworkGameScreen when index is 0 for "لعبة تركيب الشبكات"
+                  Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => CryptoGameScreen()));
+                    MaterialPageRoute(builder: (context) => CryptoGameScreen()),
+                  );
+                }
               },
               child: Center(
                 child: Text(
