@@ -1,65 +1,66 @@
 import 'package:flutter/material.dart';
+import 'Block.dart'; // استدعاء كلاس Block
 
 class SideColumn extends StatelessWidget {
-  final Function(String) onBlockDragged; // تمرير الدالة لاستقبال العنصر المسحوب
+  final List<Block> blocks; // قائمة البلوكات
+  final double columnWidth; // عرض العمود
+  final double columnHeight; // ارتفاع العمود
+  final Color? backgroundColor; // لون خلفية العمود
 
-  SideColumn({required this.onBlockDragged});
+  SideColumn(
+      {required this.blocks,
+      required this.columnWidth,
+      required this.columnHeight,
+      required this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.3, // 30% من عرض الشاشة
-      color: Colors.grey[200], // خلفية للعمود
+      width: columnWidth, // العرض الديناميكي للعمود
+      height: columnHeight,
+      color: backgroundColor, // الخلفية الخاصة بالعمود
       child: Column(
-        children: [
-          buildDraggableBlock('الصفحة الرئيسية', Icons.home),
-          buildDraggableBlock('الشبكات', Icons.network_wifi),
-          buildDraggableBlock('الأمان', Icons.security),
-          buildDraggableBlock('الإعدادات', Icons.settings),
-        ],
+        children: blocks.map((block) {
+          return Container(
+            height: columnHeight * 0.25, // كل بلوك يأخذ ربع طول العمود
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Draggable<Block>(
+                data: block,
+                feedback: Material(
+                  child: buildBlock(block.text, columnWidth),
+                ),
+                childWhenDragging: Opacity(
+                  opacity: 0.5, // تقليل الشفافية عند السحب
+                  child: buildBlock(block.text, columnWidth),
+                ),
+                child: buildBlock(block.text, columnWidth),
+              ),
+            ),
+          );
+        }).toList(),
       ),
-    );
-  }
-
-  // دالة لبناء بلوك قابل للسحب
-  Widget buildDraggableBlock(String label, IconData icon) {
-    return Draggable<String>(
-      data: label, // البيانات المسحوبة
-      feedback: Material(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.blueGrey[50],
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.blue, width: 2),
-          ),
-          child: ListTile(
-            leading: Icon(icon, color: Colors.blue),
-            title: Text(label),
-          ),
-        ),
-      ),
-      childWhenDragging: Opacity(
-        opacity: 0.5, // تغيير الشفافية أثناء السحب
-        child: buildBlock(label, icon),
-      ),
-      child: buildBlock(label, icon),
     );
   }
 
   // دالة لبناء البلوك
-  Widget buildBlock(String label, IconData icon) {
+  Widget buildBlock(String label, double width) {
     return Container(
-      margin: EdgeInsets.all(10),
-      padding: EdgeInsets.all(16),
+      width: width,
+      height: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.blueGrey[50],
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.blueGrey[200], // لون خلفية البلوك
+        borderRadius: BorderRadius.circular(10), // تدوير الحواف
         border: Border.all(color: Colors.blue, width: 2),
       ),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(label),
+      child: Center(
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: width * 0.07, // حجم الخط كنسبة من عرض العمود
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

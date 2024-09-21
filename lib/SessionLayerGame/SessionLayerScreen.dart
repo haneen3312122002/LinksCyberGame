@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cybergame/SessionLayerGame/TunnelBackground.dart'; // استدعاء كلاس الخلفية
-import 'package:cybergame/SessionLayerGame/SideColumn.dart'; // استدعاء كلاس العمود الجانبي
-import 'package:cybergame/SessionLayerGame/SecondColumn .dart'; // استدعاء كلاس العمود الثاني
+import 'dart:math'; // لاستيراد الشيفرة الخاصة بخلط العناصر
+import 'Block.dart'; // استدعاء كلاس Block
+import 'TunnelBackground.dart'; // استدعاء كلاس الخلفية
+import 'SideColumn.dart'; // استدعاء كلاس العمود الجانبي
+import 'SecondColumn.dart'; // استدعاء كلاس العمود الثاني
+import 'package:fluttertoast/fluttertoast.dart'; // حزمة الاشعارات
 
 class SessionLayerScreen extends StatefulWidget {
   @override
@@ -9,52 +12,123 @@ class SessionLayerScreen extends StatefulWidget {
 }
 
 class _SessionLayerScreenState extends State<SessionLayerScreen> {
-  List<String> secondColumnBlocks = [];
+  List<Block> secondColumnBlocks = []; // قائمة البلوكات في العمود الثاني
+  bool hasLost = false; // للتحقق من حالة الخسارة
+
+  // الترتيب الصحيح للبلوكات
+  final List<String> correctOrder = [
+    'التأسيس',
+    'التزامن',
+    'إدارة الجلسة',
+    'الإنهاء'
+  ];
+
+  // خلط ترتيب البلوكات في العمود الجانبي
+  List<Block> getShuffledBlocks() {
+    List<Block> blocks = [
+      Block(text: 'التأسيس'),
+      Block(text: 'التزامن'),
+      Block(text: 'إدارة الجلسة'),
+      Block(text: 'الإنهاء'),
+    ];
+    blocks.shuffle(Random());
+    return blocks;
+  }
+
+  // إعادة تعيين اللعبة
+  void resetGame() {
+    setState(() {
+      secondColumnBlocks.clear();
+      hasLost = false;
+    });
+  }
+
+  // دالة للتحقق من الترتيب
+  void checkOrder() {
+    if (secondColumnBlocks.length == correctOrder.length) {
+      bool isCorrect = true;
+      for (int i = 0; i < correctOrder.length; i++) {
+        if (secondColumnBlocks[i].text != correctOrder[i]) {
+          isCorrect = false;
+          break;
+        }
+      }
+
+      if (isCorrect) {
+        // عرض إشعار النجاح
+        Fluttertoast.showToast(
+          msg: "أتممت المهمة بنجاح!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+        resetGame(); // إعادة اللعبة بعد النجاح
+      } else {
+        setState(() {
+          hasLost = true; // اللاعب خسر اللعبة
+        });
+      }
+    }
+  }
 
   // دالة لإضافة البلوك إلى العمود الثاني
-  void onBlockDragged(String block) {
+  void onBlockDragged(Block block) {
     setState(() {
-      secondColumnBlocks.add(block);
+      // تحقق من أن البلوك لم يتم إضافته مسبقًا لتجنب التكرار
+      if (!secondColumnBlocks.contains(block)) {
+        secondColumnBlocks.add(block);
+        checkOrder(); // تحقق من الترتيب بعد إضافة البلوك
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width; // عرض الشاشة
+    final screenHeight = MediaQuery.of(context).size.height; // ارتفاع الشاشة
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Session Layer Game'),
-        centerTitle: true,
-      ),
       body: Row(
         children: [
-          SideColumn(onBlockDragged: onBlockDragged), // استدعاء العمود الجانبي
+          // استدعاء العمود الجانبي مع تمرير قائمة من الكتل المختلطة
+          SideColumn(
+            blocks: getShuffledBlocks(), // البلوكات المختلطة
+            columnWidth: screenWidth * 0.3, // 30% من عرض الشاشة
+            columnHeight: screenHeight, // طول الشاشة للعمود
+            backgroundColor: Colors.blueGrey[100], // خلفية العمود الجانبي
+          ),
           Expanded(
             child: Stack(
               children: [
                 TunnelBackground(), // استخدام الخلفية
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'ترتيب خطوات الجلسة:',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          // قم بإضافة الوظيفة هنا لاحقًا
-                        },
-                        child: Text('ابدأ'),
-                      ),
-                    ],
+                if (hasLost)
+                  Center(
+                    child: AlertDialog(
+                      title: Text('لقد خسرت!'),
+                      content: Text('قم بالمحاولة مرة أخرى.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            resetGame(); // إعادة اللعبة
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('إعادة المحاولة'),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
-          SecondColumn(blocks: secondColumnBlocks), // استدعاء العمود الثاني
+          // استدعاء العمود الثاني مع تمرير الكتل المسقطة
+          SecondColumn(
+            blocks: secondColumnBlocks,
+            columnWidth: screenWidth * 0.3, // 30% من عرض الشاشة
+            columnHeight: screenHeight, // طول الشاشة للعمود
+            onBlockAccepted: onBlockDragged, // قبول البلوكات المسقطة
+            backgroundColor: Colors.green[100], // خلفية العمود الثاني
+          ),
         ],
       ),
     );
