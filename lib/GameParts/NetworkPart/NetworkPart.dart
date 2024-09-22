@@ -74,14 +74,14 @@ class NetworkGameSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NetworkGameScreen()),
+                        builder: (context) => SessionLayerScreen()),
                   );
                 } else if (index == 1) {
                   // Navigate to SessionLayerScreen when index is 1 for "Session Layer Game"
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SessionLayerScreen()),
+                        builder: (context) => NetworkGameScreen()),
                   );
                 }
               },

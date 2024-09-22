@@ -44,6 +44,9 @@ dependencies:
   just_audio: ^0.9.40
   flutter_screenutil: ^5.9.3
   http: ^1.2.2
+  flame: 1.19.0
+  fluttertoast: ^8.2.8
+
 
 dev_dependencies:
   flutter_test:
@@ -87,7 +90,11 @@ flutter:
     - assets/MobileSecurityPart.png
     - assets/SpaceBack.png
     #homepage:
-    - assets/Background1.png 
+    - assets/BackGround1.png 
     #networkPage:
     - assets/NetworkBackground.png 
     - assets/tunnel.png
+    #HttpGame:
+    - assets/Street1.png
+    - assets/Street.mp4
+    - assets/MoveChar.webm
