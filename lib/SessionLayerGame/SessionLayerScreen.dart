@@ -5,6 +5,7 @@ import 'TunnelBackground.dart'; // استدعاء كلاس الخلفية
 import 'SideColumn.dart'; // استدعاء كلاس العمود الجانبي
 import 'SecondColumn.dart'; // استدعاء كلاس العمود الثاني
 import 'package:fluttertoast/fluttertoast.dart'; // حزمة الاشعارات
+import 'package:audioplayers/audioplayers.dart'; // لاستيراد تشغيل الصوت
 
 class SessionLayerScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class SessionLayerScreen extends StatefulWidget {
 class _SessionLayerScreenState extends State<SessionLayerScreen> {
   List<Block> secondColumnBlocks = []; // قائمة البلوكات في العمود الثاني
   bool hasLost = false; // للتحقق من حالة الخسارة
+  final AudioPlayer _audioPlayer = AudioPlayer(); // مشغل الصوت
 
   // الترتيب الصحيح للبلوكات
   final List<String> correctOrder = [
@@ -43,6 +45,11 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
     });
   }
 
+  // تشغيل الصوت
+  Future<void> playSound(String assetPath) async {
+    await _audioPlayer.play(AssetSource(assetPath));
+  }
+
   // دالة للتحقق من الترتيب
   void checkOrder() {
     if (secondColumnBlocks.length == correctOrder.length) {
@@ -55,7 +62,7 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
       }
 
       if (isCorrect) {
-        // عرض إشعار النجاح
+        // عرض إشعار النجاح وتشغيل صوت الفوز
         Fluttertoast.showToast(
           msg: "أتممت المهمة بنجاح!",
           toastLength: Toast.LENGTH_SHORT,
@@ -63,11 +70,13 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
+        playSound('victory.mp3'); // تشغيل صوت النجاح
         resetGame(); // إعادة اللعبة بعد النجاح
       } else {
         setState(() {
           hasLost = true; // اللاعب خسر اللعبة
         });
+        playSound('Winning.mp3'); // تشغيل صوت الخسارة
       }
     }
   }
@@ -81,6 +90,12 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
         checkOrder(); // تحقق من الترتيب بعد إضافة البلوك
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose(); // التخلص من مشغل الصوت عند انتهاء الشاشة
+    super.dispose();
   }
 
   @override

@@ -28,6 +28,7 @@ class SideColumn extends StatelessWidget {
               child: Draggable<Block>(
                 data: block,
                 feedback: Material(
+                  color: Colors.transparent, // لجعل السحب يبدو واضحًا
                   child: buildBlock(block.text, columnWidth),
                 ),
                 childWhenDragging: Opacity(

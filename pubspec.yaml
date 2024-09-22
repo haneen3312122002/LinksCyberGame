@@ -88,6 +88,8 @@ flutter:
     - assets/SpaceBack.png
     #homepage:
     - assets/Background1.png 
-    #networkPage:
+    #sessionlayerPage:
     - assets/NetworkBackground.png 
     - assets/tunnel.png
+    - assets/sessionLayer.mp4
+    - assets/Winning.mp3
