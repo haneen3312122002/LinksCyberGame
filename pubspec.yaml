@@ -98,3 +98,7 @@ flutter:
     - assets/Street1.png
     - assets/Street.mp4
     - assets/MoveChar.webm
+    - assets/HttpStop.gif
+    - assets/HttpsStop.gif
+    - assets/Stop.mp3
+    - assets/Walking.mp3

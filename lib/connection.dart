@@ -32,7 +32,7 @@ class ApiService {
 // API service for the password game
 class ApiServicePasswordGame {
   static const String baseUrl =
-      'http://192.168.100.2:5000'; // تأكد من استبدال الـ IP بالعنوان الخاص بك
+      'http://192.168.100.100:5000'; // تأكد من استبدال الـ IP بالعنوان الخاص بك
 
   static Future<String> checkPassword(String password) async {
     if (password.isEmpty) {
