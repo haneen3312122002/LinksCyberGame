@@ -1,7 +1,7 @@
 name: cybergame
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
+# pub.dev using flutter pub publish. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -23,10 +23,10 @@ environment:
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# consider running flutter pub upgrade --major-versions. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
+# versions available, run flutter pub outdated.
 dependencies:
   flutter:
     sdk: flutter
@@ -44,6 +44,9 @@ dependencies:
   just_audio: ^0.9.40
   flutter_screenutil: ^5.9.3
   http: ^1.2.2
+  flame: 1.19.0
+  fluttertoast: ^8.2.8
+
 
 dev_dependencies:
   flutter_test:
@@ -87,9 +90,15 @@ flutter:
     - assets/MobileSecurityPart.png
     - assets/SpaceBack.png
     #homepage:
-    - assets/Background1.png 
-    #sessionlayerPage:
+    - assets/BackGround1.png 
+    #networkPage:
     - assets/NetworkBackground.png 
     - assets/tunnel.png
-    - assets/sessionLayer.mp4
-    - assets/Winning.mp3
+    #HttpGame:
+    - assets/Street1.png
+    - assets/Street.mp4
+    - assets/MoveChar.webm
+    - assets/HttpStop.gif
+    - assets/HttpsStop.gif
+    - assets/Stop.mp3
+    - assets/Walking.mp3
