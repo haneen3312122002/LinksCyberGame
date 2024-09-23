@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart'; // استيراد الكلاس الجديد
+import 'package:cybergame/SessionLayerGame/VideoScreen.dart';
 
 class NetworkGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -60,7 +61,7 @@ class NetworkGameSection extends StatelessWidget {
               border: Border.all(color: Colors.yellow, width: 3.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: const Color.fromRGBO(9, 0, 32, 1).withOpacity(0.2),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: Offset(0, 3),
@@ -73,8 +74,7 @@ class NetworkGameSection extends StatelessWidget {
                   // Navigate to NetworkGameScreen when index is 0 for "لعبة تركيب الشبكات"
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => SessionLayerScreen()),
+                    MaterialPageRoute(builder: (context) => VideoScreen()),
                   );
                 } else if (index == 1) {
                   // Navigate to SessionLayerScreen when index is 1 for "Session Layer Game"

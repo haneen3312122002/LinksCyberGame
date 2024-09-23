@@ -91,9 +91,11 @@ flutter:
     - assets/SpaceBack.png
     #homepage:
     - assets/BackGround1.png 
-    #networkPage:
+    #sessionLayer: 
     - assets/NetworkBackground.png 
     - assets/tunnel.png
+    - assets/sessionLayer.mp4
+    - assets/Winning.mp3
     #HttpGame:
     - assets/Street1.png
     - assets/Street.mp4

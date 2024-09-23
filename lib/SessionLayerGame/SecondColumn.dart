@@ -8,37 +8,41 @@ class SecondColumn extends StatelessWidget {
   final Color? backgroundColor; // لون خلفية العمود
   final Function(Block) onBlockAccepted; // الدالة التي تستقبل البلوك
 
-  SecondColumn(
-      {required this.blocks,
-      required this.columnWidth,
-      required this.columnHeight,
-      required this.backgroundColor,
-      required this.onBlockAccepted});
+  SecondColumn({
+    required this.blocks,
+    required this.columnWidth,
+    required this.columnHeight,
+    required this.backgroundColor,
+    required this.onBlockAccepted,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: columnWidth, // العرض الديناميكي للعمود
-      height: columnHeight,
-      color: backgroundColor, // الخلفية الخاصة بالعمود
-      child: Column(
-        children: [
-          ...blocks
-              .map((block) => Container(
-                    height: columnHeight * 0.25, // كل بلوك يأخذ ربع طول العمود
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: buildBlock(block.text, columnWidth),
-                    ),
-                  ))
-              .toList(),
-          Expanded(
-            child: DragTarget<Block>(
-              onAccept: (block) {
-                onBlockAccepted(block); // استقبال العنصر المسحوب
-              },
-              builder: (context, candidateData, rejectedData) {
+    return DragTarget<Block>(
+      onWillAccept: (block) => true,
+      onAccept: (block) {
+        onBlockAccepted(block); // استقبال العنصر المسحوب
+      },
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          width: columnWidth, // العرض الديناميكي للعمود
+          height: columnHeight,
+          color: backgroundColor, // الخلفية الخاصة بالعمود
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ...blocks.map((block) {
                 return Container(
+                  height: columnHeight * 0.2, // تعديل الحجم ليناسب عدد البلوكات
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: buildBlock(block.text, columnWidth),
+                  ),
+                );
+              }).toList(),
+              if (blocks.length < 4)
+                Container(
+                  height: columnHeight * 0.2,
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -50,19 +54,18 @@ class SecondColumn extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   // دالة لبناء البلوك
   Widget buildBlock(String label, double width) {
     return Container(
-      width: width,
+      width: width * 0.8, // تقليل العرض ليبدو أفضل
       height: double.infinity,
       decoration: BoxDecoration(
         color: Colors.green[200], // لون خلفية البلوك
@@ -72,8 +75,9 @@ class SecondColumn extends StatelessWidget {
       child: Center(
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: width * 0.07, // حجم الخط كنسبة من عرض العمود
+            fontSize: width * 0.05, // حجم الخط كنسبة من عرض العمود
             fontWeight: FontWeight.bold,
           ),
         ),

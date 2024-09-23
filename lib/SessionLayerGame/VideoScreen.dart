@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter/services.dart'; // Added for SystemChrome
 import 'SessionLayerScreen.dart'; // الشاشة الرئيسية للعبة
 
 class VideoScreen extends StatefulWidget {
@@ -14,6 +15,14 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Lock orientation to landscape and hide system UI for full-screen experience
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     _controller = VideoPlayerController.asset('assets/sessionLayer.mp4')
       ..initialize().then((_) {
         setState(() {});
@@ -31,6 +40,13 @@ class _VideoScreenState extends State<VideoScreen> {
 
   @override
   void dispose() {
+    // Reset orientation and show system UI when disposing the screen
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
     _controller.dispose(); // تدمير الفيديو عند إغلاق الشاشة
     super.dispose();
   }
@@ -55,13 +71,20 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Remove app bar and other paddings for full-screen
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           _controller.value.isInitialized
-              ? AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
+              ? SizedBox.expand(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: _controller.value.size?.width ?? 0,
+                      height: _controller.value.size?.height ?? 0,
+                      child: VideoPlayer(_controller),
+                    ),
+                  ),
                 )
               : Center(child: CircularProgressIndicator()),
 
@@ -77,7 +100,6 @@ class _VideoScreenState extends State<VideoScreen> {
                     child: Text('تخطي الفيديو'),
                   ),
                 ),
-
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: ElevatedButton(
@@ -85,8 +107,6 @@ class _VideoScreenState extends State<VideoScreen> {
                   child: Text('إعادة تشغيل الفيديو'),
                 ),
               ),
-
-              // هذا الزر يظهر فقط عند انتهاء الفيديو
               if (_isVideoEnded)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),

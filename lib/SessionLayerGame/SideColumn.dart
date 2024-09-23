@@ -7,11 +7,12 @@ class SideColumn extends StatelessWidget {
   final double columnHeight; // ارتفاع العمود
   final Color? backgroundColor; // لون خلفية العمود
 
-  SideColumn(
-      {required this.blocks,
-      required this.columnWidth,
-      required this.columnHeight,
-      required this.backgroundColor});
+  SideColumn({
+    required this.blocks,
+    required this.columnWidth,
+    required this.columnHeight,
+    required this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +20,13 @@ class SideColumn extends StatelessWidget {
       width: columnWidth, // العرض الديناميكي للعمود
       height: columnHeight,
       color: backgroundColor, // الخلفية الخاصة بالعمود
-      child: Column(
+      child: ListView(
         children: blocks.map((block) {
           return Container(
-            height: columnHeight * 0.25, // كل بلوك يأخذ ربع طول العمود
+            height: columnHeight * 0.2, // تعديل الحجم ليناسب عدد البلوكات
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Draggable<Block>(
+              child: LongPressDraggable<Block>(
                 data: block,
                 feedback: Material(
                   color: Colors.transparent, // لجعل السحب يبدو واضحًا
@@ -47,7 +48,7 @@ class SideColumn extends StatelessWidget {
   // دالة لبناء البلوك
   Widget buildBlock(String label, double width) {
     return Container(
-      width: width,
+      width: width * 0.8, // تقليل العرض ليبدو أفضل
       height: double.infinity,
       decoration: BoxDecoration(
         color: Colors.blueGrey[200], // لون خلفية البلوك
@@ -57,8 +58,9 @@ class SideColumn extends StatelessWidget {
       child: Center(
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: width * 0.07, // حجم الخط كنسبة من عرض العمود
+            fontSize: width * 0.05, // حجم الخط كنسبة من عرض العمود
             fontWeight: FontWeight.bold,
           ),
         ),

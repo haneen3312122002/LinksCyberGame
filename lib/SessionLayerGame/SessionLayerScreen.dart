@@ -13,6 +13,7 @@ class SessionLayerScreen extends StatefulWidget {
 }
 
 class _SessionLayerScreenState extends State<SessionLayerScreen> {
+  List<Block> sideColumnBlocks = []; // قائمة البلوكات في العمود الجانبي
   List<Block> secondColumnBlocks = []; // قائمة البلوكات في العمود الثاني
   bool hasLost = false; // للتحقق من حالة الخسارة
   final AudioPlayer _audioPlayer = AudioPlayer(); // مشغل الصوت
@@ -24,6 +25,13 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
     'إدارة الجلسة',
     'الإنهاء'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // إنشاء قائمة البلوكات بشكل غير مرتب
+    sideColumnBlocks = getShuffledBlocks();
+  }
 
   // خلط ترتيب البلوكات في العمود الجانبي
   List<Block> getShuffledBlocks() {
@@ -40,6 +48,7 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
   // إعادة تعيين اللعبة
   void resetGame() {
     setState(() {
+      sideColumnBlocks = getShuffledBlocks();
       secondColumnBlocks.clear();
       hasLost = false;
     });
@@ -84,11 +93,11 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
   // دالة لإضافة البلوك إلى العمود الثاني
   void onBlockDragged(Block block) {
     setState(() {
-      // تحقق من أن البلوك لم يتم إضافته مسبقًا لتجنب التكرار
-      if (!secondColumnBlocks.contains(block)) {
-        secondColumnBlocks.add(block);
-        checkOrder(); // تحقق من الترتيب بعد إضافة البلوك
-      }
+      // إزالة البلوك من العمود الجانبي
+      sideColumnBlocks.remove(block);
+      // إضافة البلوك إلى العمود الثاني
+      secondColumnBlocks.add(block);
+      checkOrder(); // تحقق من الترتيب بعد إضافة البلوك
     });
   }
 
@@ -108,7 +117,7 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
         children: [
           // استدعاء العمود الجانبي مع تمرير قائمة من الكتل المختلطة
           SideColumn(
-            blocks: getShuffledBlocks(), // البلوكات المختلطة
+            blocks: sideColumnBlocks, // البلوكات المختلطة
             columnWidth: screenWidth * 0.3, // 30% من عرض الشاشة
             columnHeight: screenHeight, // طول الشاشة للعمود
             backgroundColor: Colors.blueGrey[100], // خلفية العمود الجانبي
