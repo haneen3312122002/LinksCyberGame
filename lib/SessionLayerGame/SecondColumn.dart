@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'Block.dart'; // استدعاء كلاس Block
+import 'Block.dart'; // Ensure this file contains your Block class.
 
 class SecondColumn extends StatelessWidget {
-  final List<Block> blocks; // قائمة البلوكات المسقطة
-  final double columnWidth; // عرض العمود
-  final double columnHeight; // ارتفاع العمود
-  final Color? backgroundColor; // لون خلفية العمود
-  final Function(Block) onBlockAccepted; // الدالة التي تستقبل البلوك
+  final List<Block> blocks; // List of blocks in the second column
+  final double columnWidth; // Width of the column
+  final double columnHeight; // Height of the column
+  final Color? backgroundColor; // Background color of the column
+  final Function(Block) onBlockAccepted; // Function to handle accepted blocks
 
   SecondColumn({
     required this.blocks,
@@ -18,34 +18,37 @@ class SecondColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DragTarget<Block>(
-      onWillAccept: (block) => true,
-      onAccept: (block) {
-        onBlockAccepted(block); // استقبال العنصر المسحوب
-      },
-      builder: (context, candidateData, rejectedData) {
-        return Container(
-          width: columnWidth, // العرض الديناميكي للعمود
-          height: columnHeight,
-          color: backgroundColor, // الخلفية الخاصة بالعمود
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ...blocks.map((block) {
+    return Container(
+      width: columnWidth,
+      height: columnHeight,
+      color: backgroundColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ...blocks.map((block) {
+            return Container(
+              height: columnHeight * 0.2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: buildBlock(block.text, columnWidth),
+              ),
+            );
+          }).toList(),
+          if (blocks.length < 4)
+            // Wrap the "Drop Here" container with DragTarget
+            DragTarget<Block>(
+              onWillAccept: (block) => true,
+              onAccept: (block) {
+                onBlockAccepted(block);
+              },
+              builder: (context, candidateData, rejectedData) {
                 return Container(
-                  height: columnHeight * 0.2, // تعديل الحجم ليناسب عدد البلوكات
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: buildBlock(block.text, columnWidth),
-                  ),
-                );
-              }).toList(),
-              if (blocks.length < 4)
-                Container(
                   height: columnHeight * 0.2,
                   margin: EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: candidateData.isNotEmpty
+                        ? Colors.grey[300]
+                        : Colors.white,
                     border: Border.all(color: Colors.blue, width: 2),
                   ),
                   child: Center(
@@ -54,22 +57,22 @@ class SecondColumn extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
-                ),
-            ],
-          ),
-        );
-      },
+                );
+              },
+            ),
+        ],
+      ),
     );
   }
 
-  // دالة لبناء البلوك
+  // Function to build a block widget
   Widget buildBlock(String label, double width) {
     return Container(
-      width: width * 0.8, // تقليل العرض ليبدو أفضل
-      height: double.infinity,
+      width: width * 0.8, // Reduce width for better appearance
+      // Remove height: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.green[200], // لون خلفية البلوك
-        borderRadius: BorderRadius.circular(10), // تدوير الحواف
+        color: Colors.blue[200], // Background color of the block
+        borderRadius: BorderRadius.circular(10), // Rounded corners
         border: Border.all(color: Colors.blue, width: 2),
       ),
       child: Center(
@@ -77,7 +80,7 @@ class SecondColumn extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: width * 0.05, // حجم الخط كنسبة من عرض العمود
+            fontSize: width * 0.05, // Font size as a percentage of column width
             fontWeight: FontWeight.bold,
           ),
         ),
