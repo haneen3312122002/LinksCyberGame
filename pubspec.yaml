@@ -104,3 +104,5 @@ flutter:
     - assets/HttpsStop.gif
     - assets/Stop.mp3
     - assets/Walking.mp3
+    #PortGame
+    - assets/port.png

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
-import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart'; // استيراد الكلاس الجديد
+import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart';
 import 'package:cybergame/SessionLayerGame/VideoScreen.dart';
+import 'package:cybergame/portGame/port_game.dart'; // استيراد شاشة PortGame
 
 class NetworkGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -71,17 +72,23 @@ class NetworkGameSection extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (index == 0) {
-                  // Navigate to NetworkGameScreen when index is 0 for "لعبة تركيب الشبكات"
+                  // Navigate to VideoScreen when index is 0 for "لعبة تركيب الشبكات"
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => VideoScreen()),
+                    MaterialPageRoute(builder: (context) => port_game()),
                   );
                 } else if (index == 1) {
-                  // Navigate to SessionLayerScreen when index is 1 for "Session Layer Game"
+                  // Navigate to NetworkGameScreen when index is 1 for "Session Layer Game"
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => NetworkGameScreen()),
+                  );
+                } else if (index == 2) {
+                  // Navigate to PortGameScreen when index is 2 for "Port Game"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => VideoScreen()),
                   );
                 }
               },
@@ -89,7 +96,9 @@ class NetworkGameSection extends StatelessWidget {
                 child: Text(
                   index == 0
                       ? 'لعبة تركيب الشبكات'
-                      : ' لعبة طبقة الجلسات ', // النص الجديد لجزء 2
+                      : index == 1
+                          ? 'لعبة طبقة الجلسات'
+                          : 'لعبة المنافذ', // النص الجديد لجزء 3
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
