@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'Adues.dart';
+import 'Obstacle.dart';
 
 class VideoGame extends StatefulWidget {
   @override
@@ -23,6 +24,9 @@ class _VideoGameState extends State<VideoGame> {
   @override
   void initState() {
     super.initState();
+
+    // Start the background music when the game starts
+    AudioPlayerManagerHttpMusic.playHttpMusic();
 
     // Initialize the street video controller
     _streetController = VideoPlayerController.asset('assets/Street.mp4')
@@ -273,16 +277,4 @@ class _VideoGameState extends State<VideoGame> {
       ),
     );
   }
-}
-
-class Obstacle {
-  String type;
-  double xPosition;
-  double yPosition;
-
-  Obstacle({
-    required this.type,
-    required this.xPosition,
-    required this.yPosition,
-  });
 }
