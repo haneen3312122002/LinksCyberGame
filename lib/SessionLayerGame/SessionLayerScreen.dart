@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:math'; // لاستيراد الشيفرة الخاصة بخلط العناصر
-import 'Block.dart'; // استدعاء كلاس Block
-import 'TunnelBackground.dart'; // استدعاء كلاس الخلفية
-import 'SideColumn.dart'; // استدعاء كلاس العمود الجانبي
-import 'SecondColumn.dart'; // استدعاء كلاس العمود الثاني
-import 'package:fluttertoast/fluttertoast.dart'; // حزمة الاشعارات
-import 'package:audioplayers/audioplayers.dart'; // لاستيراد تشغيل الصوت
+import 'dart:math';
+import 'Block.dart';
+import 'TunnelBackground.dart';
+import 'SideColumn.dart';
+import 'SecondColumn.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class SessionLayerScreen extends StatefulWidget {
   @override
@@ -13,53 +13,48 @@ class SessionLayerScreen extends StatefulWidget {
 }
 
 class _SessionLayerScreenState extends State<SessionLayerScreen> {
-  List<Block> sideColumnBlocks = []; // قائمة البلوكات في العمود الجانبي
-  List<Block> secondColumnBlocks = []; // قائمة البلوكات في العمود الثاني
-  bool hasLost = false; // للتحقق من حالة الخسارة
-  final AudioPlayer _audioPlayer = AudioPlayer(); // مشغل الصوت
+  List<Block> sideColumnBlocks = [];
+  List<Block> secondColumnBlocks = [];
+  bool hasLost = false;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
-  // الترتيب الصحيح للبلوكات
   final List<String> correctOrder = [
     'التأسيس',
-    'التزامن',
-    'إدارة الجلسة',
+    'ادارة الجلسة',
+    'تبادل البيانات',
     'الإنهاء'
   ];
 
   @override
   void initState() {
     super.initState();
-    // إنشاء قائمة البلوكات بشكل غير مرتب
     sideColumnBlocks = getShuffledBlocks();
   }
 
-  // خلط ترتيب البلوكات في العمود الجانبي
   List<Block> getShuffledBlocks() {
     List<Block> blocks = [
       Block(text: 'التأسيس'),
-      Block(text: 'التزامن'),
-      Block(text: 'إدارة الجلسة'),
+      Block(text: 'ادارة الجلسة'),
+      Block(text: 'تبادل البيانات'),
       Block(text: 'الإنهاء'),
     ];
     blocks.shuffle(Random());
     return blocks;
   }
 
-  // إعادة تعيين اللعبة
   void resetGame() {
     setState(() {
       sideColumnBlocks = getShuffledBlocks();
       secondColumnBlocks.clear();
-      hasLost = false;
+
+      // hasLost = false; // Removed in previous adjustments
     });
   }
 
-  // تشغيل الصوت
   Future<void> playSound(String assetPath) async {
     await _audioPlayer.play(AssetSource(assetPath));
   }
 
-  // دالة للتحقق من الترتيب
   void checkOrder() {
     if (secondColumnBlocks.length == correctOrder.length) {
       bool isCorrect = true;
@@ -71,7 +66,6 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
       }
 
       if (isCorrect) {
-        // عرض إشعار النجاح وتشغيل صوت الفوز
         Fluttertoast.showToast(
           msg: "أتممت المهمة بنجاح!",
           toastLength: Toast.LENGTH_SHORT,
@@ -79,53 +73,52 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
-        playSound('victory.mp3'); // تشغيل صوت النجاح
-        resetGame(); // إعادة اللعبة بعد النجاح
+        playSound('victory.mp3');
+        resetGame();
       } else {
         setState(() {
-          hasLost = true; // اللاعب خسر اللعبة
+          hasLost = true;
         });
-        playSound('Winning.mp3'); // تشغيل صوت الخسارة
+        playSound('Winning.mp3');
       }
     }
   }
 
-  // دالة لإضافة البلوك إلى العمود الثاني
+  // Updated to accept the block from DragTarget
   void onBlockDragged(Block block) {
     setState(() {
-      // إزالة البلوك من العمود الجانبي
-      sideColumnBlocks.remove(block);
-      // إضافة البلوك إلى العمود الثاني
+      // Remove the block from the side column
+      sideColumnBlocks.removeWhere((b) => b.text == block.text);
+      // Add the block to the second column
       secondColumnBlocks.add(block);
-      checkOrder(); // تحقق من الترتيب بعد إضافة البلوك
+      checkOrder();
     });
   }
 
   @override
   void dispose() {
-    _audioPlayer.dispose(); // التخلص من مشغل الصوت عند انتهاء الشاشة
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width; // عرض الشاشة
-    final screenHeight = MediaQuery.of(context).size.height; // ارتفاع الشاشة
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: Row(
         children: [
-          // استدعاء العمود الجانبي مع تمرير قائمة من الكتل المختلطة
           SideColumn(
-            blocks: sideColumnBlocks, // البلوكات المختلطة
-            columnWidth: screenWidth * 0.3, // 30% من عرض الشاشة
-            columnHeight: screenHeight, // طول الشاشة للعمود
-            backgroundColor: Colors.blueGrey[100], // خلفية العمود الجانبي
+            blocks: sideColumnBlocks,
+            columnWidth: screenWidth * 0.3,
+            columnHeight: screenHeight,
+            backgroundColor: Colors.blueGrey[100],
           ),
           Expanded(
             child: Stack(
               children: [
-                TunnelBackground(), // استخدام الخلفية
+                TunnelBackground(),
                 if (hasLost)
                   Center(
                     child: AlertDialog(
@@ -134,8 +127,12 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            resetGame(); // إعادة اللعبة
-                            Navigator.of(context).pop();
+                            // Close the dialog
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SessionLayerScreen()));
                           },
                           child: Text('إعادة المحاولة'),
                         ),
@@ -145,13 +142,12 @@ class _SessionLayerScreenState extends State<SessionLayerScreen> {
               ],
             ),
           ),
-          // استدعاء العمود الثاني مع تمرير الكتل المسقطة
           SecondColumn(
             blocks: secondColumnBlocks,
-            columnWidth: screenWidth * 0.3, // 30% من عرض الشاشة
-            columnHeight: screenHeight, // طول الشاشة للعمود
-            onBlockAccepted: onBlockDragged, // قبول البلوكات المسقطة
-            backgroundColor: Colors.green[100], // خلفية العمود الثاني
+            columnWidth: screenWidth * 0.3,
+            columnHeight: screenHeight,
+            onBlockAccepted: onBlockDragged,
+            backgroundColor: Colors.green[100],
           ),
         ],
       ),

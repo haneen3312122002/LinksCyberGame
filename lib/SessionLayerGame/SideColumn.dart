@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'Block.dart'; // استدعاء كلاس Block
+import 'Block.dart'; // Ensure this file contains your Block class.
 
 class SideColumn extends StatelessWidget {
-  final List<Block> blocks; // قائمة البلوكات
-  final double columnWidth; // عرض العمود
-  final double columnHeight; // ارتفاع العمود
-  final Color? backgroundColor; // لون خلفية العمود
+  final List<Block> blocks; // List of blocks in the side column
+  final double columnWidth; // Width of the column
+  final double columnHeight; // Height of the column
+  final Color? backgroundColor; // Background color of the column
 
   SideColumn({
     required this.blocks,
@@ -17,23 +17,25 @@ class SideColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: columnWidth, // العرض الديناميكي للعمود
+      width: columnWidth,
       height: columnHeight,
-      color: backgroundColor, // الخلفية الخاصة بالعمود
-      child: ListView(
+      color: backgroundColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: blocks.map((block) {
           return Container(
-            height: columnHeight * 0.2, // تعديل الحجم ليناسب عدد البلوكات
+            height: columnHeight * 0.2,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: LongPressDraggable<Block>(
-                data: block,
+              child: Draggable<Block>(
+                data: block, // The data being dragged
                 feedback: Material(
-                  color: Colors.transparent, // لجعل السحب يبدو واضحًا
+                  // Wrap feedback with Material
+                  color: Colors.transparent,
                   child: buildBlock(block.text, columnWidth),
                 ),
                 childWhenDragging: Opacity(
-                  opacity: 0.5, // تقليل الشفافية عند السحب
+                  opacity: 0.5,
                   child: buildBlock(block.text, columnWidth),
                 ),
                 child: buildBlock(block.text, columnWidth),
@@ -45,14 +47,14 @@ class SideColumn extends StatelessWidget {
     );
   }
 
-  // دالة لبناء البلوك
+  // Function to build a block widget
   Widget buildBlock(String label, double width) {
     return Container(
-      width: width * 0.8, // تقليل العرض ليبدو أفضل
-      height: double.infinity,
+      width: width * 0.8, // Reduce width for better appearance
+      // Remove height: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.blueGrey[200], // لون خلفية البلوك
-        borderRadius: BorderRadius.circular(10), // تدوير الحواف
+        color: Colors.blue[200], // Background color of the block
+        borderRadius: BorderRadius.circular(10), // Rounded corners
         border: Border.all(color: Colors.blue, width: 2),
       ),
       child: Center(
@@ -60,7 +62,7 @@ class SideColumn extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: width * 0.05, // حجم الخط كنسبة من عرض العمود
+            fontSize: width * 0.05, // Font size as a percentage of column width
             fontWeight: FontWeight.bold,
           ),
         ),

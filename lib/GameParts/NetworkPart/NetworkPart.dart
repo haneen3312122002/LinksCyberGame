@@ -4,6 +4,7 @@ import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart';
 import 'package:cybergame/SessionLayerGame/VideoScreen.dart';
 import 'package:cybergame/portGame/port_game.dart'; // استيراد شاشة PortGame
+import 'package:cybergame/SessionLayerGame/VideoScreen.dart'; // استيراد الكلاس الجديد
 
 class NetworkGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -62,7 +63,7 @@ class NetworkGameSection extends StatelessWidget {
               border: Border.all(color: Colors.yellow, width: 3.0),
               boxShadow: [
                 BoxShadow(
-                  color: const Color.fromRGBO(9, 0, 32, 1).withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.2),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: Offset(0, 3),
