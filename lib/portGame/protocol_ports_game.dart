@@ -33,26 +33,24 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 600),
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildProtocolColumns(),
-                    SizedBox(height: 25),
-                    ElevatedButton(
-                      onPressed: _checkAllAnswers,
-                      child: Text('Check All Answers'),
-                    ),
-                    SizedBox(height: 20),
-                  ],
-                ),
+    return SingleChildScrollView(
+      child: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 600),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildProtocolColumns(),
+                  SizedBox(height: 25),
+                  ElevatedButton(
+                    onPressed: _checkAllAnswers,
+                    child: Text('Check All Answers'),
+                  ),
+                  SizedBox(height: 20),
+                ],
               ),
             ),
           ),
