@@ -16,8 +16,23 @@ class port_game extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.network_check), // Network Icon
-              SizedBox(width: 10), // Spacing between icon and text
-              Text('Port Protocol Game'),
+              SizedBox(width: 8), // Spacing between icon and text
+              Text(
+                'Port Protocol Game',
+                style: TextStyle(
+                  fontSize: 35, // Font size
+                  fontWeight: FontWeight.bold, // Bold text
+                  color: const Color.fromARGB(255, 12, 23, 85), // Text color
+                  letterSpacing: 1.5, // Add some letter spacing
+                  shadows: [
+                    Shadow(
+                      blurRadius: 5.0,
+                      color: Colors.black.withOpacity(0.3),
+                      offset: Offset(2.0, 2.0),
+                    ),
+                  ], // Adding shadow to make text stand out
+                ),
+              ),
             ],
           ),
           centerTitle: true,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart'; // استيراد مكتبة just_audio
 
 class ProtocolPortsGame extends StatefulWidget {
   @override
@@ -21,13 +22,23 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
 
   Map<String, String> userAnswers = {};
   Map<String, Color> fieldColors = {};
+  bool hasErrors = false;
+  final AudioPlayer _audioPlayer = AudioPlayer(); // إنشاء كائن مشغل الصوت
 
   @override
   void initState() {
     super.initState();
-    protocolsPorts.forEach((protocol, port) {
-      userAnswers[protocol] = '';
-      fieldColors[protocol] = Colors.white;
+    _resetGame();
+  }
+
+  // إعادة تعيين الحقول
+  void _resetGame() {
+    setState(() {
+      protocolsPorts.forEach((protocol, port) {
+        userAnswers[protocol] = ''; // تفريغ الإجابات
+        fieldColors[protocol] = Colors.white; // إعادة تعيين اللون إلى الأبيض
+      });
+      hasErrors = false;
     });
   }
 
@@ -45,11 +56,55 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
                 children: [
                   _buildProtocolColumns(),
                   SizedBox(height: 25),
+                  // تكبير حجم زر "Check All Answers" وتغيير لونه
                   ElevatedButton(
                     onPressed: _checkAllAnswers,
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                      backgroundColor:
+                          const Color.fromARGB(255, 39, 43, 51), // لون الخلفية
+                      textStyle: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                      ), // تكبير النص
+                    ),
                     child: Text('Check All Answers'),
                   ),
                   SizedBox(height: 20),
+                  if (hasErrors)
+                    Column(
+                      children: [
+                        Text(
+                          'There are errors, please try again!',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: _resetGame,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
+                            backgroundColor: const Color.fromARGB(
+                                255, 255, 252, 59), // لون زر "Retry"
+                          ),
+                          child: Text(
+                            'Retry',
+                            style: TextStyle(
+                              // تعديل نمط النص المدخل
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -81,7 +136,7 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
             width: double.infinity,
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.blue, // لون الخلفية
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -89,12 +144,13 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
                 Text(
                   protocol,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 SizedBox(height: 10),
+                // تعديل النص في TextField وإعادة تلوين الخلفية
                 TextField(
                   onChanged: (value) {
                     setState(() {
@@ -104,12 +160,18 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: fieldColors[protocol],
+                    fillColor: fieldColors[protocol], // لون خلفية الإدخال
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    hintText: 'Port',
+                    hintText: 'Port number',
                     hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  style: TextStyle(
+                    // تعديل نمط النص المدخل
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
@@ -120,16 +182,37 @@ class _ProtocolPortsGameState extends State<ProtocolPortsGame> {
     );
   }
 
-  void _checkAllAnswers() {
+  void _checkAllAnswers() async {
+    bool allCorrect = true;
     setState(() {
       protocolsPorts.forEach((protocol, correctPort) {
         int userPort = int.tryParse(userAnswers[protocol]!) ?? 0;
         if (userPort == correctPort) {
-          fieldColors[protocol] = Colors.green;
+          fieldColors[protocol] =
+              const Color.fromARGB(255, 134, 241, 138); // لون النجاح
         } else {
-          fieldColors[protocol] = Colors.red;
+          fieldColors[protocol] =
+              const Color.fromARGB(255, 235, 83, 72); // لون الفشل
+          allCorrect = false;
         }
       });
+      hasErrors = !allCorrect;
     });
+
+    if (allCorrect) {
+      await _playSound('assets/victory.mp3');
+    } else {
+      await _playSound('assets/loss.mp3');
+    }
+  }
+
+  Future<void> _playSound(String assetPath) async {
+    try {
+      final player = AudioPlayer();
+      await player.setAsset(assetPath); // تحميل الصوت من الأصول
+      await player.play(); // تشغيل الصوت
+    } catch (e) {
+      print('Error playing sound: $e');
+    }
   }
 }
