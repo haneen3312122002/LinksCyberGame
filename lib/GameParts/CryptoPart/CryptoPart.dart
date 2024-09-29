@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
+import 'package:cybergame/CarGame/CarMain.dart'; // استيراد شاشة CarMain
 
 class CryptoGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -72,7 +73,13 @@ class CryptoGameSection extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (index == 0) {
-                  // Navigate to NetworkGameScreen when index is 0 for "لعبة تركيب الشبكات"
+                  // Navigate to CryptoGameScreen when index is 0 for "لعبة جدار كلمة المرور"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GameScreen()),
+                  );
+                } else if (index == 1) {
+                  // Navigate to CarMain screen when index is 1 for "لعبة السيارات"
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => CryptoGameScreen()),
@@ -83,7 +90,9 @@ class CryptoGameSection extends StatelessWidget {
                 child: Text(
                   index == 0
                       ? 'لعبة جدار كلمة المرور'
-                      : 'Part ${index + 1}', // Display custom text for part 1
+                      : index == 1
+                          ? 'لعبة السيارات'
+                          : 'Part ${index + 1}', // Display custom text for other parts
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,

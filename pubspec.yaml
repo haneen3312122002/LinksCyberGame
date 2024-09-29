@@ -106,3 +106,6 @@ flutter:
     - assets/Walking.mp3
     #postdGame:
     - assets/portBack.png 
+
+    #carGame :
+    - assets/car.mp4
