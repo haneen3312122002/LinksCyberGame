@@ -12,26 +12,76 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   String correctProtocol = '';
   final audioPlayer = AudioPlayer();
+  int stageCount = 0; // عداد المراحل
+  final GlobalKey<DataDescriptionBoxState> dataDescriptionBoxKey = GlobalKey<
+      DataDescriptionBoxState>(); // مفتاح للتحكم في DataDescriptionBox
+  late AudioPlayer backgroundPlayer; // مشغل الخلفية
+
+  @override
+  void initState() {
+    super.initState();
+    _playBackgroundMusic(); // تشغيل الموسيقى عند بدء اللعبة
+  }
+
+  @override
+  void dispose() {
+    backgroundPlayer.dispose(); // إيقاف الموسيقى عند الخروج من الشاشة
+    super.dispose();
+  }
+
+  // تشغيل الموسيقى الخلفية
+  void _playBackgroundMusic() async {
+    backgroundPlayer = AudioPlayer();
+    await backgroundPlayer.play(AssetSource('carsong.mp3'),
+        volume: 0.5); // تحديد ملف الصوت وتكراره
+    backgroundPlayer
+        .setReleaseMode(ReleaseMode.loop); // تشغيل الموسيقى بشكل متكرر
+  }
 
   void _showResultMessage(String message, bool correct) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: Text(message),
+        backgroundColor: correct
+            ? Colors.green[100]
+            : Colors.red[100], // تغيير خلفية الرسالة بناءً على الإجابة
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(
+            fontSize: 18,
+            color: correct
+                ? Colors.green
+                : Colors.red, // تغيير لون النص بناءً على الإجابة
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               if (correct) {
-                _loadNextData();
+                setState(() {
+                  stageCount++; // زيادة العداد عند الإجابة الصحيحة
+                });
+                _loadNextData(); // تحميل بيانات جديدة
               }
             },
-            child: Text('OK'),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                fontSize: 16,
+                color: correct ? Colors.green : Colors.red, // لون زر "OK"
+              ),
+            ),
           ),
         ],
       ),
     );
-    _playSound(correct ? "victory.mp3" : "Winning.mp3");
+    _playSound(correct ? "correct.mp3" : "Winning.mp3");
   }
 
   void _playSound(String fileName) {
@@ -39,9 +89,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _loadNextData() {
-    if (mounted) {
-      setState(() {});
-    }
+    // استدعاء دالة توليد بيانات جديدة في DataDescriptionBox
+    dataDescriptionBoxKey.currentState?.generateRandomData();
   }
 
   void _onChoiceMade(String choice) {
@@ -55,7 +104,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void _onDataGenerated(String protocol) {
     setState(() {
-      correctProtocol = protocol;
+      correctProtocol = protocol; // تخزين البروتوكول الصحيح
     });
   }
 
@@ -68,7 +117,10 @@ class _GameScreenState extends State<GameScreen> {
           SafeArea(
             child: Column(
               children: [
-                DataDescriptionBox(onDataGenerated: _onDataGenerated),
+                DataDescriptionBox(
+                  key: dataDescriptionBoxKey,
+                  onDataGenerated: _onDataGenerated,
+                ), // عرض بيانات جديدة
                 Spacer(),
                 ChoiceRow(
                   onTcpSelected: () => _onChoiceMade('TCP'),
@@ -78,8 +130,52 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
           ),
+          Positioned(
+            top: 30,
+            right: 20,
+            child: StageCounter(stageCount: stageCount), // عداد المراحل
+          ),
         ],
       ),
+    );
+  }
+}
+
+// عداد المراحل داخل دائرة
+class StageCounter extends StatelessWidget {
+  final int stageCount;
+
+  StageCounter({required this.stageCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white, // لون الخلفية
+            border: Border.all(
+              color: Colors.red, // لون الحدود
+              width: 4,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              '$stageCount',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.red, // لون النص
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 10),
+        Icon(Icons.flag, color: Colors.red, size: 50), // أيقونة العداد
+      ],
     );
   }
 }

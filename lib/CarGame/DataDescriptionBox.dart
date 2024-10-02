@@ -9,39 +9,64 @@ class DataDescriptionBox extends StatefulWidget {
       : super(key: key);
 
   @override
-  _DataDescriptionBoxState createState() => _DataDescriptionBoxState();
+  DataDescriptionBoxState createState() => DataDescriptionBoxState();
 }
 
-class _DataDescriptionBoxState extends State<DataDescriptionBox> {
+class DataDescriptionBoxState extends State<DataDescriptionBox> {
   String currentData = '';
   String correctProtocol = '';
   final audioPlayer = AudioPlayer();
   List<Map<String, String>> dataOptions = [
-    {'data': 'بث مباشر لفيديو', 'protocol': 'UDP'},
-    {'data': 'رسائل بريد إلكتروني', 'protocol': 'TCP'},
-    // إضافة المزيد من البيانات حسب الحاجة
+    {'data': 'بث مباشر لفيديو', 'protocol': 'UDP'}, // بث فيديو يتطلب UDP
+    {
+      'data': 'رسائل بريد إلكتروني',
+      'protocol': 'TCP'
+    }, // البريد الإلكتروني يتطلب TCP
+    {
+      'data': 'اتصال صوتي عبر الإنترنت',
+      'protocol': 'UDP'
+    }, // الاتصال الصوتي يستخدم UDP
+    {'data': 'نقل ملفات كبيرة', 'protocol': 'TCP'}, // نقل الملفات يتطلب TCP
+    {
+      'data': 'ألعاب فيديو عبر الإنترنت',
+      'protocol': 'UDP'
+    }, // الألعاب تحتاج UDP
+    {'data': 'تحميل صفحة ويب', 'protocol': 'TCP'}, // صفحات الويب تستخدم TCP
+    {
+      'data': 'نقل بيانات مستشعرات في الوقت الفعلي',
+      'protocol': 'UDP'
+    }, // المستشعرات تتطلب UDP
+    {
+      'data': 'تحميل البرامج والتحديثات',
+      'protocol': 'TCP'
+    }, // التحديثات تتطلب TCP
+    {'data': 'بث مباشر للصوت', 'protocol': 'UDP'}, // بث الصوت
+    {'data': 'مكالمات فيديو', 'protocol': 'UDP'}, // مكالمات الفيديو تحتاج UDP
+    {'data': 'تصفح الإنترنت', 'protocol': 'TCP'}, // التصفح يحتاج TCP
   ];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _generateRandomData());
+    WidgetsBinding.instance.addPostFrameCallback((_) => generateRandomData());
   }
 
-  void _generateRandomData() {
+  // جعل الدالة عامة حتى يتم استدعاؤها من الخارج
+  void generateRandomData() {
     if (dataOptions.isEmpty) {
       print("All questions are answered correctly!");
-      // ربما يمكن إضافة إعادة التعيين أو التنقل إلى صفحة نتائج أو غير ذلك.
       return;
     }
     final random = Random();
     int index = random.nextInt(dataOptions.length);
-    final randomItem = dataOptions.removeAt(index);
+    final randomItem =
+        dataOptions.removeAt(index); // إزالة العنصر المستخدم من القائمة
     setState(() {
       currentData = randomItem['data']!;
       correctProtocol = randomItem['protocol']!;
     });
-    widget.onDataGenerated(correctProtocol);
+    widget.onDataGenerated(
+        correctProtocol); // إرسال البروتوكول الصحيح لـ GameScreen
   }
 
   Future<void> playSound(String fileName) async {

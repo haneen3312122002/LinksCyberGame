@@ -109,3 +109,5 @@ flutter:
 
     #carGame :
     - assets/car.mp4
+    - assets/carsong.mp3
+    - assets/correct.mp3
