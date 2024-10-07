@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+//control data box
 class DataDescriptionBox extends StatefulWidget {
   final Function(String) onDataGenerated;
 

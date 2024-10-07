@@ -111,3 +111,8 @@ flutter:
     - assets/car.mp4
     - assets/carsong.mp3
     - assets/correct.mp3
+
+    #trojanHorseGame :
+    - assets/desktop1.png
+    - assets/desktop2.png
+    - assets/Evil.mp3
