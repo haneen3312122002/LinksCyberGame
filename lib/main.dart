@@ -9,6 +9,7 @@ import 'DoorsGame/DoorsMainVideo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; // Add localization for RTL
 import 'PasswordGame/CryptoGameScreen.dart';
 import 'HomePage/HomePage.dart';
+import 'package:cybergame/MarioGame/MarioScreen.dart';
 
 void main() {
   // Ensure widget binding is initialized
@@ -58,7 +59,7 @@ class LinkClassificationGame extends StatelessWidget {
           },
           home: Scaffold(
             backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-            body: HomePage(),
+            body: MarioGame(),
           ),
           builder: (context, widget) {
             // Force RTL layout direction

@@ -111,3 +111,11 @@ flutter:
     - assets/car.mp4
     - assets/carsong.mp3
     - assets/correct.mp3
+    #Mario:
+    - assets/Ground1.png 
+    - assets/Ground2.png 
+    - assets/Ground3.png 
+    - assets/LeftChar.gif
+    - assets/RightChar.gif
+    - assets/StaticLeftChar.png
+    - assets/StaticRightChar.png
