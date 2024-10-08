@@ -3,8 +3,9 @@ import 'package:audioplayers/audioplayers.dart'; // مكتبة تشغيل الص
 
 class VictimScreen extends StatefulWidget {
   final String virusType;
+  final bool showFakeGoogleIcon; // إضافة هذا المعامل
 
-  VictimScreen({required this.virusType});
+  VictimScreen({required this.virusType, required this.showFakeGoogleIcon});
 
   @override
   _VictimScreenState createState() => _VictimScreenState();
@@ -82,6 +83,17 @@ class _VictimScreenState extends State<VictimScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                  ),
+                ),
+              // عرض شعار غوغل المزيف إذا تم تمرير showFakeGoogleIcon كـ true
+              if (widget.showFakeGoogleIcon)
+                Positioned(
+                  bottom: screenSize.height * 0.15,
+                  right: screenSize.width * 0.15,
+                  child: Image.asset(
+                    'assets/instalogo.png', // شعار غوغل المزيف
+                    width: 100,
+                    height: 100,
                   ),
                 ),
             ],

@@ -106,6 +106,8 @@ class _HackerScreenState extends State<HackerScreen> {
       MaterialPageRoute(
         builder: (context) => VictimScreen(
           virusType: selectedVirusType, // تمرير نوع الفيروس
+          showFakeGoogleIcon: disguiseOption ==
+              'أيقونة ملف زائفة', // تمرير حالة الأيقونة المزيفة
         ),
       ),
     );
