@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
 
-class Character extends StatelessWidget {
+class GameCharacter extends StatefulWidget {
+  final double characterX;
+  final double characterY;
   final bool isMovingRight;
-  final bool isMoving;
 
-  Character({required this.isMovingRight, required this.isMoving});
+  const GameCharacter({
+    Key? key,
+    required this.characterX,
+    required this.characterY,
+    required this.isMovingRight,
+  }) : super(key: key);
 
   @override
+  _GameCharacterState createState() => _GameCharacterState();
+}
+
+class _GameCharacterState extends State<GameCharacter> {
+  @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      isMoving
-          ? (isMovingRight
-              ? 'assets/RightChar.gif'
-              : 'assets/LeftChar.gif') // صورة متحركة أثناء الحركة
-          : (isMovingRight
-              ? 'assets/StaticRightChar.png'
-              : 'assets/StaticLeftChar.png'), // صورة ثابتة حسب الاتجاه الأخير
-      fit: BoxFit.contain,
+    return Positioned(
+      left: widget.characterX,
+      bottom: widget.characterY, // استخدم characterY لتحديد الموقع الرأسي
+      child: Image.asset(
+        widget.isMovingRight ? 'assets/RightChar.gif' : 'assets/LeftChar.gif',
+        width: 150, // تكبير حجم الشخصية
+        height: 150,
+        fit: BoxFit.contain,
+      ),
     );
   }
 }

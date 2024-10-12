@@ -1,203 +1,132 @@
 import 'package:flutter/material.dart';
-import 'Char.dart'; // استيراد كلاس الشخصية
-import 'MovingBack.dart'; // استيراد كلاس الأرضية
-import 'LettersBox.dart'; // استيراد كلاس الصناديق
+import 'dart:async';
+import 'Char.dart';
+import 'MovingBack.dart';
 
 class MarioGame extends StatefulWidget {
   @override
-  _GameState createState() => _GameState();
+  _GameScreenState createState() => _GameScreenState();
 }
 
-class _GameState extends State<MarioGame> {
-  bool isMovingRight = true; // لتتبع اتجاه حركة الشخصية
-  bool isHoldingButton = false; // لتتبع استمرار الضغط على الأزرار
-  bool isMoving = false; // لتتبع حالة حركة الشخصية
-  bool isJumping = false; // لتتبع حالة القفز
-  double scrollOffset = -500.0; // لجعل الشخصية تبدأ قبل الحرف A
-  double characterY = 137.0; // تعديل موضع الشخصية لتكون أعلى في الشاشة
-  double groundY = 270.0; // ارتفاع الأرضية (الأرضية الأساسية)
-  double initialCharacterY = 137.0; // الموضع الأصلي للشخصية
-  double characterX = 0; // لتتبع موضع الشخصية الأفقي
+class _GameScreenState extends State<MarioGame> {
+  double characterX = 50; // تعديل نقطة بدء الشخصية
+  double characterY = 70; // مستوى الأرض عند البداية
+  bool isMovingRight = true;
+  bool isJumping = false;
+  double gravity = -0.5; // تعديل قيمة الجاذبية لتناسب القفز
+  double velocityY = 0;
+  bool onPlatform = false;
 
-  GlobalKey<State<Ground>> groundKey = GlobalKey(); // استخدام State<Ground>
-  Character characterWidget =
-      Character(isMovingRight: true, isMoving: false); // استدعاء كلاس الشخصية
+  Timer? moveTimer;
 
-  // قائمة الحروف من A إلى Z بترتيب عكسي
-  List<Widget> letterBoxes = List.generate(
-    26,
-    (index) => LetterBox(letter: String.fromCharCode(65 + index)),
-  ).reversed.toList(); // عكس الترتيب لعرض الحروف من اليمين إلى اليسار
+  // تحريك الشخصية بشكل سلس عند الضغط المستمر
+  void startMoving(bool moveRight) {
+    // التأكد من إيقاف أي حركة سابقة
+    stopMoving();
 
-  // دالة لبدء الحركة عند الضغط المستمر
-  void onLongPressStart(bool isRight) {
-    setState(() {
-      isHoldingButton = true;
-      isMovingRight = isRight;
-      isMoving = true; // بدء الحركة
-      characterWidget =
-          Character(isMovingRight: isMovingRight, isMoving: isMoving);
-    });
-    startMoving();
-  }
+    moveTimer = Timer.periodic(Duration(milliseconds: 30), (timer) {
+      setState(() {
+        double screenWidth = MediaQuery.of(context).size.width; // عرض الشاشة
 
-  void onLongPressEnd() {
-    setState(() {
-      isHoldingButton = false;
-      isMoving = false; // إيقاف الحركة
-      characterWidget =
-          Character(isMovingRight: isMovingRight, isMoving: isMoving);
+        if (moveRight) {
+          // التأكد من عدم الخروج من الجانب الأيمن
+          if (characterX + 5 <= screenWidth - 100) {
+            characterX += 5; // تحريك لليمين
+            isMovingRight = true;
+          }
+        } else {
+          // التأكد من عدم الخروج من الجانب الأيسر
+          if (characterX - 5 >= 0) {
+            characterX -= 5; // تحريك لليسار
+            isMovingRight = false;
+          }
+        }
+      });
     });
   }
 
-  // تحريك الخلفية والأحرف أثناء الضغط على الزر
-  void startMoving() {
-    Future.doWhile(() async {
-      await Future.delayed(Duration(milliseconds: 16)); // 60 إطار في الثانية
-      if (isHoldingButton) {
+  void stopMoving() {
+    if (moveTimer != null) {
+      moveTimer?.cancel(); // إلغاء أي حركة مستمرة عند رفع اليد
+      moveTimer = null;
+    }
+  }
+
+  // منطق القفز
+  void jump() {
+    if (!isJumping && !onPlatform) {
+      isJumping = true;
+      velocityY = 10; // السرعة الأولية للقفز
+      Timer.periodic(Duration(milliseconds: 30), (timer) {
         setState(() {
-          double moveDistance =
-              MediaQuery.of(context).size.width * 0.01; // نفس سرعة الخلفية
+          characterY += velocityY; // تحديث المحور الرأسي
+          velocityY += gravity; // تأثير الجاذبية
 
-          // تحريك الأرضية
-          (groundKey.currentState as GroundState).moveGround(isMovingRight);
+          // إذا وصلت الشخصية إلى الأرض
+          if (characterY <= 70) {
+            characterY = 70; // العودة إلى المستوى الأصلي للأرض
+            isJumping = false;
+            velocityY = 0;
+            timer.cancel();
+          }
 
-          // التحقق من الاصطدام بالصناديق
-          bool isCollision = checkCollisionWithBoxes();
-
-          if (!isCollision) {
-            // إذا لم يكن هناك اصطدام، استمر في تحريك الشخصية
-            if (isMovingRight) {
-              scrollOffset -= moveDistance; // تحريك الأحرف لليسار مع الشخصية
-              characterX += moveDistance;
-            } else {
-              scrollOffset += moveDistance; // تحريك الأحرف لليمين مع الشخصية
-              characterX -= moveDistance;
-            }
+          // التحقق من التصادم مع المنصة العائمة
+          if (characterY <= 150 &&
+              characterY > 100 &&
+              characterX >= 300 &&
+              characterX <= 450) {
+            // إذا كانت الشخصية داخل حدود المنصة
+            onPlatform = true;
+            characterY = 150; // توقف عند مستوى المنصة
+            velocityY = 0;
+            timer.cancel();
+          } else {
+            onPlatform = false;
           }
         });
-        return true;
-      }
-      return false;
-    });
-  }
-
-  // دالة للقفز
-  void jump() async {
-    if (isJumping) return; // إذا كانت الشخصية تقفز بالفعل فلا تقفز مرة أخرى
-    setState(() {
-      isJumping = true;
-    });
-
-    // القفز لأعلى
-    for (int i = 0; i < 15; i++) {
-      await Future.delayed(Duration(milliseconds: 30));
-      setState(() {
-        characterY -= 10; // تحرك الشخصية لأعلى
       });
     }
-
-    // النزول للأسفل
-    for (int i = 0; i < 15; i++) {
-      await Future.delayed(Duration(milliseconds: 30));
-      setState(() {
-        if (characterY < groundY) {
-          characterY += 10; // تحرك الشخصية للأسفل
-        }
-      });
-    }
-
-    setState(() {
-      // إعادة الشخصية إلى الموضع الأصلي بسلاسة بعد النزول الكامل
-      characterY = initialCharacterY;
-      isJumping = false;
-    });
   }
 
-  // التحقق مما إذا كانت الشخصية اصطدمت بصندوق
-  bool checkCollisionWithBoxes() {
-    double boxWidth = 200.0; // عرض الصندوق
-    double boxX = scrollOffset;
-
-    for (int i = 0; i < letterBoxes.length; i++) {
-      double boxLeft = boxX + (i * (boxWidth + 20)); // حساب موقع الصندوق
-      double boxRight = boxLeft + boxWidth;
-
-      // تحقق مما إذا كانت الشخصية تقترب من الصندوق
-      if (characterX + 100 >= boxLeft && characterX + 100 <= boxRight) {
-        // إذا كانت الشخصية تصطدم بالصندوق
-        if (characterY >= groundY - 50) {
-          return true; // تمنع الحركة الأفقية
-        }
-      }
-    }
-    return false; // تسمح بالحركة الأفقية إذا لم يكن هناك اصطدام
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // الأرضية في الخلف
-          Positioned.fill(
-            child: Ground(key: groundKey), // الأرضية تتحرك بشكل مستقل
+          GameBackground(),
+          GameGround(),
+          GameCharacter(
+            characterX: characterX, // تمرير إحداثيات X
+            characterY: characterY, // تمرير إحداثيات Y
+            isMovingRight: isMovingRight,
           ),
-          // حاوية لدمج الشخصية والصناديق معًا في نفس الطبقة
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Stack(
-              children: [
-                // الصناديق والشخصية في نفس الطبقة
-                Positioned(
-                  bottom: 45, // وضع الصناديق فوق الأرضية
-                  left: scrollOffset, // تحريك الحروف بشكل مستقل
-                  child: Row(
-                    mainAxisSize: MainAxisSize
-                        .min, // إضافة هذا السطر لتفادي القيود غير النهائية
-                    children: letterBoxes, // عرض الحروف
-                  ),
-                ),
-                // الشخصية ثابتة في مكانها ولكن تتحرك عموديًا للقفز
-                Positioned(
-                  top: characterY, // تحريك الشخصية عموديًا
-                  left: MediaQuery.of(context).size.width / 2 -
-                      100, // تثبيت الشخصية في وسط الشاشة
-                  child: SizedBox(
-                    width: 350,
-                    height: 350,
-                    child: characterWidget,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // الأزرار للتحكم في الحركة
-          Positioned(
-            bottom: 30,
-            left: 20,
-            child: GestureDetector(
-              onLongPress: () => onLongPressStart(false), // الحركة لليسار
-              onLongPressUp: onLongPressEnd, // إيقاف الحركة عند رفع الضغط
-              child: Icon(Icons.arrow_left, size: 50),
-            ),
-          ),
-          Positioned(
-            bottom: 30,
-            right: 20,
-            child: GestureDetector(
-              onLongPress: () => onLongPressStart(true), // الحركة لليمين
-              onLongPressUp: onLongPressEnd, // إيقاف الحركة عند رفع الضغط
-              child: Icon(Icons.arrow_right, size: 50),
-            ),
-          ),
-          // Gesture لتفعيل القفز
+          FloatingPlatform(platformX: 300, platformY: 150), // المنصة العائمة
+          Obstacle(obstacleX: 500), // العائق
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
           GestureDetector(
-            onVerticalDragStart: (_) => jump(), // القفز عند السحب لأعلى
+            onPanStart: (_) => startMoving(true), // بدء الحركة لليمين عند الضغط
+            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
+            child: FloatingActionButton(
+              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
+              child: Icon(Icons.arrow_forward),
+            ),
+          ),
+          GestureDetector(
+            onPanStart: (_) =>
+                startMoving(false), // بدء الحركة لليسار عند الضغط
+            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
+            child: FloatingActionButton(
+              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
+              child: Icon(Icons.arrow_back),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: jump,
+            child: Icon(Icons.arrow_upward),
           ),
         ],
       ),

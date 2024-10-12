@@ -112,9 +112,9 @@ flutter:
     - assets/carsong.mp3
     - assets/correct.mp3
     #Mario:
-    - assets/Ground1.png 
-    - assets/Ground2.png 
-    - assets/Ground3.png 
+    - assets/UnderGround1.png 
+    - assets/UnderGround2.png 
+    - assets/Clouds.png
     - assets/LeftChar.gif
     - assets/RightChar.gif
     - assets/StaticLeftChar.png
