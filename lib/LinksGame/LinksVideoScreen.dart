@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'gameScree.dart';
 
-class VideoScreen extends StatefulWidget {
+class LinksVideoScreen extends StatefulWidget {
   @override
   _VideoScreenState createState() => _VideoScreenState();
 }
 
-class _VideoScreenState extends State<VideoScreen> {
+class _VideoScreenState extends State<LinksVideoScreen> {
   late VideoPlayerController _controller;
   bool _isPlaying = false;
 
