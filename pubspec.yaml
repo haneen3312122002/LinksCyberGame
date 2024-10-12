@@ -111,6 +111,13 @@ flutter:
     - assets/car.mp4
     - assets/carsong.mp3
     - assets/correct.mp3
+
+    #trojanHorseGame :
+    - assets/desktop1.png
+    - assets/desktop2.png
+    - assets/Evil.mp3
+    - assets/Evil laugh.mp3
+    - assets/instalogo.png 
     #Mario:
     - assets/UnderGround1.png 
     - assets/UnderGround2.png 

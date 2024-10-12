@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cybergame/HttpGame/HttpGameScreen.dart';
+import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart'; // Import TrojanHorseGameScreen
 
 class WebGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -76,13 +77,21 @@ class WebGameSection extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) => HttpGameScreen()),
                   );
+                } else if (index == 1) {
+                  // Navigate to TrojanHorseGameScreen when index is 1 for "Trojan Horse Game"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TrojanHorseGame()),
+                  );
                 }
               },
               child: Center(
                 child: Text(
                   index == 0
                       ? 'لعبة حواجز الانترنت '
-                      : 'Part ${index + 1}', // Display custom text for part 1
+                      : index == 1
+                          ? 'لعبة حصان طروادة'
+                          : 'Part ${index + 1}', // Display custom text for Trojan Horse part
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
