@@ -59,7 +59,7 @@ class LinkClassificationGame extends StatelessWidget {
           },
           home: Scaffold(
             backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-            body: MarioGame(),
+            body: HomePage(),
           ),
           builder: (context, widget) {
             // Force RTL layout direction
