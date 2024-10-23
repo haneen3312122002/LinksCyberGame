@@ -89,6 +89,9 @@ flutter:
     - assets/CyberAttackPart.png
     - assets/MobileSecurityPart.png
     - assets/SpaceBack.png
+    - assets/linkback.png
+    - assets/doorback.png
+    - assets/carback.png
     #homepage:
     - assets/BackGround1.png 
     #sessionLayer: 
@@ -118,6 +121,8 @@ flutter:
     - assets/Evil.mp3
     - assets/Evil laugh.mp3
     - assets/instalogo.png 
+    - assets/trojenHorse.png 
+
     #Mario:
     - assets/UnderGround1.png 
     - assets/UnderGround2.png 

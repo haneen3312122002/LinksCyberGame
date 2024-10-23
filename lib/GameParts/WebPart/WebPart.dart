@@ -44,7 +44,14 @@ class WebGameSection extends StatelessWidget {
               ),
               child: ClipOval(
                 child: Image.asset(
-                  'assets/Street1.png', // Path to your image
+                  // Conditional image logic based on the index
+                  index == 1
+                      ? 'assets/trojenHorse.png' // Show trojenHorse.png for index 1
+                      : index == 2
+                          ? 'assets/doorback.png' // Show doorback.png for index 2
+                          : index == 3
+                              ? 'assets/linkback.png' // Show linkback.png for index 3
+                              : 'assets/Street1.png', // Default image for other indices
                   fit: BoxFit.cover, // Fit image to cover the circle
                   width: circleDiameter,
                   height: circleDiameter,
