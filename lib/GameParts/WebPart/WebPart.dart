@@ -1,3 +1,5 @@
+import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
+import 'package:cybergame/LinksGame/LinksVideoScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cybergame/HttpGame/HttpGameScreen.dart';
 import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart'; // Import TrojanHorseGameScreen
@@ -72,16 +74,28 @@ class WebGameSection extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 if (index == 0) {
-                  // Navigate to NetworkGameScreen when index is 0 for "لعبة تركيب الشبكات"
+                  // Navigate to HttpGameScreen when index is 0 for "لعبة حواجز الانترنت"
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => HttpGameScreen()),
                   );
                 } else if (index == 1) {
-                  // Navigate to TrojanHorseGameScreen when index is 1 for "Trojan Horse Game"
+                  // Navigate to TrojanHorseGame when index is 1 for "لعبة حصان طروادة"
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => TrojanHorseGame()),
+                  );
+                } else if (index == 2) {
+                  // Navigate to DoorsVideoScreen when index is 2 for "الابواب"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => DoorsVideoScreen()),
+                  );
+                } else if (index == 3) {
+                  // Navigate to LinksVideoScreen when index is 3 for "لينكات"
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LinksVideoScreen()),
                   );
                 }
               },
@@ -91,7 +105,11 @@ class WebGameSection extends StatelessWidget {
                       ? 'لعبة حواجز الانترنت '
                       : index == 1
                           ? 'لعبة حصان طروادة'
-                          : 'Part ${index + 1}', // Display custom text for Trojan Horse part
+                          : index == 2
+                              ? 'الابواب'
+                              : index == 3
+                                  ? 'لعبة فحص الروابط '
+                                  : '',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,

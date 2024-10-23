@@ -3,13 +3,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'video_background.dart';
 import 'DataDescriptionBox.dart';
 import 'choice_row.dart';
+
 //hi
-class GameScreen extends StatefulWidget {
+class CarGameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> {
+class _GameScreenState extends State<CarGameScreen> {
   String correctProtocol = '';
   final audioPlayer = AudioPlayer();
   int stageCount = 0; // عداد المراحل

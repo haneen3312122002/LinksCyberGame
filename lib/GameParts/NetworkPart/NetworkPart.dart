@@ -4,7 +4,7 @@ import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/SessionLayerGame/SessionLayerScreen.dart';
 import 'package:cybergame/SessionLayerGame/VideoScreen.dart';
 import 'package:cybergame/portGame/port_game.dart'; // استيراد شاشة PortGame
-import 'package:cybergame/SessionLayerGame/VideoScreen.dart'; // استيراد الكلاس الجديد
+import 'package:cybergame/CarGame/CarMain.dart'; // استيراد شاشة CarGameScreen
 
 class NetworkGameSection extends StatelessWidget {
   final int index; // Index of the section
@@ -86,10 +86,10 @@ class NetworkGameSection extends StatelessWidget {
                         builder: (context) => NetworkGameScreen()),
                   );
                 } else if (index == 2) {
-                  // Navigate to PortGameScreen when index is 2 for "Port Game"
+                  // Navigate to CarGameScreen when index is 2 for "لعبة السيارات"
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => VideoScreen()),
+                    MaterialPageRoute(builder: (context) => CarGameScreen()),
                   );
                 }
               },
@@ -99,7 +99,7 @@ class NetworkGameSection extends StatelessWidget {
                       ? 'لعبة تركيب الشبكات'
                       : index == 1
                           ? 'لعبة طبقة الجلسات'
-                          : 'لعبة المنافذ', // النص الجديد لجزء 3
+                          : 'لعبة السيارات', // النص الجديد للقسم
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
