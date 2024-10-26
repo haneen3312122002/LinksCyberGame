@@ -30,37 +30,47 @@ class ApiService {
 //password game
 
 // API service for the password game
+
 class ApiServicePasswordGame {
   static const String baseUrl =
-      'http://192.168.100.100:5000'; // تأكد من استبدال الـ IP بالعنوان الخاص بك
+      'http://192.168.100.100:5000'; // Replace with actual IP
 
-  static Future<String> checkPassword(String password) async {
+  // Send both the password and personal info to the backend for validation
+  static Future<String> checkPasswordAndInfo(
+      String password, Map<String, String> personalInfo) async {
     if (password.isEmpty) {
       throw Exception('Password cannot be empty');
     }
 
-    // Construct the URL with the password as a query parameter
-    final url = Uri.parse(
-        '$baseUrl/check_password?password=${Uri.encodeComponent(password)}');
+    final url = Uri.parse('$baseUrl/check_password_and_info');
+    final body = jsonEncode({
+      'password': password,
+      'personalInfo': personalInfo,
+    });
 
-    // إرسال الطلب باستخدام GET
-    final response = await http.get(url);
+    // Send a POST request with the password and personal info
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
 
-    // معالجة الاستجابة
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       String strength = jsonResponse['strength'];
 
-      // تأكد أن النتيجة تكون "Weak" أو "Mid" أو "Strong"
+      // Ensure that the response contains a valid strength value
       if (strength == 'Strong' || strength == 'Mid' || strength == 'Weak') {
         return strength;
       } else {
         throw Exception('Unexpected strength value returned from the server');
       }
     } else if (response.statusCode == 400) {
-      throw Exception('Invalid request: Password parameter is missing');
+      throw Exception(
+          'Invalid request: Ensure that both password and personal information are provided');
     } else {
-      throw Exception('Failed to check password: ${response.statusCode}');
+      throw Exception(
+          'Failed to check password and personal information: ${response.statusCode}');
     }
   }
 }
