@@ -1,99 +1,262 @@
+import 'package:cybergame/CarGame/CarMain.dart';
+import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
+import 'package:cybergame/LinksGame/LinksVideoScreen.dart';
+import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
+import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
+import 'package:cybergame/portGame/port_game.dart';
+import 'package:cybergame/portGame/protocol_ports_game.dart';
 import 'package:flutter/material.dart';
-import 'package:cybergame/GameParts/CryptoPart/CryptoHomePage.dart'; // Ensure CryptoHomePage is correctly imported
-import '/GameParts/NetworkPart/NetworkHome.dart';
-import '/GameParts/WebPart/WebHomePage.dart';
+import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 
-class GamePartsCard extends StatelessWidget {
-  final String partTitle;
-  final String imagePath; // Image path for each card
+// Placeholder pages for each part, which you can replace with actual pages later
+class CryptoPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PlaceholderPage(title: 'Cryptography');
+  }
+}
 
-  GamePartsCard({required this.partTitle, required this.imagePath});
+class NetworkPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PlaceholderPage(title: 'Networking');
+  }
+}
+
+// Continue creating a new class for each part like this...
+// Add as many unique pages as needed.
+
+class PlaceholderPage extends StatelessWidget {
+  final String title;
+
+  PlaceholderPage({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    // Fixed card dimensions
-    double cardWidth = 100; // Fixed width
-    double cardHeight = 100; // Fixed height to maintain aspect ratio
-
-    return InkWell(
-      onTap: () {
-        if (partTitle == 'Crypto part' || partTitle == 'Part 1') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CryptoHomePage()),
-          );
-        } else if (partTitle == 'network games' || partTitle == 'Part 3') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => NetworkHomePage()),
-          );
-        } else if (partTitle == 'web part' || partTitle == 'Part 2') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WebHomePage()),
-          );
-        }
-      },
-      child: Container(
-        width: cardWidth,
-        height: cardHeight,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Colors.yellow,
-            width: 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],
-          image: DecorationImage(
-            image: AssetImage(imagePath),
-            fit: BoxFit.cover,
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Center(
+        child: Text(
+          'Welcome to $title',
+          style: TextStyle(fontSize: 24),
         ),
       ),
     );
   }
 }
 
-//........................................
-class CryptoGamesGrid extends StatelessWidget {
-  final List<String> imagesPaths = [
-    'assets/Cryptographygame.png',
-    'assets/webSecurityPart.png',
-    'assets/netWorkPart.png',
-    'assets/CyberAttackPart.png',
-    'assets/MobileSecurityPart.png',
-    'assets/CyberAttackPart.png',
-    'assets/MobileSecurityPart.png',
-    'assets/CyberAttackPart.png',
-    'assets/MobileSecurityPart.png',
-    'assets/Cryptographygame.png',
-  ];
+class GamePartsCard extends StatelessWidget {
+  final String partTitle;
+  final String imagePath;
+  final int partNumber;
 
+  GamePartsCard(
+      {required this.partTitle,
+      required this.imagePath,
+      required this.partNumber});
+
+  // Function to navigate to a specific page based on part number
+  void navigateToPart(BuildContext context) {
+    switch (partNumber) {
+      case 1:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => NetworkGameScreen()));
+        break;
+      case 2:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CryptoGameScreen()));
+        break;
+
+      case 3:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+        break;
+      case 4:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+        break;
+      case 5:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+        break;
+      case 6:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => TrojanHorseGame()));
+        break;
+      case 21:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CarGameScreen()));
+        break;
+      case 22:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => DoorsVideoScreen()));
+        break;
+      case 23:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => port_game()));
+        break;
+      // Add more cases here for each part's unique page...
+      default:
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PlaceholderPage(title: partTitle)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double circleDiameter = MediaQuery.of(context).size.width * 0.2;
+
+    return Center(
+      child: Stack(
+        alignment: AlignmentDirectional.topCenter,
+        children: [
+          // Main image circle
+          Positioned(
+            top: circleDiameter / 2,
+            child: Container(
+              width: circleDiameter,
+              height: circleDiameter,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.green,
+                border: Border.all(
+                  color: Colors.yellow,
+                  width: 3.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          // Title container with top-right number circle and navigation functionality
+          Container(
+            margin: EdgeInsets.only(top: circleDiameter + 20),
+            width: MediaQuery.of(context).size.width * 0.6,
+            height: MediaQuery.of(context).size.height * 0.1,
+            child: Stack(
+              children: [
+                // Background title container
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 38, 179, 255),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.yellow, width: 3.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      navigateToPart(context); // Navigate to the specific part
+                    },
+                    child: Center(
+                      child: Text(
+                        partTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Number circle at the top right of the title container
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.yellow,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        partNumber.toString(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Main Grid Widget
+class CryptoGamesGrid extends StatelessWidget {
+  final List<String> imagesPaths =
+      List.generate(25, (index) => 'assets/placeholder.png');
   final List<String> partsTitles = [
-    'Crypto part',
-    'web part',
-    'network games',
-    'Part 4',
-    'Part 5',
-    'Part 6',
-    'Part 7',
-    'Part 8',
-    'Part 9',
-    'Part 10',
+    'ما هي الشبكات؟', //a
+    'هعا لنؤمن الشبكة معا', //a
+    'الان لنتصفح الويب بامان ', //a
+    'لنلقي نظرة على اساسيات التشفير ', //a
+    'سنتعمق قليلا في التشفير ',
+    'تعرف وانتبه من خطر الفايروسات ', //a
+    'الان، كافح الفايروسات ',
+    'ميز بين انواع الفايروسات ',
+    'ابن جدار امن لشبكتك ',
+    'جرب هجوم الDOS',
+    'ما هو الSQL Injection',
+    'برامج الفدية',
+    'احذر من عجمات التصيد ',
+    'الهندسة الاجتماعية  هي الاخطر ',
+    'القرصنة الاخلاقية',
+    'احمي معلوماتك الشخصية ',
+    'لا للتنمر الالكتروني ',
+    'قانون الجرائم الالكترونية ',
+    'كيف نستجيب  للحوادث السيبرانية؟ ',
+    'التحدي النهائي ',
+    'لعبة السيارات ',
+    'لعبة الابواب',
+    'لعبة المنافذ ',
+    'Security Audits',
+    'User Training'
   ];
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount =
-        screenWidth > 600 ? 4 : 3; // More columns for wider screens
+    int crossAxisCount = screenWidth > 600 ? 4 : 3;
 
     return GridView.builder(
       padding: EdgeInsets.all(20),
@@ -101,13 +264,14 @@ class CryptoGamesGrid extends StatelessWidget {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 30,
         mainAxisSpacing: 30,
-        childAspectRatio: 1,
+        childAspectRatio: 0.8,
       ),
       itemCount: partsTitles.length,
       itemBuilder: (context, index) {
         return GamePartsCard(
           partTitle: partsTitles[index],
           imagePath: imagesPaths[index],
+          partNumber: index + 1, // Pass part number
         );
       },
     );
