@@ -96,9 +96,9 @@ class NetworkGameSection extends StatelessWidget {
               child: Center(
                 child: Text(
                   index == 0
-                      ? 'لعبة تركيب الشبكات'
+                      ? 'لعبة منافذ الشبكة'
                       : index == 1
-                          ? 'لعبة طبقة الجلسات'
+                          ? 'لعبة تركيب الشبكة'
                           : 'لعبة السيارات', // النص الجديد للقسم
                   style: TextStyle(
                     color: Colors.white,

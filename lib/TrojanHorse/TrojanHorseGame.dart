@@ -1,65 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart'; // استيراد مكتبة الصوت
-import 'HackerScreen.dart'; // استدعاء كلاس شاشة الهاكر
-import 'VictimScreen.dart'; // استدعاء كلاس شاشة الضحية
+import 'package:audioplayers/audioplayers.dart';
+import 'HackerScreen.dart';
+import 'VictimScreen.dart';
 
 class TrojanHorseGame extends StatefulWidget {
   @override
-  TwoUsersScreenState createState() => TwoUsersScreenState();
+  _TrojanHorseGameState createState() => _TrojanHorseGameState();
 }
 
-class TwoUsersScreenState extends State<TrojanHorseGame> {
-  String virusType = ''; // تخزين نوع الفيروس
-  bool showFakeGoogleIcon = false; // لتحديد إذا كان يجب عرض أيقونة غوغل المزيفة
-  AudioPlayer audioPlayer = AudioPlayer(); // متغير لتشغيل الصوت
+class _TrojanHorseGameState extends State<TrojanHorseGame> {
+  final ValueNotifier<String> virusTypeNotifier = ValueNotifier('');
+  final ValueNotifier<bool> fakeGoogleIconNotifier = ValueNotifier(false);
+  late AudioPlayer backgroundAudioPlayer;
 
   @override
   void initState() {
     super.initState();
-    _playBackgroundMusic(); // تشغيل الصوت عند بدء اللعبة
+    backgroundAudioPlayer = AudioPlayer();
+    _initializeAndPlayBackgroundMusic();
   }
 
   @override
   void dispose() {
-    audioPlayer.stop(); // إيقاف الصوت عند إغلاق الشاشة
+    backgroundAudioPlayer.stop();
+    backgroundAudioPlayer.dispose();
     super.dispose();
   }
 
-  // تشغيل الصوت في الخلفية
-  void _playBackgroundMusic() async {
-    await audioPlayer
-        .setReleaseMode(ReleaseMode.loop); // تكرار الصوت بشكل مستمر
-    await audioPlayer
-        .play(AssetSource('Evil laugh.mp3')); // تشغيل الصوت من assets
+  Future<void> _initializeAndPlayBackgroundMusic() async {
+    try {
+      await backgroundAudioPlayer.setReleaseMode(ReleaseMode.loop);
+      await backgroundAudioPlayer.play(AssetSource('Evil_laugh.mp3'));
+    } catch (error) {
+      print("Error playing background music: $error");
+    }
+  }
+
+  void _onVirusSend(String selectedVirusType) {
+    virusTypeNotifier.value = selectedVirusType;
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final spacing = screenSize.width * 0.02;
+
     return Scaffold(
       body: Row(
         children: [
-          // شاشة الهاكر
           Expanded(
+            flex: 1,
             child: HackerScreen(
-              onVirusSend: () {
-                setState(() {
-                  virusType =
-                      'رسائل منبثقة'; // تمرير نوع الفيروس بدلاً من حالة حذف الملف
-                  showFakeGoogleIcon =
-                      true; // عند إرسال الفيروس، يتم إظهار الأيقونة المزيفة
-                });
-              },
+              onVirusSend: (virusType) => _onVirusSend(virusType),
             ),
           ),
-          // مسافة بين الشاشتين
-          SizedBox(width: 20), // يمكنك تعديل العرض حسب الحاجة
-
-          // شاشة الضحية
+          SizedBox(width: spacing),
           Expanded(
+            flex: 1,
             child: VictimScreen(
-              virusType: virusType,
-              showFakeGoogleIcon:
-                  showFakeGoogleIcon, // تمرير الحالة إلى شاشة الضحية
+              virusTypeNotifier: virusTypeNotifier,
+              showFakeGoogleIconNotifier: fakeGoogleIconNotifier,
             ),
           ),
         ],

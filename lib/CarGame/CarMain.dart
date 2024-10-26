@@ -1,10 +1,9 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'video_background.dart';
 import 'DataDescriptionBox.dart';
-import 'choice_row.dart';
 
-//hi
 class CarGameScreen extends StatefulWidget {
   @override
   _GameScreenState createState() => _GameScreenState();
@@ -13,75 +12,55 @@ class CarGameScreen extends StatefulWidget {
 class _GameScreenState extends State<CarGameScreen> {
   String correctProtocol = '';
   final audioPlayer = AudioPlayer();
-  int stageCount = 0; // عداد المراحل
-  final GlobalKey<DataDescriptionBoxState> dataDescriptionBoxKey = GlobalKey<
-      DataDescriptionBoxState>(); // مفتاح للتحكم في DataDescriptionBox
-  late AudioPlayer backgroundPlayer; // مشغل الخلفية
+  int stageCount = 0;
+  final GlobalKey<DataDescriptionBoxState> dataDescriptionBoxKey =
+      GlobalKey<DataDescriptionBoxState>();
+  late AudioPlayer backgroundPlayer;
 
   @override
   void initState() {
     super.initState();
-    _playBackgroundMusic(); // تشغيل الموسيقى عند بدء اللعبة
+    _playBackgroundMusic();
   }
 
   @override
   void dispose() {
-    backgroundPlayer.dispose(); // إيقاف الموسيقى عند الخروج من الشاشة
+    backgroundPlayer.dispose();
     super.dispose();
   }
 
-  // تشغيل الموسيقى الخلفية
   void _playBackgroundMusic() async {
     backgroundPlayer = AudioPlayer();
-    await backgroundPlayer.play(AssetSource('carsong.mp3'),
-        volume: 0.5); // تحديد ملف الصوت وتكراره
-    backgroundPlayer
-        .setReleaseMode(ReleaseMode.loop); // تشغيل الموسيقى بشكل متكرر
+    await backgroundPlayer.play(AssetSource('carsong.mp3'), volume: 0.5);
+    backgroundPlayer.setReleaseMode(ReleaseMode.loop);
   }
 
   void _showResultMessage(String message, bool correct) {
-    showDialog(
+    final color = correct ? Colors.green : Colors.red;
+    final dialogType = correct ? DialogType.success : DialogType.error;
+
+    AwesomeDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: correct
-            ? Colors.green[100]
-            : Colors.red[100], // تغيير خلفية الرسالة بناءً على الإجابة
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        content: Text(
-          message,
-          style: TextStyle(
-            fontSize: 18,
-            color: correct
-                ? Colors.green
-                : Colors.red, // تغيير لون النص بناءً على الإجابة
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              if (correct) {
-                setState(() {
-                  stageCount++; // زيادة العداد عند الإجابة الصحيحة
-                });
-                _loadNextData(); // تحميل بيانات جديدة
-              }
-            },
-            child: Text(
-              'OK',
-              style: TextStyle(
-                fontSize: 16,
-                color: correct ? Colors.green : Colors.red, // لون زر "OK"
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+      dialogType: dialogType,
+      animType: AnimType.leftSlide,
+      headerAnimationLoop: false,
+      title: correct ? 'أحسنت!' : 'خطأ!',
+      desc: message,
+      btnOkOnPress: () {
+        if (correct) {
+          setState(() {
+            stageCount++;
+          });
+          _loadNextData();
+        }
+      },
+      btnOkText: 'موافق',
+      btnOkColor: color,
+      btnOkIcon: Icons.check_circle,
+      descTextStyle:
+          TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
+    ).show();
+
     _playSound(correct ? "correct.mp3" : "Winning.mp3");
   }
 
@@ -90,7 +69,6 @@ class _GameScreenState extends State<CarGameScreen> {
   }
 
   void _loadNextData() {
-    // استدعاء دالة توليد بيانات جديدة في DataDescriptionBox
     dataDescriptionBoxKey.currentState?.generateRandomData();
   }
 
@@ -105,12 +83,15 @@ class _GameScreenState extends State<CarGameScreen> {
 
   void _onDataGenerated(String protocol) {
     setState(() {
-      correctProtocol = protocol; // تخزين البروتوكول الصحيح
+      correctProtocol = protocol;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -121,20 +102,30 @@ class _GameScreenState extends State<CarGameScreen> {
                 DataDescriptionBox(
                   key: dataDescriptionBoxKey,
                   onDataGenerated: _onDataGenerated,
-                ), // عرض بيانات جديدة
-                Spacer(),
-                ChoiceRow(
-                  onTcpSelected: () => _onChoiceMade('TCP'),
-                  onUdpSelected: () => _onChoiceMade('UDP'),
                 ),
-                SizedBox(height: 50),
+                Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ChoiceContainer(
+                      label: 'TCP',
+                      onTap: () => _onChoiceMade('TCP'),
+                    ),
+                    SizedBox(width: screenWidth * 0.04),
+                    ChoiceContainer(
+                      label: 'UDP',
+                      onTap: () => _onChoiceMade('UDP'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: screenHeight * 0.05),
               ],
             ),
           ),
           Positioned(
-            top: 30,
-            right: 20,
-            child: StageCounter(stageCount: stageCount), // عداد المراحل
+            top: screenHeight * 0.02,
+            right: screenWidth * 0.02,
+            child: StageCounter(stageCount: stageCount),
           ),
         ],
       ),
@@ -142,7 +133,50 @@ class _GameScreenState extends State<CarGameScreen> {
   }
 }
 
-// عداد المراحل داخل دائرة
+// ChoiceContainer with rounded corners and smaller size for TCP/UDP
+class ChoiceContainer extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  ChoiceContainer({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: screenWidth * 0.18,
+        padding: EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.grey, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: screenWidth * 0.04,
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Compact StageCounter for top-right
 class StageCounter extends StatelessWidget {
   final int stageCount;
 
@@ -150,32 +184,34 @@ class StageCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         Container(
-          width: 70,
-          height: 70,
+          width: screenWidth * 0.08,
+          height: screenWidth * 0.08,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white, // لون الخلفية
+            color: Colors.white,
             border: Border.all(
-              color: Colors.red, // لون الحدود
-              width: 4,
+              color: Colors.red,
+              width: screenWidth * 0.005,
             ),
           ),
           child: Center(
             child: Text(
               '$stageCount',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: screenWidth * 0.04,
                 fontWeight: FontWeight.bold,
-                color: Colors.red, // لون النص
+                color: Colors.red,
               ),
             ),
           ),
         ),
-        SizedBox(height: 10),
-        Icon(Icons.flag, color: Colors.red, size: 50), // أيقونة العداد
+        SizedBox(height: screenWidth * 0.02),
+        Icon(Icons.flag, color: Colors.red, size: screenWidth * 0.06),
       ],
     );
   }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'VictimScreen.dart';
 
 class HackerScreen extends StatefulWidget {
-  final VoidCallback onVirusSend;
+  final Function(String virusType) onVirusSend;
 
   HackerScreen({required this.onVirusSend});
 
@@ -37,10 +36,9 @@ class _HackerScreenState extends State<HackerScreen> {
         child: Center(
           child: Container(
             width: screenSize.width * 0.9,
-            height: screenSize.height * 0.9,
-            margin: EdgeInsets.all(screenSize.width * 0.02),
+            padding: EdgeInsets.all(screenSize.width * 0.02),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 10),
+              border: Border.all(color: Colors.red, width: 10),
               image: DecorationImage(
                 image: AssetImage('assets/desktop2.png'),
                 fit: BoxFit.cover,
@@ -61,8 +59,11 @@ class _HackerScreenState extends State<HackerScreen> {
 
   List<Widget> buildUIComponents(Size screenSize) {
     return [
-      Text('أداة إنشاء الفيروس',
-          style: TextStyle(color: Colors.white, fontSize: 24)),
+      Text(
+        'أداة إنشاء الفيروس',
+        style:
+            TextStyle(color: Colors.white, fontSize: screenSize.width * 0.06),
+      ),
       SizedBox(height: screenSize.height * 0.02),
       buildDropDown('نوع الفيروس:', selectedVirusType, virusTypes, (newValue) {
         setState(() => selectedVirusType = newValue!);
@@ -83,34 +84,22 @@ class _HackerScreenState extends State<HackerScreen> {
       }),
       Center(
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            textStyle: TextStyle(fontSize: 16, color: Colors.white),
+          ),
           onPressed: () {
-            if (activationMethod == 'مؤجل') {
-              // إذا كانت طريقة التفعيل مؤجلة، نضع مؤقت لمدة 10 ثواني
-              Future.delayed(Duration(seconds: 10), () {
-                _sendVirusToVictim(); // استدعاء الفيروس بعد التأخير
-              });
-            } else {
-              _sendVirusToVictim(); // تشغيل الفيروس مباشرة
-            }
+            // Call onVirusSend with the selectedVirusType
+            widget.onVirusSend(selectedVirusType);
           },
-          child: Text('حفظ وتشغيل الفيروس'),
+          child: Text(
+            'حفظ وتشغيل الفيروس',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
     ];
-  }
-
-  // دالة لإرسال الفيروس إلى شاشة الضحية
-  void _sendVirusToVictim() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VictimScreen(
-          virusType: selectedVirusType, // تمرير نوع الفيروس
-          showFakeGoogleIcon: disguiseOption ==
-              'أيقونة ملف زائفة', // تمرير حالة الأيقونة المزيفة
-        ),
-      ),
-    );
   }
 
   Widget buildDropDown(String label, String currentValue, List<String> options,
@@ -122,6 +111,7 @@ class _HackerScreenState extends State<HackerScreen> {
         DropdownButton<String>(
           value: currentValue,
           dropdownColor: Colors.grey[800],
+          isExpanded: true,
           items: options.map((String value) {
             return DropdownMenuItem<String>(
               value: value,

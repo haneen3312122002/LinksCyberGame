@@ -119,9 +119,10 @@ flutter:
     - assets/desktop1.png
     - assets/desktop2.png
     - assets/Evil.mp3
-    - assets/Evil laugh.mp3
+    - assets/Evil_laugh.mp3
     - assets/instalogo.png 
     - assets/trojenHorse.png 
+    - assets/TroBack.png
 
     #Mario:
     - assets/UnderGround1.png 
