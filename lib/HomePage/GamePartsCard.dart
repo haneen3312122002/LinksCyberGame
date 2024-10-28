@@ -71,7 +71,7 @@ class GamePartsCard extends StatelessWidget {
 
       case 3:
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+            MaterialPageRoute(builder: (context) => DoorsVideoScreen()));
         break;
       case 4:
         Navigator.push(context,
@@ -84,6 +84,14 @@ class GamePartsCard extends StatelessWidget {
       case 6:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => TrojanHorseGame()));
+        break;
+      case 12:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => port_game()));
+        break;
+      case 13:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CarGameScreen()));
         break;
       case 21:
         Navigator.push(
@@ -226,31 +234,32 @@ class CryptoGamesGrid extends StatelessWidget {
   final List<String> imagesPaths =
       List.generate(25, (index) => 'assets/placeholder.png');
   final List<String> partsTitles = [
-    'ما هي الشبكات؟', //a
-    'هعا لنؤمن الشبكة معا', //a
-    'الان لنتصفح الويب بامان ', //a
-    'لنلقي نظرة على اساسيات التشفير ', //a
-    'سنتعمق قليلا في التشفير ',
-    'تعرف وانتبه من خطر الفايروسات ', //a
-    'الان، كافح الفايروسات ',
-    'ميز بين انواع الفايروسات ',
-    'ابن جدار امن لشبكتك ',
-    'جرب هجوم الDOS',
-    'ما هو الSQL Injection',
-    'برامج الفدية',
-    'احذر من عجمات التصيد ',
-    'الهندسة الاجتماعية  هي الاخطر ',
-    'القرصنة الاخلاقية',
-    'احمي معلوماتك الشخصية ',
-    'لا للتنمر الالكتروني ',
-    'قانون الجرائم الالكترونية ',
-    'كيف نستجيب  للحوادث السيبرانية؟ ',
-    'التحدي النهائي ',
-    'لعبة السيارات ',
-    'لعبة الابواب',
-    'لعبة المنافذ ',
-    'Security Audits',
-    'User Training'
+    'ما هي الشبكات؟', //a1
+    'دعنا نضع كلمة سر قوية للشبكة', //a2
+    'الان لنطلب موقع على الويب', //3
+    'الان لنتصفح الويب بامان ', //a4
+    'لنلقي نظرة على اساسيات التشفير ', //a5
+    'سنتعمق قليلا في التشفير ', //6
+    'تعرف وانتبه من خطر الفايروسات ', //a7
+    'الان، كافح الفايروسات ', //8
+    'ميز بين انواع الفايروسات ', //9
+    'ابن جدار امن لشبكتك ', //10
+    'جرب هجوم الDOS', //11
+
+    'ما هي البروتوكولات والمنافذ؟', //12
+    'بروتوكولات نقل البيانات  ', //13
+    'ما هو sql injection', //14
+    'يرامج الفدية', //15
+    'هجمات التصيد', //16
+    'الهندسة الاجتماعية هي الاخطر', //17
+    'القرصنة الاخلاقية', //18
+    'احمي معلوماتك على الانترنت ', //19
+    'لا للتنمر الالكتروني ', //20
+    'قانون الجرائم الالكترونية', //21
+    'الاستجابة للحوادث الالكترونية', //22
+    'التحدي النهائي', //23
+    'Security Audits', //24
+    'User Training' //25
   ];
 
   @override
