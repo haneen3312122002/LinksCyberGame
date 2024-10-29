@@ -123,6 +123,10 @@ flutter:
     - assets/instalogo.png 
     - assets/trojenHorse.png 
     - assets/TroBack.png
+    - assets/HourseL1.png
+    - assets/Box.png
+    - assets/Danger.png
+    - assets/Lock.png
 
     #Mario:
     - assets/UnderGround1.png 
