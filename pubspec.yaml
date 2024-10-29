@@ -136,3 +136,5 @@ flutter:
     - assets/RightChar.gif
     - assets/StaticLeftChar.png
     - assets/StaticRightChar.png
+    #net game:
+    - assets/Stand.png  
