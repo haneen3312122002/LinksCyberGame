@@ -17,14 +17,14 @@ class _VideoScreenState extends State<LinksVideoScreen> {
     _controller = VideoPlayerController.asset("assets/the_char.mp4")
       ..initialize().then((_) {
         setState(() {});
-        _controller.setLooping(false); // لا يعيد تشغيل الفيديو تلقائيًا
+        _controller.setLooping(false); // No auto-repeat
       });
 
-    // للاستماع إلى نهاية الفيديو وإيقاف التشغيل
+    // Listen to video end to stop playing
     _controller.addListener(() {
       if (_controller.value.position == _controller.value.duration) {
         setState(() {
-          _isPlaying = false; // تحديث حالة الزر
+          _isPlaying = false; // Update button state
         });
       }
     });
@@ -49,6 +49,7 @@ class _VideoScreenState extends State<LinksVideoScreen> {
   }
 
   void _skipVideo() {
+    _controller.pause(); // Pause the video to stop sound
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => GameScreen()),

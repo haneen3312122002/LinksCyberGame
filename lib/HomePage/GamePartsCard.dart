@@ -81,7 +81,7 @@ class GamePartsCard extends StatelessWidget {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => LinksVideoScreen()));
         break;
-      case 6:
+      case 7:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => TrojanHorseGame()));
         break;
