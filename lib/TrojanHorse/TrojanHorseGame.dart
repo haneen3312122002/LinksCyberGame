@@ -66,6 +66,7 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('إجابة خاطئة، حاول مرة أخرى!')),
       );
+      _resetLevel(); // Clear the answer on incorrect attempt
     }
   }
 
@@ -108,9 +109,9 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
 
     return Center(
       child: Container(
-        width: imageSize * 2.5, // Control the total grid size
+        width: imageSize * 2.5,
         child: GridView.count(
-          crossAxisCount: 2, // Display images in a 2x2 grid
+          crossAxisCount: 2,
           shrinkWrap: true,
           mainAxisSpacing: imageSize * 0.2,
           crossAxisSpacing: imageSize * 0.2,
@@ -134,7 +135,7 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
   Widget _buildLetterGrid(double fontSize, double buttonWidth) {
     List<String> letters = List<String>.from(levelAnswers[step].split(''))
       ..addAll(['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ']);
-    letters.shuffle(); // Shuffle letters to add a challenge
+    letters.shuffle();
     return Wrap(
       spacing: 3.0,
       runSpacing: 3.0,
@@ -181,6 +182,64 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
     );
   }
 
+  Widget _buildGameInterface(double screenWidth, double screenHeight) {
+    final double imageSize = screenWidth * 0.10;
+    final double fontSize = screenWidth * 0.020;
+    final double boxSize = screenWidth * 0.03;
+    final double buttonWidth = screenWidth * 0.05;
+
+    return Scaffold(
+      backgroundColor: Colors.yellow[100], // Background color for questions
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.02),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'المرحلة ${step + 1}: ${_getHint(step)}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: fontSize * 1.4, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: screenHeight * 0.015),
+              _buildImageGrid(step, imageSize),
+              SizedBox(height: screenHeight * 0.015),
+              _buildAnswerDisplay(boxSize, fontSize),
+              SizedBox(height: screenHeight * 0.015),
+              _buildLetterGrid(fontSize, buttonWidth),
+              SizedBox(height: screenHeight * 0.015),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _checkAnswer,
+                    child: Text('تحقق من الإجابة',
+                        style: TextStyle(fontSize: fontSize * 0.9)),
+                  ),
+                  SizedBox(width: screenWidth * 0.02),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (answer.isNotEmpty) {
+                        setState(() {
+                          answer = answer.substring(0, answer.length - 1);
+                          selectedLetters.removeLast();
+                        });
+                      }
+                    },
+                    child:
+                        Text('مسح', style: TextStyle(fontSize: fontSize * 0.9)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _onVirusSend(String virusType) {
     virusTypeNotifier.value = virusType;
   }
@@ -188,47 +247,8 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final double imageSize =
-        screenSize.width * 0.10; // Smaller image size for the grid
-    final double fontSize =
-        screenSize.width * 0.020; // Further reduced font size
-    final double boxSize =
-        screenSize.width * 0.03; // Smaller box for answer display
-    final double buttonWidth =
-        screenSize.width * 0.05; // Smaller button size for letters
-
     if (!isAuthenticated) {
-      return Scaffold(
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(screenSize.width * 0.02),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'المرحلة ${step + 1}: ${_getHint(step)}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: fontSize * 1.4, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: screenSize.height * 0.015),
-                _buildImageGrid(step, imageSize),
-                SizedBox(height: screenSize.height * 0.015),
-                _buildAnswerDisplay(boxSize, fontSize),
-                SizedBox(height: screenSize.height * 0.015),
-                _buildLetterGrid(fontSize, buttonWidth),
-                SizedBox(height: screenSize.height * 0.015),
-                ElevatedButton(
-                  onPressed: _checkAnswer,
-                  child: Text('تحقق من الإجابة',
-                      style: TextStyle(fontSize: fontSize * 0.9)),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      return _buildGameInterface(screenSize.width, screenSize.height);
     }
 
     return Scaffold(
