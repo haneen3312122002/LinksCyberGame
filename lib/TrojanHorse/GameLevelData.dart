@@ -15,7 +15,7 @@ class GameLevels {
       images: [
         "network_cable.png",
         "wifi_spread.png",
-        "computer_phone.png",
+        "MobileSecurityPart.png",
         "transfer_arrow.png"
       ],
     ),

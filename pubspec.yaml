@@ -87,7 +87,6 @@ flutter:
     - assets/webSecurityPart.png
     - assets/netWorkPart.png
     - assets/CyberAttackPart.png
-    - assets/MobileSecurityPart.png
     - assets/SpaceBack.png
     - assets/linkback.png
     - assets/doorback.png
@@ -130,6 +129,10 @@ flutter:
     - assets/Box.png
     - assets/Danger.png
     - assets/Lock.png
+    - assets/transfer_arrow.png
+    - assets/MobileSecurityPart.png
+    - assets/wifi_spread.png
+    - assets/network_cable.png
 
     #Mario:
     - assets/UnderGround1.png 
