@@ -7,7 +7,6 @@ import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
 import 'package:cybergame/portGame/port_game.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 
-// Placeholder pages for each part, which you can replace with actual pages later
 class CryptoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -48,12 +47,12 @@ class GamePartsCard extends StatelessWidget {
   final String imagePath;
   final int partNumber;
 
-  GamePartsCard(
-      {required this.partTitle,
-      required this.imagePath,
-      required this.partNumber});
+  GamePartsCard({
+    required this.partTitle,
+    required this.imagePath,
+    required this.partNumber,
+  });
 
-  // Function to navigate to a specific page based on part number
   void navigateToPart(BuildContext context) {
     switch (partNumber) {
       case 1:
@@ -84,7 +83,6 @@ class GamePartsCard extends StatelessWidget {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => CarGameScreen()));
         break;
-      // Add additional cases for each part's unique page if needed...
       default:
         Navigator.push(
             context,
@@ -101,7 +99,6 @@ class GamePartsCard extends StatelessWidget {
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
-          // Main image circle
           Positioned(
             top: circleDiameter / 2,
             child: Container(
@@ -131,14 +128,12 @@ class GamePartsCard extends StatelessWidget {
               ),
             ),
           ),
-          // Title container with top-right number circle and navigation functionality
           Container(
             margin: EdgeInsets.only(top: circleDiameter + 20),
             width: MediaQuery.of(context).size.width * 0.6,
             height: MediaQuery.of(context).size.height * 0.1,
             child: Stack(
               children: [
-                // Background title container
                 Container(
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 38, 179, 255),
@@ -155,7 +150,7 @@ class GamePartsCard extends StatelessWidget {
                   ),
                   child: InkWell(
                     onTap: () {
-                      navigateToPart(context); // Navigate to the specific part
+                      navigateToPart(context);
                     },
                     child: Center(
                       child: Text(
@@ -168,7 +163,6 @@ class GamePartsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Number circle at the top right of the title container
                 Positioned(
                   top: 8,
                   right: 8,
@@ -208,38 +202,61 @@ class GamePartsCard extends StatelessWidget {
   }
 }
 
-// Main Grid Widget
 class CryptoGamesGrid extends StatelessWidget {
-  // Set Cryptographygame.png as the default image for all items
-  final List<String> imagesPaths = List.generate(
-      25, (index) => 'assets/Cryptographygame.png'); // Default image path
+  final List<String> imagesPaths = [
+    'assets/netWorkPart.png',
+    'assets/PartsPage.png',
+    'assets/doorback.png',
+    'assets/linkback.png',
+    'assets/images/cryptography.png',
+    'assets/images/deep_cryptography.png',
+    'assets/viros.png',
+    'assets/images/fight_viruses.png',
+    'assets/images/virus_types.png',
+    'assets/images/firewall.png',
+    'assets/images/dos_attack.png',
+    'assets/ports.png',
+    'assets/carback.png',
+    'assets/images/sql_injection.png',
+    'assets/images/ransomware.png',
+    'assets/images/phishing.png',
+    'assets/images/social_engineering.png',
+    'assets/images/ethical_hacking.png',
+    'assets/images/protect_information.png',
+    'assets/images/cyberbullying.png',
+    'assets/images/cyber_crime_law.png',
+    'assets/images/incident_response.png',
+    'assets/images/final_challenge.png',
+    'assets/images/security_audits.png',
+    'assets/images/user_training.png',
+  ];
 
   final List<String> partsTitles = [
-    'ما هي الشبكات؟', //a1
-    'دعنا نضع كلمة سر قوية للشبكة', //a2
-    'الان لنطلب موقع على الويب', //3
-    'الان لنتصفح الويب بامان ', //a4
-    'لنلقي نظرة على اساسيات التشفير ', //a5
-    'سنتعمق قليلا في التشفير ', //6
-    'تعرف وانتبه من خطر الفايروسات ', //a7
-    'الان، كافح الفايروسات ', //8
-    'ميز بين انواع الفايروسات ', //9
-    'ابن جدار امن لشبكتك ', //10
-    'جرب هجوم الDOS', //11
-    'ما هي البروتوكولات والمنافذ؟', //12
-    'بروتوكولات نقل البيانات  ', //13
-    'ما هو sql injection', //14
-    'يرامج الفدية', //15
-    'هجمات التصيد', //16
-    'الهندسة الاجتماعية هي الاخطر', //17
-    'القرصنة الاخلاقية', //18
-    'احمي معلوماتك على الانترنت ', //19
-    'لا للتنمر الالكتروني ', //20
-    'قانون الجرائم الالكترونية', //21
-    'الاستجابة للحوادث الالكترونية', //22
-    'التحدي النهائي', //23
-    'Security Audits', //24
-    'User Training' //25
+    'ما هي الشبكات؟',
+    'دعنا نضع كلمة سر قوية للشبكة',
+    'الان لنطلب موقع على الويب',
+    'الان لنتصفح الويب بامان ',
+    'لنلقي نظرة على اساسيات التشفير ',
+    'سنتعمق قليلا في التشفير ',
+    'تعرف وانتبه من خطر الفايروسات ',
+    'الان، كافح الفايروسات ',
+    'ميز بين انواع الفايروسات ',
+    'ابن جدار امن لشبكتك ',
+    'جرب هجوم الDOS',
+    'ما هي البروتوكولات والمنافذ؟',
+    'بروتوكولات نقل البيانات ',
+    'ما هو sql injection',
+    'يرامج الفدية',
+    'هجمات التصيد',
+    'الهندسة الاجتماعية هي الاخطر',
+    'القرصنة الاخلاقية',
+    'احمي معلوماتك على الانترنت ',
+    'لا للتنمر الالكتروني ',
+    'قانون الجرائم الالكترونية',
+    'الاستجابة للحوادث الالكترونية',
+    'التحدي النهائي',
+    'Security Audits',
+    'User Training',
   ];
 
   @override
@@ -260,7 +277,7 @@ class CryptoGamesGrid extends StatelessWidget {
         return GamePartsCard(
           partTitle: partsTitles[index],
           imagePath: imagesPaths[index],
-          partNumber: index + 1, // Pass part number
+          partNumber: index + 1,
         );
       },
     );

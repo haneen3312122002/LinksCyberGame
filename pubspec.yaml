@@ -92,6 +92,9 @@ flutter:
     - assets/linkback.png
     - assets/doorback.png
     - assets/carback.png
+    - assets/viros.png
+    - assets/ports.png
+
     #homepage:
     - assets/BackGround1.png 
     #sessionLayer: 
