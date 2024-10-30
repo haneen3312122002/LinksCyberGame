@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 class HackerScreen extends StatefulWidget {
   final Function(String virusType) onVirusSend;
+  final ValueNotifier<Color> backgroundColorNotifier; // للتحكم في لون الخلفية
+  final ValueNotifier<bool>
+      showFakeGoogleIconNotifier; // للتحكم في إظهار الأيقونة المزيفة
 
-  HackerScreen({required this.onVirusSend});
+  HackerScreen({
+    required this.onVirusSend,
+    required this.backgroundColorNotifier,
+    required this.showFakeGoogleIconNotifier,
+  });
 
   @override
   _HackerScreenState createState() => _HackerScreenState();
@@ -65,23 +72,45 @@ class _HackerScreenState extends State<HackerScreen> {
             TextStyle(color: Colors.white, fontSize: screenSize.width * 0.06),
       ),
       SizedBox(height: screenSize.height * 0.02),
+
+      // Dropdown for Virus Type
       buildDropDown('نوع الفيروس:', selectedVirusType, virusTypes, (newValue) {
         setState(() => selectedVirusType = newValue!);
       }),
+
+      // Dropdown for Disguise Option
       buildDropDown('طريقة التنكر:', disguiseOption, disguiseOptions,
           (newValue) {
-        setState(() => disguiseOption = newValue!);
+        setState(() {
+          disguiseOption = newValue!;
+          widget.showFakeGoogleIconNotifier.value =
+              (newValue == 'أيقونة ملف زائفة'); // تحديث الأيقونة
+        });
       }),
+
+      // Slider for File Size
       buildSlider(screenSize),
+
+      // Dropdown for Activation Method
       buildDropDown('طريقة التفعيل:', activationMethod, activationMethods,
           (newValue) {
         setState(() => activationMethod = newValue!);
       }),
+
+      // TextField for Virus Message
       buildTextField(),
+
+      // Dropdown for Background Color
       buildDropDown('تغيير خلفية الشاشة:', backgroundColor, backgroundOptions,
           (newValue) {
-        setState(() => backgroundColor = newValue!);
+        setState(() {
+          backgroundColor = newValue!;
+          widget.backgroundColorNotifier.value =
+              getColorFromString(newValue); // تحديث اللون
+        });
       }),
+
+      // Button to Send Virus Type
       Center(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -90,8 +119,7 @@ class _HackerScreenState extends State<HackerScreen> {
             textStyle: TextStyle(fontSize: 16, color: Colors.white),
           ),
           onPressed: () {
-            // Call onVirusSend with the selectedVirusType
-            widget.onVirusSend(selectedVirusType);
+            widget.onVirusSend(selectedVirusType); // إرسال نوع الفيروس المحدد
           },
           child: Text(
             'حفظ وتشغيل الفيروس',
@@ -102,6 +130,7 @@ class _HackerScreenState extends State<HackerScreen> {
     ];
   }
 
+  // Dropdown widget builder
   Widget buildDropDown(String label, String currentValue, List<String> options,
       ValueChanged<String?> onChanged) {
     return Column(
@@ -124,6 +153,7 @@ class _HackerScreenState extends State<HackerScreen> {
     );
   }
 
+  // Slider widget for file size
   Widget buildSlider(Size screenSize) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,6 +175,7 @@ class _HackerScreenState extends State<HackerScreen> {
     );
   }
 
+  // TextField widget for virus message
   Widget buildTextField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,5 +198,21 @@ class _HackerScreenState extends State<HackerScreen> {
         ),
       ],
     );
+  }
+
+  // Helper function to convert color name to Color object
+  Color getColorFromString(String colorName) {
+    switch (colorName) {
+      case 'أحمر':
+        return Colors.red;
+      case 'أخضر':
+        return Colors.green;
+      case 'أزرق':
+        return Colors.blue;
+      case 'أسود':
+        return Colors.black;
+      default:
+        return Colors.red;
+    }
   }
 }

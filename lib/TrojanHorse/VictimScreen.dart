@@ -4,10 +4,12 @@ import 'package:audioplayers/audioplayers.dart';
 class VictimScreen extends StatefulWidget {
   final ValueNotifier<String> virusTypeNotifier;
   final ValueNotifier<bool> showFakeGoogleIconNotifier;
+  final ValueNotifier<Color> backgroundColorNotifier;
 
   VictimScreen({
     required this.virusTypeNotifier,
     required this.showFakeGoogleIconNotifier,
+    required this.backgroundColorNotifier,
   });
 
   @override
@@ -24,31 +26,32 @@ class _VictimScreenState extends State<VictimScreen> {
   @override
   void initState() {
     super.initState();
-
-    widget.virusTypeNotifier.addListener(() {
-      final virusType = widget.virusTypeNotifier.value;
-      switch (virusType) {
-        case 'حذف الملفات':
-          _deleteFiles();
-          break;
-        case 'إتلاف الملفات':
-          _destroyFiles();
-          break;
-        case 'إبطاء النظام':
-          _simulateSlowSystem();
-          break;
-        case 'رسائل منبثقة':
-          _showInlineMessage();
-          break;
-      }
-    });
+    widget.virusTypeNotifier.addListener(_handleVirusType);
   }
 
   @override
   void dispose() {
-    widget.virusTypeNotifier.removeListener(() {});
+    widget.virusTypeNotifier.removeListener(_handleVirusType);
     audioPlayer.dispose();
     super.dispose();
+  }
+
+  void _handleVirusType() {
+    final virusType = widget.virusTypeNotifier.value;
+    switch (virusType) {
+      case 'حذف الملفات':
+        _deleteFiles();
+        break;
+      case 'إتلاف الملفات':
+        _destroyFiles();
+        break;
+      case 'إبطاء النظام':
+        _simulateSlowSystem();
+        break;
+      case 'رسائل منبثقة':
+        _showInlineMessage();
+        break;
+    }
   }
 
   void _deleteFiles() {
@@ -79,12 +82,12 @@ class _VictimScreenState extends State<VictimScreen> {
   }
 
   void _showInlineMessage() async {
-    await audioPlayer.play(AssetSource('Evil.mp3')); // Play audio
+    await audioPlayer.play(AssetSource('Evil.mp3')); // تشغيل الصوت
     setState(() {
-      showMessage = true; // Display red warning message
+      showMessage = true; // عرض الرسالة التحذيرية
     });
 
-    // Hide the message after 5 seconds
+    // إخفاء الرسالة بعد 5 ثوانٍ
     Future.delayed(Duration(seconds: 5), () {
       setState(() {
         showMessage = false;
@@ -112,82 +115,89 @@ class _VictimScreenState extends State<VictimScreen> {
 
     return Scaffold(
       body: Center(
-        child: Container(
-          width: screenSize.width,
-          height: screenSize.height,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: const Color.fromARGB(255, 111, 89, 255),
-              width: 10,
-            ),
-            image: DecorationImage(
-              image: AssetImage('assets/desktop1.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Column(
+        child: ValueListenableBuilder<Color>(
+          valueListenable: widget.backgroundColorNotifier,
+          builder: (context, backgroundColor, child) {
+            return Container(
+              width: screenSize.width,
+              height: screenSize.height,
+              decoration: BoxDecoration(
+                color: backgroundColor, // تطبيق اللون المحدد للخلفية
+                border: Border.all(
+                  color: const Color.fromARGB(255, 111, 89, 255),
+                  width: 10,
+                ),
+                image: DecorationImage(
+                  image: AssetImage('assets/desktop1.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Stack(
                 children: [
-                  SizedBox(height: screenSize.height * 0.02),
-                  _buildDesktopIcon('My Homework', Icons.insert_drive_file, [
-                    "Math Homework.pdf",
-                    "Science Notes.docx",
-                    "History Essay.docx"
-                  ]),
-                  SizedBox(height: screenSize.height * 0.02),
-                  _buildDesktopIcon('Images', Icons.image,
-                      ["Vacation.jpg", "Birthday.png", "Event Photo.jpeg"]),
-                  SizedBox(height: screenSize.height * 0.02),
-                  _buildDesktopIcon('Documents', Icons.folder, [
-                    "Resume.pdf",
-                    "Project Proposal.docx",
-                    "Meeting Notes.txt"
-                  ]),
-                ],
-              ),
-              Positioned(
-                bottom: screenSize.height * 0.05,
-                right: screenSize.width * 0.05,
-                child: _buildDesktopIcon('Recycle Bin', Icons.delete, []),
-              ),
-              if (openFolderName != null && openFolderFiles != null)
-                _buildFolderWindow(screenSize),
-              if (isSlow)
-                Center(child: CircularProgressIndicator()), // Slowdown effect
-              if (showMessage)
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    color: Colors.red,
-                    child: Text(
-                      'تم اختراق جهازك!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  Column(
+                    children: [
+                      SizedBox(height: screenSize.height * 0.02),
+                      _buildDesktopIcon(
+                          'My Homework', Icons.insert_drive_file, [
+                        "Math Homework.pdf",
+                        "Science Notes.docx",
+                        "History Essay.docx"
+                      ]),
+                      SizedBox(height: screenSize.height * 0.02),
+                      _buildDesktopIcon('Images', Icons.image,
+                          ["Vacation.jpg", "Birthday.png", "Event Photo.jpeg"]),
+                      SizedBox(height: screenSize.height * 0.02),
+                      _buildDesktopIcon('Documents', Icons.folder, [
+                        "Resume.pdf",
+                        "Project Proposal.docx",
+                        "Meeting Notes.txt"
+                      ]),
+                    ],
+                  ),
+                  Positioned(
+                    bottom: screenSize.height * 0.05,
+                    right: screenSize.width * 0.05,
+                    child: _buildDesktopIcon('Recycle Bin', Icons.delete, []),
+                  ),
+                  if (openFolderName != null && openFolderFiles != null)
+                    _buildFolderWindow(screenSize),
+                  if (isSlow)
+                    Center(child: CircularProgressIndicator()), // تأثير البطء
+                  if (showMessage)
+                    Center(
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        color: Colors.red,
+                        child: Text(
+                          'تم اختراق جهازك!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: widget.showFakeGoogleIconNotifier,
+                    builder: (context, showFakeIcon, child) {
+                      return showFakeIcon
+                          ? Positioned(
+                              bottom: screenSize.height * 0.15,
+                              right: screenSize.width * 0.15,
+                              child: Image.asset(
+                                'assets/instalogo.png',
+                                width: 100,
+                                height: 100,
+                              ),
+                            )
+                          : SizedBox.shrink();
+                    },
                   ),
-                ),
-              ValueListenableBuilder<bool>(
-                valueListenable: widget.showFakeGoogleIconNotifier,
-                builder: (context, showFakeIcon, child) {
-                  return showFakeIcon
-                      ? Positioned(
-                          bottom: screenSize.height * 0.15,
-                          right: screenSize.width * 0.15,
-                          child: Image.asset(
-                            'assets/instalogo.png',
-                            width: 100,
-                            height: 100,
-                          ),
-                        )
-                      : SizedBox.shrink();
-                },
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
