@@ -143,6 +143,8 @@ flutter:
     - assets/Computer3.png
     - assets/Router.png
     - assets/Printer.png
-    - assets/RouterNew.png
-    - assets/SwitchNew.png
+    - assets/RO.png
+    - assets/SW.png
     - assets/Tab.png
+    - assets/ROVID.gif
+    - assets/SWVID.gif
