@@ -138,3 +138,11 @@ flutter:
     - assets/StaticRightChar.png
     #net game:
     - assets/Stand.png  
+    - assets/Computer1.png
+    - assets/Computer2.png
+    - assets/Computer3.png
+    - assets/Router.png
+    - assets/Printer.png
+    - assets/RouterNew.png
+    - assets/SwitchNew.png
+    - assets/Tab.png

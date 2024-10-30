@@ -1,11 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:cybergame/CarGame/CarMain.dart';
 import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
 import 'package:cybergame/LinksGame/LinksVideoScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
 import 'package:cybergame/portGame/port_game.dart';
-import 'package:cybergame/portGame/protocol_ports_game.dart';
-import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 
 // Placeholder pages for each part, which you can replace with actual pages later
@@ -22,9 +21,6 @@ class NetworkPage extends StatelessWidget {
     return PlaceholderPage(title: 'Networking');
   }
 }
-
-// Continue creating a new class for each part like this...
-// Add as many unique pages as needed.
 
 class PlaceholderPage extends StatelessWidget {
   final String title;
@@ -68,16 +64,11 @@ class GamePartsCard extends StatelessWidget {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CryptoGameScreen()));
         break;
-
       case 3:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => DoorsVideoScreen()));
         break;
       case 4:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
-        break;
-      case 5:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => LinksVideoScreen()));
         break;
@@ -93,19 +84,7 @@ class GamePartsCard extends StatelessWidget {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => CarGameScreen()));
         break;
-      case 21:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CarGameScreen()));
-        break;
-      case 22:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DoorsVideoScreen()));
-        break;
-      case 23:
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => port_game()));
-        break;
-      // Add more cases here for each part's unique page...
+      // Add additional cases for each part's unique page if needed...
       default:
         Navigator.push(
             context,
@@ -231,8 +210,10 @@ class GamePartsCard extends StatelessWidget {
 
 // Main Grid Widget
 class CryptoGamesGrid extends StatelessWidget {
-  final List<String> imagesPaths =
-      List.generate(25, (index) => 'assets/placeholder.png');
+  // Set Cryptographygame.png as the default image for all items
+  final List<String> imagesPaths = List.generate(
+      25, (index) => 'assets/Cryptographygame.png'); // Default image path
+
   final List<String> partsTitles = [
     'ما هي الشبكات؟', //a1
     'دعنا نضع كلمة سر قوية للشبكة', //a2
@@ -245,7 +226,6 @@ class CryptoGamesGrid extends StatelessWidget {
     'ميز بين انواع الفايروسات ', //9
     'ابن جدار امن لشبكتك ', //10
     'جرب هجوم الDOS', //11
-
     'ما هي البروتوكولات والمنافذ؟', //12
     'بروتوكولات نقل البيانات  ', //13
     'ما هو sql injection', //14
