@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'NetNodes.dart';
-import 'Slider.dart'; // استدعاء القائمة الجانبية
+import 'Slider.dart';
 
 class NetworkGameScreen extends StatefulWidget {
   @override
@@ -11,17 +11,16 @@ class NetworkGameScreen extends StatefulWidget {
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
   Offset? startDragPosition;
   Offset? currentDragPosition;
-  List<List<Offset>> connections = []; // قائمة لتخزين النقاط المتصلة
+  List<Map<String, dynamic>> connections = [];
   Map<String, int> deviceConnectionsCount = {
     'router': 0,
     'switch': 0,
-  }; // عدد توصيلات الأجهزة
-  Map<String, int> devicePositions = {}; // المواقع لكل جهاز
+  };
+  Map<String, int> devicePositions = {};
 
   bool isGifPlaying = false;
   int gifPlayingCount = 0;
-
-  bool devicesUnlocked = false; // New state variable
+  bool devicesUnlocked = false;
 
   List<Offset> _generateDevicePositions(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -31,8 +30,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     final radius = min(screenWidth, screenHeight) * 0.45;
 
     List<Offset> positions = [
-      Offset(centerX - screenWidth * 0.05, centerY), // الموقع الأول
-      Offset(centerX + screenWidth * 0.05, centerY), // الموقع الثاني
+      Offset(centerX - screenWidth * 0.05, centerY),
+      Offset(centerX + screenWidth * 0.05, centerY),
     ];
 
     for (int i = 0; i < 6; i++) {
@@ -58,14 +57,24 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     });
   }
 
-  void endDraggingLine(Offset end) {
+  void endDraggingLine(Offset end, String? deviceType, bool wifiStatus) {
     if (startDragPosition != null) {
+      Color lineColor = const Color.fromARGB(255, 221, 111, 255);
+      if (deviceType == 'تابلت' && wifiStatus) {
+        lineColor = const Color.fromARGB(
+            255, 12, 220, 19); // Set green color if from tablet with WiFi on
+      }
+
       setState(() {
-        connections.add([startDragPosition!, end]);
+        connections.add({
+          'start': startDragPosition!,
+          'end': end,
+          'color': lineColor,
+        });
         startDragPosition = null;
         currentDragPosition = null;
       });
-      checkCentralDevices(); // فحص المواقع بعد إضافة اتصال جديد
+      checkCentralDevices();
     }
   }
 
@@ -105,28 +114,79 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }
 
   void checkCentralDevices() {
-    // تحقق أن الراوتر والسويتش في المواقع المركزية فقط
     if (devicePositions['router'] != null &&
         devicePositions['switch'] != null) {
       final routerPosition = devicePositions['router'];
       final switchPosition = devicePositions['switch'];
       if ((routerPosition == 0 || routerPosition == 1) &&
           (switchPosition == 0 || switchPosition == 1)) {
-        // الوضع سليم
+        // Correct positioning
       } else {
         _showMessage('يجب وضع الراوتر والسويتش في المواقع المركزية فقط.');
       }
     }
   }
 
-  // وظيفة للتحقق من النقر بالقرب من خط معين
+  @override
+  Widget build(BuildContext context) {
+    final devicePositionsList = _generateDevicePositions(context);
+
+    return Scaffold(
+      body: Row(
+        children: [
+          SideMenu(devicesUnlocked: devicesUnlocked),
+          Expanded(
+            child: GestureDetector(
+              onTapDown: (details) {
+                _handleTapOnConnection(details.localPosition);
+              },
+              child: Stack(
+                children: [
+                  CustomPaint(
+                    painter: LinePainter(
+                        connections, startDragPosition, currentDragPosition),
+                    child: Container(),
+                  ),
+                  ...devicePositionsList.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    Offset position = entry.value;
+                    return Positioned(
+                      left: position.dx,
+                      top: position.dy,
+                      child: DeviceBase(
+                        onDragStart: (start) => startDraggingLine(start),
+                        onDragUpdate: (update) => updateDraggingLine(update),
+                        onDragEnd: (end, deviceType, wifiStatus) =>
+                            endDraggingLine(end, deviceType, wifiStatus),
+                        onVideoStatusChanged: (isPlaying) {
+                          setState(() {
+                            if (isPlaying) {
+                              gifPlayingCount++;
+                              isGifPlaying = true;
+                              devicesUnlocked = true;
+                            } else {
+                              gifPlayingCount = max(0, gifPlayingCount - 1);
+                              isGifPlaying = gifPlayingCount > 0;
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _handleTapOnConnection(Offset tapPosition) {
     for (int i = 0; i < connections.length; i++) {
       final connection = connections[i];
-      final p1 = connection[0];
-      final p2 = connection[1];
-
-      // حساب المسافة بين النقطة والنقرة
+      final p1 = connection['start'];
+      final p2 = connection['end'];
       double distance = _distanceToLine(tapPosition, p1, p2);
       if (distance < 10.0) {
         setState(() {
@@ -152,86 +212,10 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     final projection = Offset(lineStart.dx + t * dx, lineStart.dy + t * dy);
     return (point - projection).distance;
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final devicePositionsList = _generateDevicePositions(context);
-
-    return Scaffold(
-      body: Row(
-        children: [
-          SideMenu(devicesUnlocked: devicesUnlocked), // Use devicesUnlocked
-          Expanded(
-            child: GestureDetector(
-              onTapDown: (details) {
-                _handleTapOnConnection(details.localPosition);
-              },
-              child: Stack(
-                children: [
-                  CustomPaint(
-                    painter: LinePainter(
-                        connections, startDragPosition, currentDragPosition),
-                    child: Container(),
-                  ),
-                  ...devicePositionsList.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    Offset position = entry.value;
-                    return Positioned(
-                      left: position.dx,
-                      top: position.dy,
-                      child: DragTarget<Map<String, String>>(
-                        onAccept: (data) {
-                          if (data['label'] == 'راوتر') {
-                            if (!canConnectDevice('router')) return;
-                            addConnection('router');
-                            devicePositions['router'] = index;
-                          } else if (data['label'] == 'سويتش') {
-                            addConnection('switch');
-                            devicePositions['switch'] = index;
-                          }
-                          setState(() {
-                            connections.add([startDragPosition!, position]);
-                          });
-                        },
-                        builder: (context, accepted, rejected) {
-                          return DeviceBase(
-                            onDragStart: (start) => startDraggingLine(start),
-                            onDragUpdate: (update) =>
-                                updateDraggingLine(update),
-                            onDragEnd: (end) => endDraggingLine(end),
-                            onVideoStatusChanged: (isPlaying) {
-                              setState(() {
-                                if (isPlaying) {
-                                  gifPlayingCount++;
-                                  isGifPlaying = true;
-                                  // Unlock devices when GIF is played for the first time
-                                  devicesUnlocked = true;
-                                } else {
-                                  gifPlayingCount = max(0, gifPlayingCount - 1);
-                                  isGifPlaying = gifPlayingCount > 0;
-                                  // Do not lock devices again
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-//..................
-// رسام الخطوط بين الأجهزة
 class LinePainter extends CustomPainter {
-  final List<List<Offset>> connections; // قائمة الاتصالات
+  final List<Map<String, dynamic>> connections;
   final Offset? start;
   final Offset? end;
 
@@ -239,19 +223,20 @@ class LinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color =
-          const Color.fromARGB(255, 122, 240, 255) // تغيير اللون إلى الرمادي
-      ..strokeWidth = 10.0 // زيادة السمك لجعل الخط غليظاً
-      ..style = PaintingStyle.stroke;
-
-    // رسم الخطوط المحفوظة في قائمة connections
     for (var connection in connections) {
-      canvas.drawLine(connection[0], connection[1], paint);
+      Paint paint = Paint()
+        ..color =
+            connection['color'] ?? const Color.fromARGB(255, 114, 224, 249)
+        ..strokeWidth = 10.0
+        ..style = PaintingStyle.stroke;
+      canvas.drawLine(connection['start'], connection['end'], paint);
     }
 
-    // رسم الخط الديناميكي أثناء السحب
     if (start != null && end != null) {
+      Paint paint = Paint()
+        ..color = const Color.fromARGB(255, 255, 0, 0)
+        ..strokeWidth = 10.0
+        ..style = PaintingStyle.stroke;
       canvas.drawLine(start!, end!, paint);
     }
   }
