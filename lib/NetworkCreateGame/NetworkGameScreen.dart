@@ -18,6 +18,11 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }; // عدد توصيلات الأجهزة
   Map<String, int> devicePositions = {}; // المواقع لكل جهاز
 
+  bool isGifPlaying = false;
+  int gifPlayingCount = 0;
+
+  bool devicesUnlocked = false; // New state variable
+
   List<Offset> _generateDevicePositions(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -155,7 +160,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     return Scaffold(
       body: Row(
         children: [
-          SideMenu(), // استدعاء القائمة الجانبية كعنصر ثابت
+          SideMenu(devicesUnlocked: devicesUnlocked), // Use devicesUnlocked
           Expanded(
             child: GestureDetector(
               onTapDown: (details) {
@@ -194,6 +199,20 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                             onDragUpdate: (update) =>
                                 updateDraggingLine(update),
                             onDragEnd: (end) => endDraggingLine(end),
+                            onVideoStatusChanged: (isPlaying) {
+                              setState(() {
+                                if (isPlaying) {
+                                  gifPlayingCount++;
+                                  isGifPlaying = true;
+                                  // Unlock devices when GIF is played for the first time
+                                  devicesUnlocked = true;
+                                } else {
+                                  gifPlayingCount = max(0, gifPlayingCount - 1);
+                                  isGifPlaying = gifPlayingCount > 0;
+                                  // Do not lock devices again
+                                }
+                              });
+                            },
                           );
                         },
                       ),

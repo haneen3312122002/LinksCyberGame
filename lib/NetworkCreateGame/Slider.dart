@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SideMenu extends StatelessWidget {
+  final bool devicesUnlocked; // Changed from isGifPlaying to devicesUnlocked
+
+  SideMenu({required this.devicesUnlocked});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -8,15 +12,20 @@ class SideMenu extends StatelessWidget {
       color: Colors.blueAccent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          buildDraggableItem('assets/Computer1.png', "كمبيوتر 1"),
-          buildDraggableItem('assets/Computer2.png', "كمبيوتر 2"),
-          buildDraggableItem('assets/Computer3.png', "كمبيوتر 3"),
-          buildDraggableItem('assets/Printer.png', "طابعة"),
-          buildDraggableItem('assets/RO.png', "راوتر"),
-          buildDraggableItem('assets/SW.png', "سويتش"),
-          buildDraggableItem('assets/Tab.png', "تابلت"),
-        ],
+        children: devicesUnlocked
+            ? [
+                buildDraggableItem('assets/Computer1.png', "كمبيوتر 1"),
+                buildDraggableItem('assets/Computer2.png', "كمبيوتر 2"),
+                buildDraggableItem('assets/Computer3.png', "كمبيوتر 3"),
+                buildDraggableItem('assets/Printer.png', "طابعة"),
+                buildDraggableItem('assets/RO.png', "راوتر"),
+                buildDraggableItem('assets/SW.png', "سويتش"),
+                buildDraggableItem('assets/Tab.png', "تابلت"),
+              ]
+            : [
+                buildDraggableItem('assets/RO.png', "راوتر"),
+                buildDraggableItem('assets/SW.png', "سويتش"),
+              ],
       ),
     );
   }
