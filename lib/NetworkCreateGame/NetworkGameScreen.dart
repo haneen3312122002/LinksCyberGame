@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:just_audio/just_audio.dart'; // Import just_audio for background music
+import 'package:just_audio/just_audio.dart'; // Import just_audio for audio playback
+// Ensure that you have imported any other necessary files or widgets
 import 'NetNodes.dart';
 import 'Slider.dart';
 
@@ -12,6 +13,8 @@ class NetworkGameScreen extends StatefulWidget {
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
   final AudioPlayer _backgroundAudioPlayer =
       AudioPlayer(); // Background music player
+  final AudioPlayer _switchAudioPlayer =
+      AudioPlayer(); // Audio player for the switch sound
 
   Offset? startDragPosition;
   Offset? currentDragPosition;
@@ -34,7 +37,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
 
   @override
   void dispose() {
-    _backgroundAudioPlayer.dispose(); // Dispose of the audio player
+    _backgroundAudioPlayer.dispose(); // Dispose of the background music player
+    _switchAudioPlayer.dispose(); // Dispose of the switch sound player
     super.dispose();
   }
 
@@ -157,7 +161,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     return Scaffold(
       body: Row(
         children: [
-          SideMenu(devicesUnlocked: devicesUnlocked),
+          SideMenu(devicesUnlocked: devicesUnlocked), // Your side menu widget
           Expanded(
             child: GestureDetector(
               onTapDown: (details) {
@@ -177,11 +181,21 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                       left: position.dx,
                       top: position.dy,
                       child: DeviceBase(
+                        // Your device widget
                         onDragStart: (start) => startDraggingLine(start),
                         onDragUpdate: (update) => updateDraggingLine(update),
                         onDragEnd: (end, deviceType, wifiStatus) =>
                             endDraggingLine(end, deviceType, wifiStatus),
                         onVideoStatusChanged: (isPlaying) {
+                          if (isPlaying) {
+                            _switchAudioPlayer
+                                .setAsset('assets/Switch.mp3')
+                                .then((_) {
+                              _switchAudioPlayer.play();
+                            });
+                          } else {
+                            _switchAudioPlayer.stop();
+                          }
                           setState(() {
                             if (isPlaying) {
                               gifPlayingCount++;
