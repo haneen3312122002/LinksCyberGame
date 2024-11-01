@@ -74,7 +74,7 @@ flutter:
     - assets/put.mp3
     - assets/error.mp3
     - assets/LinkSong.mp3
-    
+
     #DoorsGame:
     - assets/doors.png
     - assets/door1.mp4
@@ -82,8 +82,10 @@ flutter:
     - assets/door3.mp4
     - assets/DoorsVideo.mp4
     #CryptoGame:
-    - assets/casel.png  
-    - assets/caselSong.mp3
+    - assets/casel.png
+    - assets/caselSong.mp3  
+    
+
     #PartsPage:
     - assets/PartsPage.png
     - assets/Cryptographygame.png
