@@ -73,6 +73,7 @@ flutter:
     - assets/click.mp3
     - assets/put.mp3
     - assets/error.mp3
+    
     #DoorsGame:
     - assets/doors.png
     - assets/door1.mp4
@@ -133,6 +134,11 @@ flutter:
     - assets/MobileSecurityPart.png
     - assets/wifi_spread.png
     - assets/network_cable.png
+    - assets/phone.png 
+    - assets/phishing_email.png
+    - assets/malicious_link.png
+    - assets/mesage.png
+
 
     #Mario:
     - assets/UnderGround1.png 
@@ -154,4 +160,3 @@ flutter:
     - assets/Tab.png
     - assets/ROVID.gif
     - assets/SWVID.gif
-    - assets/Router.mp3

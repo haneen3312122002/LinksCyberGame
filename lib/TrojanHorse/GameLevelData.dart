@@ -25,8 +25,8 @@ class GameLevels {
       images: [
         "phishing_email.png",
         "malicious_link.png",
-        "fake_login.png",
-        "anonymous_message.png"
+        "mesage.png",
+        "phone.png"
       ],
     ),
   ];
