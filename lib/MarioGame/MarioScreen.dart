@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'MovingBack.dart';
-// Data class to hold letter tile information (if not already defined in GameGround.dart)
+
+// Data class to hold letter tile information
 
 class MarioGameScreen extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   Timer? _movementTimer; // Timer for continuous movement
   String _randomWord = ""; // Variable to hold the random word
   int _randomKey = 0; // Variable to hold the random key
-  String? _foundLetter; // Variable to hold the found letter
+  List<String> _collectedLetters = []; // List to hold collected letters
 
   // List of three-character words
   final List<String> _words = ["cat", "dog", "sun", "car", "bat", "hat", "map"];
@@ -92,31 +93,36 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
     List<LetterTileData> letterTiles = [];
 
     // Letters A-M on the central vertical street (bottom to top)
-    // Letters A-M on the central vertical street (bottom to top)
     for (int index = 0; index < 13; index++) {
       final letter = String.fromCharCode(65 + index); // A to M
-      final x = screenWidth / 2 - 15;
+      if (!_collectedLetters.contains(letter)) {
+        final x = screenWidth / 2 - 15;
 
-      // Adjust the y-coordinate to be consistent with the character’s expected height range
-      final y = (screenHeight / 14) * index + 30;
+        // Adjust the y-coordinate to be consistent with the character’s expected height range
+        final y = (screenHeight / 14) * index + 30;
 
-      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+        letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+      }
     }
 
     // Letters N-T on the left horizontal street, centered vertically
     for (int index = 0; index < 7; index++) {
       final letter = String.fromCharCode(78 + index); // N to T
-      final x = (screenWidth / 14) * index + 20;
-      final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
-      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+      if (!_collectedLetters.contains(letter)) {
+        final x = (screenWidth / 14) * index + 20;
+        final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
+        letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+      }
     }
 
     // Letters U-Z on the right horizontal street, centered vertically
     for (int index = 0; index < 6; index++) {
       final letter = String.fromCharCode(85 + index); // U to Z
-      final x = screenWidth / 2 + (index * (screenWidth / 14)) + 40;
-      final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
-      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+      if (!_collectedLetters.contains(letter)) {
+        final x = screenWidth / 2 + (index * (screenWidth / 14)) + 40;
+        final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
+        letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+      }
     }
 
     return letterTiles;
@@ -172,20 +178,18 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       // Check if the character's center is within close proximity of the tile's center
       if ((characterCenter - tileCenter).distance <= 30) {
         // Adjust the distance threshold as needed
-        // Accurate collision detected
-        setState(() {
-          _foundLetter = tile.letter;
-        });
-        found = true;
+        if (!_collectedLetters.contains(tile.letter)) {
+          setState(() {
+            _collectedLetters.insert(0, tile.letter); // Add to start of list
+          });
+          found = true;
+        }
         break; // Exit loop after finding the first exact collision
       }
     }
 
     if (!found) {
-      // If no collision, ensure _foundLetter is null
-      setState(() {
-        _foundLetter = null;
-      });
+      // No action needed if no collision
     }
   }
 
@@ -294,42 +298,48 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
-          // Check icon at the bottom left
+          // Check icon at the bottom left with collected letters
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
-            child: IconButton(
-              icon: Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: iconSize * 1.5, // Adjust the size as needed
-              ),
-              onPressed: () {
-                _checkForLetter(context, letterTiles);
-              },
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: iconSize * 1.5, // Adjust the size as needed
+                  ),
+                  onPressed: () {
+                    _checkForLetter(context, letterTiles);
+                  },
+                ),
+                SizedBox(width: 10),
+                // Display collected letters from left to right
+                Row(
+                  children: _collectedLetters.map((letter) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 2.0),
+                      padding: EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Text(
+                        letter,
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
-          // Display the found letter
-          if (_foundLetter != null)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.2,
-              left: MediaQuery.of(context).size.width * 0.5 - 50,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: Center(
-                  child: Text(
-                    _foundLetter!,
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );
