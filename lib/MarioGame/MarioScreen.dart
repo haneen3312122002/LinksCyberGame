@@ -70,11 +70,11 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
         _characterXPosition += moveDistanceX;
         _characterDirection = 'RightChar.png';
       } else if (direction == 'forward' &&
-          _characterYPosition < screenHeight / 2) {
+          _characterYPosition < screenHeight / 3) {
         _characterYPosition += moveDistanceY;
         _characterDirection = 'TopChar.png';
       } else if (direction == 'backward' &&
-          _characterYPosition > -screenHeight / 2) {
+          _characterYPosition > -screenHeight / 3) {
         _characterYPosition -= moveDistanceY;
         _characterDirection = 'DownChar.png';
       }
