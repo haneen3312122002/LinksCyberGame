@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'Block.dart';
-import '/PasswordGame/photo.dart'; // Ensure BackgroundPhoto is implemented
-import 'RightMin.dart'; // Ensure RightSideMenu is implemented
-import 'Wall.dart'; // Ensure WallArea is implemented
+import '/PasswordGame/photo.dart'; // تأكد من وجود BackgroundPhoto
+import 'RightMin.dart'; // تأكد من وجود RightSideMenu
+import 'Wall.dart'; // تأكد من وجود WallArea
 import '/connection.dart'; // تأكد من إضافة ملف ApiService
 import 'package:awesome_dialog/awesome_dialog.dart';
 
@@ -12,13 +13,9 @@ class CryptoGameScreen extends StatefulWidget {
 }
 
 class _CryptoGameScreenState extends State<CryptoGameScreen> {
-  bool isDrawerVisible = true; // State to track if the drawer is open or closed
-  Map<String, String> personalInfo = {}; // Store personal info locally
-
-  List<Block> correctPassword =
-      []; // This will now hold dynamically dragged blocks
-
-  // List of all blocks available to choose from
+  bool isDrawerVisible = true;
+  Map<String, String> personalInfo = {};
+  List<Block> correctPassword = [];
   List<Block> allBlocks = [
     Block(text: 'Haneen'),
     Block(text: '12122002'),
@@ -40,15 +37,34 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
     Block(text: 'user'),
   ];
 
+  late AudioPlayer _audioPlayer; // تعريف مشغل الصوت
+
   @override
   void initState() {
     super.initState();
+    _audioPlayer = AudioPlayer();
+    _playMusic(); // تشغيل الموسيقى عند بدء اللعبة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPersonalInfoDialog();
     });
   }
 
-  // Method to display dialog to gather personal information
+  @override
+  void dispose() {
+    _audioPlayer.dispose(); // تحرير موارد مشغل الصوت عند الخروج
+    super.dispose();
+  }
+
+  Future<void> _playMusic() async {
+    try {
+      await _audioPlayer.setLoopMode(LoopMode.one); // تكرار الموسيقى
+      await _audioPlayer.setAsset('assets/caselSong.ogg'); // مسار ملف الصوت
+      await _audioPlayer.play(); // تشغيل الموسيقى
+    } catch (e) {
+      print("Error loading audio: $e");
+    }
+  }
+
   void _showPersonalInfoDialog() {
     TextEditingController nameController = TextEditingController();
     TextEditingController birthdayController = TextEditingController();
@@ -59,10 +75,10 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.brown, // Brown background for the dialog
+          backgroundColor: Colors.brown,
           title: Text(
             'ادخل معلوماتك الشخصية من فضلك',
-            style: TextStyle(color: Colors.white), // White text color
+            style: TextStyle(color: Colors.white),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -125,7 +141,6 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                // Collect and save the entered personal info locally
                 personalInfo = {
                   'name': nameController.text,
                   'birthday': birthdayController.text,
@@ -133,7 +148,6 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
                 };
 
                 setState(() {
-                  // Add personal info to blocks if not empty
                   if (personalInfo['name']!.isNotEmpty) {
                     allBlocks.add(Block(text: personalInfo['name']!));
                   }
@@ -145,7 +159,7 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
                   }
                 });
 
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
               child: Text(
                 'ابدا اللعبة ',
@@ -158,25 +172,20 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
     );
   }
 
-  // Remove block from menu when dragged and add to the correctPassword list
   void removeBlockFromMenu(Block block) {
     setState(() {
       allBlocks.remove(block);
-      correctPassword.add(block); // Add to the list of dragged blocks
+      correctPassword.add(block);
     });
   }
 
-  // Check if the solution is correct
   void _checkSolution() async {
-    // Join the text of the blocks that have been dragged to form the password
     String password = correctPassword.map((block) => block.text).join();
 
     try {
-      // Send the complete password and personal info to the backend
       String strength = await ApiServicePasswordGame.checkPasswordAndInfo(
           password, personalInfo);
 
-      // Display the result in an AwesomeDialog based on the password strength
       AwesomeDialog(
         context: context,
         dialogType: strength == 'Strong'
@@ -199,7 +208,6 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
                 : Colors.red,
       ).show();
     } catch (e) {
-      // Show an error if there's a problem with checking the password
       AwesomeDialog(
         context: context,
         dialogType: DialogType.error,

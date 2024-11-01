@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:just_audio/just_audio.dart';
 import 'gameScree.dart';
 
 class LinksVideoScreen extends StatefulWidget {
@@ -9,6 +10,7 @@ class LinksVideoScreen extends StatefulWidget {
 
 class _VideoScreenState extends State<LinksVideoScreen> {
   late VideoPlayerController _controller;
+  late AudioPlayer _backgroundMusicPlayer; // مشغل موسيقى الخلفية
   bool _isPlaying = false;
 
   @override
@@ -17,23 +19,49 @@ class _VideoScreenState extends State<LinksVideoScreen> {
     _controller = VideoPlayerController.asset("assets/the_char.mp4")
       ..initialize().then((_) {
         setState(() {});
-        _controller.setLooping(false); // No auto-repeat
+        _controller.setLooping(false);
       });
 
-    // Listen to video end to stop playing
+    // تهيئة وتشغيل موسيقى الخلفية
+    _backgroundMusicPlayer = AudioPlayer();
+    _playBackgroundMusic();
+
     _controller.addListener(() {
       if (_controller.value.position == _controller.value.duration) {
         setState(() {
-          _isPlaying = false; // Update button state
+          _isPlaying = false;
         });
       }
     });
   }
 
+  Future<void> _playBackgroundMusic() async {
+    try {
+      await _backgroundMusicPlayer.setAsset('assets/LinkSong.mp3');
+      _backgroundMusicPlayer.setVolume(0.3);
+      _backgroundMusicPlayer.setLoopMode(LoopMode.one); // تكرار الموسيقى
+      await _backgroundMusicPlayer.play();
+      print("Background music started playing."); // تأكيد التشغيل
+    } catch (e) {
+      print("Failed to play background music: $e"); // طباعة أي خطأ
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _backgroundMusicPlayer.dispose(); // إيقاف الموسيقى عند الخروج
     super.dispose();
+  }
+
+  void _skipVideo() {
+    _controller.pause();
+    _backgroundMusicPlayer
+        .stop(); // إيقاف موسيقى الخلفية عند الانتقال للشاشة التالية
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => GameScreen()),
+    );
   }
 
   void _togglePlayPause() {
@@ -46,14 +74,6 @@ class _VideoScreenState extends State<LinksVideoScreen> {
         _isPlaying = true;
       }
     });
-  }
-
-  void _skipVideo() {
-    _controller.pause(); // Pause the video to stop sound
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => GameScreen()),
-    );
   }
 
   @override
