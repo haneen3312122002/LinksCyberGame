@@ -43,7 +43,6 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
-    _playMusic(); // تشغيل الموسيقى عند بدء اللعبة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPersonalInfoDialog();
     });
@@ -140,7 +139,10 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                // تشغيل الموسيقى بعد تفاعل المستخدم
+                await _playMusic();
+
                 personalInfo = {
                   'name': nameController.text,
                   'birthday': birthdayController.text,
