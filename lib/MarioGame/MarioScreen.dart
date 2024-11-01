@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'MovingBack.dart';
+// Data class to hold letter tile information (if not already defined in GameGround.dart)
 
 class MarioGameScreen extends StatefulWidget {
   @override
@@ -11,12 +12,12 @@ class MarioGameScreen extends StatefulWidget {
 class _MarioGameScreenState extends State<MarioGameScreen> {
   double _characterXPosition =
       0; // Initial horizontal position of the character
-  double _characterYPosition =
-      0.05; // Initial vertical position relative to screen height
+  double _characterYPosition = 0.0; // Start at the bottom
   String _characterDirection = 'TopChar.png'; // Initial character image
   Timer? _movementTimer; // Timer for continuous movement
   String _randomWord = ""; // Variable to hold the random word
   int _randomKey = 0; // Variable to hold the random key
+  String? _foundLetter; // Variable to hold the found letter
 
   // List of three-character words
   final List<String> _words = ["cat", "dog", "sun", "car", "bat", "hat", "map"];
@@ -61,32 +62,142 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       double moveDistanceX = screenWidth * 0.005; // Horizontal step size
       double moveDistanceY = screenHeight * 0.005; // Vertical step size
 
+      double characterWidth = 120.0;
+      double characterHeight = 120.0;
+
       // Update movement based on direction
       if (direction == 'left' && _characterXPosition > -screenWidth / 2) {
         _characterXPosition -= moveDistanceX;
         _characterDirection = 'LeftChar.png';
       } else if (direction == 'right' &&
-          _characterXPosition < screenWidth / 2) {
+          _characterXPosition < screenWidth / 2 - characterWidth) {
         _characterXPosition += moveDistanceX;
         _characterDirection = 'RightChar.png';
       } else if (direction == 'forward' &&
-          _characterYPosition < screenHeight / 3) {
+          _characterYPosition < screenHeight - characterHeight) {
         _characterYPosition += moveDistanceY;
         _characterDirection = 'TopChar.png';
-      } else if (direction == 'backward' &&
-          _characterYPosition > -screenHeight / 3) {
+      } else if (direction == 'backward' && _characterYPosition > 0) {
         _characterYPosition -= moveDistanceY;
         _characterDirection = 'DownChar.png';
       }
     });
   }
 
+  // Method to generate letter tiles with positions
+  List<LetterTileData> _generateLetterTiles(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    List<LetterTileData> letterTiles = [];
+
+    // Letters A-M on the central vertical street (bottom to top)
+    // Letters A-M on the central vertical street (bottom to top)
+    for (int index = 0; index < 13; index++) {
+      final letter = String.fromCharCode(65 + index); // A to M
+      final x = screenWidth / 2 - 15;
+
+      // Adjust the y-coordinate to be consistent with the character’s expected height range
+      final y = (screenHeight / 14) * index + 30;
+
+      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+    }
+
+    // Letters N-T on the left horizontal street, centered vertically
+    for (int index = 0; index < 7; index++) {
+      final letter = String.fromCharCode(78 + index); // N to T
+      final x = (screenWidth / 14) * index + 20;
+      final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
+      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+    }
+
+    // Letters U-Z on the right horizontal street, centered vertically
+    for (int index = 0; index < 6; index++) {
+      final letter = String.fromCharCode(85 + index); // U to Z
+      final x = screenWidth / 2 + (index * (screenWidth / 14)) + 40;
+      final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
+      letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
+    }
+
+    return letterTiles;
+  }
+
+  // Method to check for collision with letters
+  void _checkForLetter(BuildContext context, List<LetterTileData> letterTiles) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Character dimensions
+    double characterWidth = 120;
+    double characterHeight = 120;
+
+    // Calculate character's position
+    double characterLeft = (screenWidth / 2) + _characterXPosition - 25;
+    double characterBottom = _characterYPosition;
+
+    // Create character rectangle to use as the hitbox
+    Rect characterRect = Rect.fromLTWH(
+      characterLeft,
+      screenHeight - characterBottom - characterHeight,
+      characterWidth,
+      characterHeight,
+    );
+
+    bool found = false;
+
+    for (LetterTileData tile in letterTiles) {
+      double tileLeft = tile.x;
+      double tileBottom = tile.y;
+
+      // Define a threshold based on whether the letter is on the vertical street
+      bool isVerticalTile =
+          (tileLeft > screenWidth / 2 - 40 && tileLeft < screenWidth / 2 + 40);
+      double thresholdX =
+          isVerticalTile ? 5.0 : 2.0; // Adjusted for vertical sensitivity
+      double thresholdY =
+          isVerticalTile ? 20.0 : 5.0; // More lenient for vertical alignment
+
+      // Expand the tile's hitbox based on the thresholds
+      Rect tileRect = Rect.fromLTWH(
+        tileLeft - thresholdX,
+        screenHeight - tileBottom - 30 - thresholdY,
+        30 + 2 * thresholdX,
+        30 + 2 * thresholdY,
+      );
+
+      // Calculate centers of character and tile
+      Offset characterCenter = characterRect.center;
+      Offset tileCenter = tileRect.center;
+
+      // Check if the character's center is within close proximity of the tile's center
+      if ((characterCenter - tileCenter).distance <= 30) {
+        // Adjust the distance threshold as needed
+        // Accurate collision detected
+        setState(() {
+          _foundLetter = tile.letter;
+        });
+        found = true;
+        break; // Exit loop after finding the first exact collision
+      }
+    }
+
+    if (!found) {
+      // If no collision, ensure _foundLetter is null
+      setState(() {
+        _foundLetter = null;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double iconSize =
-        MediaQuery.of(context).size.width * 0.02; // Arrow button size
+        MediaQuery.of(context).size.width * 0.08; // Adjusted icon size
     double buttonPadding = MediaQuery.of(context).size.width * 0.01;
     double fontSize = MediaQuery.of(context).size.width * 0.07;
+
+    // Generate the letter tiles
+    List<LetterTileData> letterTiles = _generateLetterTiles(context);
 
     return Scaffold(
       body: Stack(
@@ -95,6 +206,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
             characterXPosition: _characterXPosition,
             characterYPosition: _characterYPosition,
             characterDirection: _characterDirection,
+            letterTiles: letterTiles,
           ),
           // Display the random word at the top left corner with fun styling
           Positioned(
@@ -152,22 +264,22 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                     // Left Arrow
                     ArrowButton(
                       icon: Icons.arrow_back,
-                      onTapDown: (_) => _startMoving('right'),
-                      onTapUp: (_) => _stopMoving(),
-                      onTapCancel: () => _stopMoving(),
-                      iconSize: iconSize,
-                      padding: buttonPadding,
-                    ),
-                    SizedBox(width: buttonPadding),
-                    ArrowButton(
-                      icon: Icons.arrow_forward,
                       onTapDown: (_) => _startMoving('left'),
                       onTapUp: (_) => _stopMoving(),
                       onTapCancel: () => _stopMoving(),
                       iconSize: iconSize,
                       padding: buttonPadding,
                     ),
+                    SizedBox(width: buttonPadding),
                     // Right Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_forward,
+                      onTapDown: (_) => _startMoving('right'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
                   ],
                 ),
                 // Down Arrow
@@ -182,6 +294,42 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
+          // Check icon at the bottom left
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.08,
+            left: MediaQuery.of(context).size.width * 0.05,
+            child: IconButton(
+              icon: Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: iconSize * 1.5, // Adjust the size as needed
+              ),
+              onPressed: () {
+                _checkForLetter(context, letterTiles);
+              },
+            ),
+          ),
+          // Display the found letter
+          if (_foundLetter != null)
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.2,
+              left: MediaQuery.of(context).size.width * 0.5 - 50,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Center(
+                  child: Text(
+                    _foundLetter!,
+                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
