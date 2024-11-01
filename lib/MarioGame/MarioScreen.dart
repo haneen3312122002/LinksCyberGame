@@ -268,22 +268,23 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                     // Left Arrow
                     ArrowButton(
                       icon: Icons.arrow_back,
-                      onTapDown: (_) => _startMoving('left'),
-                      onTapUp: (_) => _stopMoving(),
-                      onTapCancel: () => _stopMoving(),
-                      iconSize: iconSize,
-                      padding: buttonPadding,
-                    ),
-                    SizedBox(width: buttonPadding),
-                    // Right Arrow
-                    ArrowButton(
-                      icon: Icons.arrow_forward,
                       onTapDown: (_) => _startMoving('right'),
                       onTapUp: (_) => _stopMoving(),
                       onTapCancel: () => _stopMoving(),
                       iconSize: iconSize,
                       padding: buttonPadding,
                     ),
+                    SizedBox(width: buttonPadding),
+                    ArrowButton(
+                      icon: Icons.arrow_forward,
+                      onTapDown: (_) => _startMoving('left'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
+
+                    // Right Arrow
                   ],
                 ),
                 // Down Arrow
