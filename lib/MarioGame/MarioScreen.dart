@@ -1,134 +1,236 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'Char.dart';
+import 'dart:math';
+import 'package:flutter/material.dart';
 import 'MovingBack.dart';
 
-class MarioGame extends StatefulWidget {
+class MarioGameScreen extends StatefulWidget {
   @override
-  _GameScreenState createState() => _GameScreenState();
+  _MarioGameScreenState createState() => _MarioGameScreenState();
 }
 
-class _GameScreenState extends State<MarioGame> {
-  double characterX = 50; // تعديل نقطة بدء الشخصية
-  double characterY = 70; // مستوى الأرض عند البداية
-  bool isMovingRight = true;
-  bool isJumping = false;
-  double gravity = -0.5; // تعديل قيمة الجاذبية لتناسب القفز
-  double velocityY = 0;
-  bool onPlatform = false;
+class _MarioGameScreenState extends State<MarioGameScreen> {
+  double _characterXPosition =
+      0; // Initial horizontal position of the character
+  double _characterYPosition =
+      0.05; // Initial vertical position relative to screen height
+  String _characterDirection = 'TopChar.png'; // Initial character image
+  Timer? _movementTimer; // Timer for continuous movement
+  String _randomWord = ""; // Variable to hold the random word
+  int _randomKey = 0; // Variable to hold the random key
 
-  Timer? moveTimer;
+  // List of three-character words
+  final List<String> _words = ["cat", "dog", "sun", "car", "bat", "hat", "map"];
 
-  // تحريك الشخصية بشكل سلس عند الضغط المستمر
-  void startMoving(bool moveRight) {
-    // التأكد من إيقاف أي حركة سابقة
-    stopMoving();
+  @override
+  void initState() {
+    super.initState();
+    _generateRandomWordAndKey(); // Generate a random word and key at the start of the game
+  }
 
-    moveTimer = Timer.periodic(Duration(milliseconds: 30), (timer) {
-      setState(() {
-        double screenWidth = MediaQuery.of(context).size.width; // عرض الشاشة
-
-        if (moveRight) {
-          // التأكد من عدم الخروج من الجانب الأيمن
-          if (characterX + 5 <= screenWidth - 100) {
-            characterX += 5; // تحريك لليمين
-            isMovingRight = true;
-          }
-        } else {
-          // التأكد من عدم الخروج من الجانب الأيسر
-          if (characterX - 5 >= 0) {
-            characterX -= 5; // تحريك لليسار
-            isMovingRight = false;
-          }
-        }
-      });
+  // Function to generate a random word and key
+  void _generateRandomWordAndKey() {
+    final random = Random();
+    setState(() {
+      _randomWord = _words[random.nextInt(_words.length)];
+      _randomKey = random.nextInt(10) + 1; // Random key between 1 and 10
     });
   }
 
-  void stopMoving() {
-    if (moveTimer != null) {
-      moveTimer?.cancel(); // إلغاء أي حركة مستمرة عند رفع اليد
-      moveTimer = null;
-    }
+  // Function to start moving character in a specific direction continuously
+  void _startMoving(String direction) {
+    _movementTimer?.cancel(); // Cancel any existing timer
+    _movementTimer = Timer.periodic(Duration(milliseconds: 16), (_) {
+      _moveCharacter(
+          direction); // Repeated move at high frequency for smoothness
+    });
   }
 
-  // منطق القفز
-  void jump() {
-    if (!isJumping && !onPlatform) {
-      isJumping = true;
-      velocityY = 10; // السرعة الأولية للقفز
-      Timer.periodic(Duration(milliseconds: 30), (timer) {
-        setState(() {
-          characterY += velocityY; // تحديث المحور الرأسي
-          velocityY += gravity; // تأثير الجاذبية
+  // Function to stop continuous movement
+  void _stopMoving() {
+    _movementTimer?.cancel();
+    _movementTimer = null;
+  }
 
-          // إذا وصلت الشخصية إلى الأرض
-          if (characterY <= 70) {
-            characterY = 70; // العودة إلى المستوى الأصلي للأرض
-            isJumping = false;
-            velocityY = 0;
-            timer.cancel();
-          }
+  // Function to move character left, right, forward, or backward
+  void _moveCharacter(String direction) {
+    setState(() {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double screenHeight = MediaQuery.of(context).size.height;
 
-          // التحقق من التصادم مع المنصة العائمة
-          if (characterY <= 150 &&
-              characterY > 100 &&
-              characterX >= 300 &&
-              characterX <= 450) {
-            // إذا كانت الشخصية داخل حدود المنصة
-            onPlatform = true;
-            characterY = 150; // توقف عند مستوى المنصة
-            velocityY = 0;
-            timer.cancel();
-          } else {
-            onPlatform = false;
-          }
-        });
-      });
-    }
+      // Smaller step sizes for smoother movement
+      double moveDistanceX = screenWidth * 0.005; // Horizontal step size
+      double moveDistanceY = screenHeight * 0.005; // Vertical step size
+
+      // Update movement based on direction
+      if (direction == 'left' && _characterXPosition > -screenWidth / 2) {
+        _characterXPosition -= moveDistanceX;
+        _characterDirection = 'LeftChar.png';
+      } else if (direction == 'right' &&
+          _characterXPosition < screenWidth / 2) {
+        _characterXPosition += moveDistanceX;
+        _characterDirection = 'RightChar.png';
+      } else if (direction == 'forward' &&
+          _characterYPosition < screenHeight / 2) {
+        _characterYPosition += moveDistanceY;
+        _characterDirection = 'TopChar.png';
+      } else if (direction == 'backward' &&
+          _characterYPosition > -screenHeight / 2) {
+        _characterYPosition -= moveDistanceY;
+        _characterDirection = 'DownChar.png';
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    double iconSize =
+        MediaQuery.of(context).size.width * 0.02; // Arrow button size
+    double buttonPadding = MediaQuery.of(context).size.width * 0.01;
+    double fontSize = MediaQuery.of(context).size.width * 0.07;
+
     return Scaffold(
       body: Stack(
         children: [
-          GameBackground(),
-          GameGround(),
-          GameCharacter(
-            characterX: characterX, // تمرير إحداثيات X
-            characterY: characterY, // تمرير إحداثيات Y
-            isMovingRight: isMovingRight,
+          GameGround(
+            characterXPosition: _characterXPosition,
+            characterYPosition: _characterYPosition,
+            characterDirection: _characterDirection,
           ),
-          FloatingPlatform(platformX: 300, platformY: 150), // المنصة العائمة
-          Obstacle(obstacleX: 500), // العائق
+          // Display the random word at the top left corner with fun styling
+          Positioned(
+            top: 60,
+            left: 20,
+            child: Text(
+              _randomWord,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.purple, // Use a fun color
+                fontFamily: 'Comic Sans MS', // Apply a playful font style
+              ),
+            ),
+          ),
+          // Display the random key with a key icon on the top right corner
+          Positioned(
+            top: 60,
+            right: 20,
+            child: Row(
+              children: [
+                Icon(Icons.vpn_key,
+                    color: Colors.orange, size: fontSize * 0.8), // Key icon
+                SizedBox(width: 5),
+                Text(
+                  '$_randomKey',
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                    fontFamily: 'Comic Sans MS', // Match the fun style
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Control buttons arranged in a diamond shape
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.08,
+            right: MediaQuery.of(context).size.width * 0.05,
+            child: Column(
+              children: [
+                // Up Arrow
+                ArrowButton(
+                  icon: Icons.arrow_upward,
+                  onTapDown: (_) => _startMoving('forward'),
+                  onTapUp: (_) => _stopMoving(),
+                  onTapCancel: () => _stopMoving(),
+                  iconSize: iconSize,
+                  padding: buttonPadding,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Left Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_back,
+                      onTapDown: (_) => _startMoving('right'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
+                    SizedBox(width: buttonPadding),
+                    ArrowButton(
+                      icon: Icons.arrow_forward,
+                      onTapDown: (_) => _startMoving('left'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
+                    // Right Arrow
+                  ],
+                ),
+                // Down Arrow
+                ArrowButton(
+                  icon: Icons.arrow_downward,
+                  onTapDown: (_) => _startMoving('backward'),
+                  onTapUp: (_) => _stopMoving(),
+                  onTapCancel: () => _stopMoving(),
+                  iconSize: iconSize,
+                  padding: buttonPadding,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          GestureDetector(
-            onPanStart: (_) => startMoving(true), // بدء الحركة لليمين عند الضغط
-            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
-            child: FloatingActionButton(
-              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
-              child: Icon(Icons.arrow_forward),
+    );
+  }
+}
+
+// Widget to create a styled arrow button with responsive sizing
+class ArrowButton extends StatelessWidget {
+  final IconData icon;
+  final GestureTapDownCallback onTapDown;
+  final GestureTapUpCallback onTapUp;
+  final GestureTapCancelCallback onTapCancel;
+  final double iconSize;
+  final double padding;
+
+  ArrowButton({
+    required this.icon,
+    required this.onTapDown,
+    required this.onTapUp,
+    required this.onTapCancel,
+    required this.iconSize,
+    required this.padding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: onTapDown,
+      onTapUp: onTapUp,
+      onTapCancel: onTapCancel,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color.fromARGB(255, 100, 180, 255),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              offset: Offset(2, 2),
+              blurRadius: 3,
             ),
-          ),
-          GestureDetector(
-            onPanStart: (_) =>
-                startMoving(false), // بدء الحركة لليسار عند الضغط
-            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
-            child: FloatingActionButton(
-              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
-              child: Icon(Icons.arrow_back),
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: jump,
-            child: Icon(Icons.arrow_upward),
-          ),
-        ],
+          ],
+        ),
+        child: IconButton(
+          icon: Icon(icon),
+          color: Colors.white,
+          onPressed: () {}, // Required by IconButton but unused here
+          iconSize: iconSize,
+          padding: EdgeInsets.all(padding),
+        ),
       ),
     );
   }

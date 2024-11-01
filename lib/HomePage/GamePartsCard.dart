@@ -6,6 +6,7 @@ import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
 import 'package:cybergame/portGame/port_game.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
+import 'package:cybergame/MarioGame/MarioScreen.dart';
 
 class CryptoPage extends StatelessWidget {
   @override
@@ -70,6 +71,10 @@ class GamePartsCard extends StatelessWidget {
       case 4:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+        break;
+      case 5:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MarioGameScreen()));
         break;
       case 7:
         Navigator.push(context,
