@@ -138,8 +138,10 @@ flutter:
     - assets/UnderGround1.png 
     - assets/UnderGround2.png 
     - assets/Clouds.png
-    - assets/LeftChar.gif
-    - assets/RightChar.gif
+    - assets/LeftChar.png
+    - assets/TopChar.png
+    - assets/RightChar.png
+    - assets/DownChar.png
     - assets/StaticLeftChar.png
     - assets/StaticRightChar.png
     #net game:

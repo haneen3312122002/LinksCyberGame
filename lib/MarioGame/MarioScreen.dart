@@ -1,91 +1,34 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'Char.dart';
 import 'MovingBack.dart';
 
-class MarioGame extends StatefulWidget {
+class MarioGameScreen extends StatefulWidget {
   @override
-  _GameScreenState createState() => _GameScreenState();
+  _MarioGameScreenState createState() => _MarioGameScreenState();
 }
 
-class _GameScreenState extends State<MarioGame> {
-  double characterX = 50; // تعديل نقطة بدء الشخصية
-  double characterY = 70; // مستوى الأرض عند البداية
-  bool isMovingRight = true;
-  bool isJumping = false;
-  double gravity = -0.5; // تعديل قيمة الجاذبية لتناسب القفز
-  double velocityY = 0;
-  bool onPlatform = false;
+class _MarioGameScreenState extends State<MarioGameScreen> {
+  double _characterXPosition =
+      0; // Initial horizontal position of the character
+  double _characterYPosition = 30; // Initial vertical position of the character
+  String _characterDirection = 'TopChar.png'; // Initial character image
 
-  Timer? moveTimer;
-
-  // تحريك الشخصية بشكل سلس عند الضغط المستمر
-  void startMoving(bool moveRight) {
-    // التأكد من إيقاف أي حركة سابقة
-    stopMoving();
-
-    moveTimer = Timer.periodic(Duration(milliseconds: 30), (timer) {
-      setState(() {
-        double screenWidth = MediaQuery.of(context).size.width; // عرض الشاشة
-
-        if (moveRight) {
-          // التأكد من عدم الخروج من الجانب الأيمن
-          if (characterX + 5 <= screenWidth - 100) {
-            characterX += 5; // تحريك لليمين
-            isMovingRight = true;
-          }
-        } else {
-          // التأكد من عدم الخروج من الجانب الأيسر
-          if (characterX - 5 >= 0) {
-            characterX -= 5; // تحريك لليسار
-            isMovingRight = false;
-          }
-        }
-      });
+  // Function to move character left, right, forward, or backward
+  void _moveCharacter(String direction) {
+    setState(() {
+      if (direction == 'left') {
+        _characterXPosition -= 40; // Move left
+        _characterDirection = 'LeftChar.png';
+      } else if (direction == 'right') {
+        _characterXPosition += 40; // Move right
+        _characterDirection = 'RightChar.png';
+      } else if (direction == 'forward') {
+        _characterYPosition += 40; // Move upward along the central street
+        _characterDirection = 'TopChar.png';
+      } else if (direction == 'backward') {
+        _characterYPosition -= 40; // Move downward along the central street
+        _characterDirection = 'DownChar.png'; // Change to downward image
+      }
     });
-  }
-
-  void stopMoving() {
-    if (moveTimer != null) {
-      moveTimer?.cancel(); // إلغاء أي حركة مستمرة عند رفع اليد
-      moveTimer = null;
-    }
-  }
-
-  // منطق القفز
-  void jump() {
-    if (!isJumping && !onPlatform) {
-      isJumping = true;
-      velocityY = 10; // السرعة الأولية للقفز
-      Timer.periodic(Duration(milliseconds: 30), (timer) {
-        setState(() {
-          characterY += velocityY; // تحديث المحور الرأسي
-          velocityY += gravity; // تأثير الجاذبية
-
-          // إذا وصلت الشخصية إلى الأرض
-          if (characterY <= 70) {
-            characterY = 70; // العودة إلى المستوى الأصلي للأرض
-            isJumping = false;
-            velocityY = 0;
-            timer.cancel();
-          }
-
-          // التحقق من التصادم مع المنصة العائمة
-          if (characterY <= 150 &&
-              characterY > 100 &&
-              characterX >= 300 &&
-              characterX <= 450) {
-            // إذا كانت الشخصية داخل حدود المنصة
-            onPlatform = true;
-            characterY = 150; // توقف عند مستوى المنصة
-            velocityY = 0;
-            timer.cancel();
-          } else {
-            onPlatform = false;
-          }
-        });
-      });
-    }
   }
 
   @override
@@ -93,42 +36,79 @@ class _GameScreenState extends State<MarioGame> {
     return Scaffold(
       body: Stack(
         children: [
-          GameBackground(),
-          GameGround(),
-          GameCharacter(
-            characterX: characterX, // تمرير إحداثيات X
-            characterY: characterY, // تمرير إحداثيات Y
-            isMovingRight: isMovingRight,
+          GameGround(
+            characterXPosition: _characterXPosition,
+            characterYPosition: _characterYPosition,
+            characterDirection: _characterDirection,
           ),
-          FloatingPlatform(platformX: 300, platformY: 150), // المنصة العائمة
-          Obstacle(obstacleX: 500), // العائق
+          // Control buttons arranged in a diamond shape
+          Positioned(
+            bottom: 70,
+            right: 20,
+            child: Column(
+              children: [
+                // Up Arrow
+                ArrowButton(
+                  icon: Icons.arrow_upward,
+                  onPressed: () => _moveCharacter('forward'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Left Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_forward,
+                      onPressed: () => _moveCharacter('left'),
+                    ),
+                    SizedBox(width: 10),
+                    // Right Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_back,
+                      onPressed: () => _moveCharacter('right'),
+                    ),
+                  ],
+                ),
+                // Down Arrow
+                ArrowButton(
+                  icon: Icons.arrow_downward,
+                  onPressed: () => _moveCharacter('backward'),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          GestureDetector(
-            onPanStart: (_) => startMoving(true), // بدء الحركة لليمين عند الضغط
-            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
-            child: FloatingActionButton(
-              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
-              child: Icon(Icons.arrow_forward),
-            ),
-          ),
-          GestureDetector(
-            onPanStart: (_) =>
-                startMoving(false), // بدء الحركة لليسار عند الضغط
-            onPanEnd: (_) => stopMoving(), // إيقاف الحركة عند رفع اليد
-            child: FloatingActionButton(
-              onPressed: () {}, // إضافة onPressed حتى لو لم يكن له وظيفة
-              child: Icon(Icons.arrow_back),
-            ),
-          ),
-          FloatingActionButton(
-            onPressed: jump,
-            child: Icon(Icons.arrow_upward),
+    );
+  }
+}
+
+// Widget to create a styled arrow button
+class ArrowButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  ArrowButton({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color.fromARGB(255, 100, 180, 255),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            offset: Offset(2, 2),
+            blurRadius: 3,
           ),
         ],
+      ),
+      child: IconButton(
+        icon: Icon(icon),
+        color: Colors.white,
+        onPressed: onPressed,
+        iconSize: 30, // Smaller icon size
+        padding: EdgeInsets.all(12),
       ),
     );
   }
