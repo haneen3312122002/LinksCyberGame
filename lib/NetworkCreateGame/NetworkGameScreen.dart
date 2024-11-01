@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:just_audio/just_audio.dart'; // Import just_audio for background music
 import 'NetNodes.dart';
 import 'Slider.dart';
 
@@ -9,6 +10,9 @@ class NetworkGameScreen extends StatefulWidget {
 }
 
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
+  final AudioPlayer _backgroundAudioPlayer =
+      AudioPlayer(); // Background music player
+
   Offset? startDragPosition;
   Offset? currentDragPosition;
   List<Map<String, dynamic>> connections = [];
@@ -21,6 +25,25 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   bool isGifPlaying = false;
   int gifPlayingCount = 0;
   bool devicesUnlocked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _playBackgroundMusic();
+  }
+
+  @override
+  void dispose() {
+    _backgroundAudioPlayer.dispose(); // Dispose of the audio player
+    super.dispose();
+  }
+
+  Future<void> _playBackgroundMusic() async {
+    await _backgroundAudioPlayer.setAsset('assets/networkbuild.mp3');
+    _backgroundAudioPlayer
+        .setLoopMode(LoopMode.one); // Loop the background music
+    await _backgroundAudioPlayer.play(); // Start playing
+  }
 
   List<Offset> _generateDevicePositions(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -62,7 +85,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       Color lineColor = const Color.fromARGB(255, 221, 111, 255);
       if (deviceType == 'تابلت' && wifiStatus) {
         lineColor = const Color.fromARGB(
-            255, 12, 220, 19); // Set green color if from tablet with WiFi on
+            255, 12, 220, 19); // Green color if from tablet with WiFi on
       }
 
       setState(() {
