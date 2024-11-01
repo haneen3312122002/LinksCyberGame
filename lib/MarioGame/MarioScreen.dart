@@ -192,9 +192,9 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   @override
   Widget build(BuildContext context) {
     double iconSize =
-        MediaQuery.of(context).size.width * 0.08; // Adjusted icon size
+        MediaQuery.of(context).size.width * 0.03; // Adjusted icon size
     double buttonPadding = MediaQuery.of(context).size.width * 0.01;
-    double fontSize = MediaQuery.of(context).size.width * 0.07;
+    double fontSize = MediaQuery.of(context).size.width * 0.04;
 
     // Generate the letter tiles
     List<LetterTileData> letterTiles = _generateLetterTiles(context);
