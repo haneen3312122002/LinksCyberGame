@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'Block.dart';
-import '/PasswordGame/photo.dart'; // تأكد من وجود BackgroundPhoto
-import 'RightMin.dart'; // تأكد من وجود RightSideMenu
-import 'Wall.dart'; // تأكد من وجود WallArea
-import '/connection.dart'; // تأكد من إضافة ملف ApiService
+import '/PasswordGame/photo.dart'; // Make sure BackgroundPhoto exists
+import 'RightMin.dart'; // Make sure RightSideMenu exists
+import 'Wall.dart'; // Make sure WallArea exists
+import '/connection.dart'; // Ensure ApiService is added
 import 'package:awesome_dialog/awesome_dialog.dart';
 
 class CryptoGameScreen extends StatefulWidget {
@@ -37,12 +37,16 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
     Block(text: 'user'),
   ];
 
-  late AudioPlayer _audioPlayer; // تعريف مشغل الصوت
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
+
+    // Start playing music automatically when the game starts
+    _playMusic();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showPersonalInfoDialog();
     });
@@ -50,15 +54,16 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose(); // تحرير موارد مشغل الصوت عند الخروج
+    _audioPlayer.dispose();
     super.dispose();
   }
 
   Future<void> _playMusic() async {
     try {
-      await _audioPlayer.setLoopMode(LoopMode.one); // تكرار الموسيقى
-      await _audioPlayer.setAsset('assets/caselSong.ogg'); // مسار ملف الصوت
-      await _audioPlayer.play(); // تشغيل الموسيقى
+      await _audioPlayer
+          .setAsset('assets/caselSong.mp3'); // Path to the audio file
+      await _audioPlayer.setLoopMode(LoopMode.one); // Repeat the audio
+      await _audioPlayer.play(); // Play the audio
     } catch (e) {
       print("Error loading audio: $e");
     }
@@ -139,10 +144,7 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () async {
-                // تشغيل الموسيقى بعد تفاعل المستخدم
-                await _playMusic();
-
+              onPressed: () {
                 personalInfo = {
                   'name': nameController.text,
                   'birthday': birthdayController.text,
