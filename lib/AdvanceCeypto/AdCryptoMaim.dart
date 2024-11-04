@@ -89,7 +89,7 @@ class _LevelPageState extends State<AdCryptoGame> {
           Expanded(
             child: Row(
               children: [
-                // First Phone Frame (حنين) showing the original message
+                // First Phone Frame (حنين) showing the original message with image
                 _buildPhoneFrame(
                   "حنين",
                   Colors.green[50]!,
@@ -99,8 +99,9 @@ class _LevelPageState extends State<AdCryptoGame> {
                       ? _originalMessage
                       : "No message",
                   isSender: true,
+                  imagePath: 'assets/images/hanenChat.png',
                 ),
-                // Second Phone Frame (بتول) with Decrypt Button
+                // Second Phone Frame (بتول) with Decrypt Button and image
                 _buildPhoneFrame(
                   "بتول",
                   Colors.blue[50]!,
@@ -113,6 +114,7 @@ class _LevelPageState extends State<AdCryptoGame> {
                           : "Waiting for encrypted message...",
                   showDecryptButton: _encryptedMessage.isNotEmpty,
                   onDecrypt: _decryptMessage,
+                  imagePath: 'assets/images/batoolChat.png',
                 ),
               ],
             ),
@@ -156,6 +158,7 @@ class _LevelPageState extends State<AdCryptoGame> {
     Color headerColor, {
     required Alignment alignment,
     required String message,
+    String? imagePath,
     bool showDecryptButton = false,
     VoidCallback? onDecrypt,
     bool isSender = false, // Determines if this is the sender's frame
@@ -196,6 +199,11 @@ class _LevelPageState extends State<AdCryptoGame> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (imagePath != null)
+                        Image.asset(
+                          imagePath,
+                          height: 100,
+                        ),
                       Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.all(10),
@@ -228,7 +236,6 @@ class _LevelPageState extends State<AdCryptoGame> {
                             ),
                           ],
                         ),
-                      // Decrypt Button (Only shown on بتول's side)
                       if (showDecryptButton && onDecrypt != null && !isSender)
                         IconButton(
                           icon: Icon(Icons.lock_open, color: Colors.blue),

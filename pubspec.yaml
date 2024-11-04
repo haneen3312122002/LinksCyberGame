@@ -154,6 +154,7 @@ flutter:
     - assets/DownChar.png
     - assets/StaticLeftChar.png
     - assets/StaticRightChar.png
+    - assets/MarioBackground.mp4
     #net game:
     - assets/Stand.png  
     - assets/Computer1.png
@@ -172,3 +173,7 @@ flutter:
     - assets/NetworkBack.png
     #antihame:
     - assets/WinBack.png  
+    #adcryptomami
+    - assets/batoolChat.png
+    - assets/hanenChat.png
+    

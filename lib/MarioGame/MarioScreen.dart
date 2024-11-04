@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'MovingBack.dart';
+import 'MarioBackground.dart';
 
 // Data class to hold letter tile information
 
@@ -206,6 +207,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
     return Scaffold(
       body: Stack(
         children: [
+          MarioBackground(),
           GameGround(
             characterXPosition: _characterXPosition,
             characterYPosition: _characterYPosition,
@@ -323,8 +325,9 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                       margin: EdgeInsets.symmetric(horizontal: 2.0),
                       padding: EdgeInsets.all(4.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black),
+                        color: const Color.fromARGB(255, 187, 67, 127),
+                        border: Border.all(
+                            color: const Color.fromARGB(255, 51, 5, 37)),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
                       child: Text(
@@ -332,7 +335,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                         style: TextStyle(
                           fontSize: fontSize,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: const Color.fromARGB(255, 14, 12, 12),
                         ),
                       ),
                     );
