@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 //link game:
 class ApiService {
   static const String baseUrl =
-      'http://192.168.100.100:5000'; // Replace with your PC's local IP
+      'http://192.168.100.2:5000'; // Replace with your PC's local IP
 
   static Future<String> checkLink(String link) async {
     if (link.isEmpty) {
@@ -33,7 +33,7 @@ class ApiService {
 
 class ApiServicePasswordGame {
   static const String baseUrl =
-      'http://192.168.100.100:5000'; // Replace with actual IP
+      'http://192.168.100.2:5000'; // Replace with actual IP
 
   // Send both the password and personal info to the backend for validation
   static Future<String> checkPasswordAndInfo(
@@ -60,7 +60,10 @@ class ApiServicePasswordGame {
       String strength = jsonResponse['strength'];
 
       // Ensure that the response contains a valid strength value
-      if (strength == 'Strong' || strength == 'Mid' || strength == 'Weak') {
+      if (strength == 'Strong' ||
+          strength == 'Mid' ||
+          strength == 'Weak' ||
+          strength == 'You are using personal info') {
         return strength;
       } else {
         throw Exception('Unexpected strength value returned from the server');
