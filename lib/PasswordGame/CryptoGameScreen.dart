@@ -196,20 +196,26 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
             ? DialogType.success
             : strength == 'Mid'
                 ? DialogType.warning
-                : DialogType.error,
+                : strength == 'Weak'
+                    ? DialogType.error
+                    : DialogType.info, // For 'You are using personal info'
         animType: AnimType.scale,
         title: 'قوة كلمة المرور',
         desc: strength == 'Strong'
             ? 'كلمة المرور قوية'
             : strength == 'Mid'
                 ? 'كلمة المرور متوسطة'
-                : 'كلمة المرور ضعيفة',
+                : strength == 'Weak'
+                    ? 'كلمة المرور ضعيفة'
+                    : 'كلمة المرور تحتوي على معلومات شخصية', // Custom message
         btnOkOnPress: () {},
         btnOkColor: strength == 'Strong'
             ? Colors.green
             : strength == 'Mid'
                 ? Colors.orange
-                : Colors.red,
+                : strength == 'Weak'
+                    ? Colors.red
+                    : Colors.blue, // Custom color for personal info case
       ).show();
     } catch (e) {
       AwesomeDialog(
