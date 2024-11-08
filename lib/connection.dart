@@ -44,8 +44,8 @@ class ApiServicePasswordGame {
 
     final url = Uri.parse('$baseUrl/check_password_and_info');
     final body = jsonEncode({
-      'password': password,
-      'personalInfo': personalInfo,
+      'passwordKey': password,
+      'InfoKey': personalInfo,
     });
 
     // Send a POST request with the password and personal info
@@ -60,7 +60,7 @@ class ApiServicePasswordGame {
       String strength = jsonResponse['strength'];
 
       // Ensure that the response contains a valid strength value
-      if (strength == 'Strong' || strength == 'Mid' || strength == 'Weak') {
+      if (strength == 'Strong' || strength == 'Mid' || strength == 'Weak"||  ) {
         return strength;
       } else {
         throw Exception('Unexpected strength value returned from the server');

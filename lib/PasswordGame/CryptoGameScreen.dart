@@ -145,6 +145,7 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
           actions: [
             TextButton(
               onPressed: () {
+                print('');
                 personalInfo = {
                   'name': nameController.text,
                   'birthday': birthdayController.text,

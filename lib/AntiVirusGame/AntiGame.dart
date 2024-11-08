@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
+import "AntiVirusProgram.dart";
+import 'Questions.dart';
 
 // شاشة اللعبة: التحكم الرئيسي في واجهة المستخدم ومنطق اللعبة
 class AntiGameScreen extends StatefulWidget {
@@ -544,98 +546,5 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
 }
 
 // فئة برنامج مكافحة الفيروسات: توفر المسح والأسئلة للتحدي
-class AntivirusProgram {
-  List<Question> trojanQuestions = [
-    Question(
-      questionText: 'ما هو حصان طروادة في عالم الكمبيوتر؟',
-      options: [
-        'برنامج مفيد',
-        'فيروس يتنكر كبرنامج شرعي',
-        'أداة لتحسين الأداء',
-        'نوع من الأجهزة'
-      ],
-      correctAnswer: 'فيروس يتنكر كبرنامج شرعي',
-    ),
-    // أضف المزيد من الأسئلة حول حصان طروادة
-  ];
-
-  List<Question> wormQuestions = [
-    Question(
-      questionText: 'كيف تنتشر الدودة في الشبكات؟',
-      options: [
-        'من خلال نسخ نفسها عبر الشبكة',
-        'عن طريق المستخدمين فقط',
-        'لا تنتشر على الإطلاق',
-        'من خلال الأجهزة الخارجية فقط'
-      ],
-      correctAnswer: 'من خلال نسخ نفسها عبر الشبكة',
-    ),
-    // أضف المزيد من الأسئلة حول الديدان
-  ];
-
-  List<Question> spywareQuestions = [
-    Question(
-      questionText: 'ما هو الهدف الرئيسي لفيروسات التجسس؟',
-      options: [
-        'تحسين أداء النظام',
-        'جمع المعلومات الشخصية',
-        'تدمير الملفات',
-        'تحديث البرامج'
-      ],
-      correctAnswer: 'جمع المعلومات الشخصية',
-    ),
-    // أضف المزيد من الأسئلة حول برامج التجسس
-  ];
-
-  // إرجاع سؤال بناءً على نوع الفيروس
-  Question getQuestionByVirusType(String virusType) {
-    Random random = Random();
-    if (virusType == 'حصان طروادة') {
-      return trojanQuestions[random.nextInt(trojanQuestions.length)];
-    } else if (virusType == 'دودة') {
-      return wormQuestions[random.nextInt(wormQuestions.length)];
-    } else if (virusType == 'فيروس تجسس') {
-      return spywareQuestions[random.nextInt(spywareQuestions.length)];
-    } else {
-      // افتراضيًا، إذا لم يتم تحديد النوع
-      return trojanQuestions[random.nextInt(trojanQuestions.length)];
-    }
-  }
-
-  // مسح الملفات للبحث عن الفيروسات
-  void scanFiles(List<FileItem> filesToScan) {
-    // تحديث حالة الملفات لتكون "تم المسح"
-    for (var file in filesToScan) {
-      file.scanned = true;
-    }
-  }
-}
 
 // فئة السؤال: تمثل سؤالاً في الأمن السيبراني
-class Question {
-  String questionText;
-  List<String> options;
-  String correctAnswer;
-  String? selectedOption;
-
-  Question({
-    required this.questionText,
-    required this.options,
-    required this.correctAnswer,
-    this.selectedOption,
-  });
-}
-
-// فئة الملف: تمثل ملفاً
-class FileItem {
-  String fileName;
-  bool isInfected;
-  String? virusType; // نوع الفيروس
-  bool scanned = false; // لمعرفة ما إذا تم مسح الملف أم لا
-
-  FileItem({
-    required this.fileName,
-    this.isInfected = false,
-    this.virusType,
-  });
-}

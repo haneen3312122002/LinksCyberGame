@@ -1,5 +1,6 @@
 import 'package:cybergame/AdvanceCeypto/AdCryptoMaim.dart';
 import 'package:cybergame/AntiVirusGame/AntiGame.dart';
+import 'package:cybergame/MalGame/MalGameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cybergame/CarGame/CarMain.dart';
 import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
@@ -90,6 +91,10 @@ class GamePartsCard extends StatelessWidget {
       case 8:
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => AntiGameScreen()));
+        break;
+      case 9:
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MalsGameScreen()));
         break;
 
       case 12:

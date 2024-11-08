@@ -95,11 +95,10 @@ class _LevelPageState extends State<AdCryptoGame> {
                   Colors.green[50]!,
                   Colors.green[200]!,
                   alignment: Alignment.bottomLeft,
-                  message: _originalMessage.isNotEmpty
-                      ? _originalMessage
-                      : "No message",
+                  message:
+                      _originalMessage.isNotEmpty ? _originalMessage : "المرسل",
                   isSender: true,
-                  imagePath: 'assets/images/hanenChat.png',
+                  imagePath: 'assets/hanenChat.png',
                 ),
                 // Second Phone Frame (بتول) with Decrypt Button and image
                 _buildPhoneFrame(
@@ -111,10 +110,10 @@ class _LevelPageState extends State<AdCryptoGame> {
                       ? _decryptedMessage
                       : _encryptedMessage.isNotEmpty
                           ? _encryptedMessage
-                          : "Waiting for encrypted message...",
+                          : "المستقبل",
                   showDecryptButton: _encryptedMessage.isNotEmpty,
                   onDecrypt: _decryptMessage,
-                  imagePath: 'assets/images/batoolChat.png',
+                  imagePath: 'assets/batoolChat.png',
                 ),
               ],
             ),
@@ -126,13 +125,14 @@ class _LevelPageState extends State<AdCryptoGame> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Enter Date", style: TextStyle(fontSize: 16)),
+                Text("اكتب معلومات المفتاح من القصة السابقة",
+                    style: TextStyle(fontSize: 16)),
                 SizedBox(height: 10),
-                _buildTextField(_dayController, 'Day'),
+                _buildTextField(_dayController, 'اليوم'),
                 SizedBox(height: 10),
-                _buildTextField(_monthController, 'Month'),
+                _buildTextField(_monthController, 'الشهر'),
                 SizedBox(height: 10),
-                _buildTextField(_yearController, 'Year'),
+                _buildTextField(_yearController, 'السنة'),
                 SizedBox(height: 20),
                 IconButton(
                   icon: Icon(Icons.check, size: 30),
@@ -223,7 +223,7 @@ class _LevelPageState extends State<AdCryptoGame> {
                               child: TextField(
                                 controller: _messageController,
                                 decoration: InputDecoration(
-                                  hintText: "Type message...",
+                                  hintText: "اكتب رسالة",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
