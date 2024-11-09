@@ -47,8 +47,15 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
         result = linkResult;
       });
 
-      if (linkResult == 'good') {
+      if (linkResult == 'secure') {
         await _playSound('assets/secure.mp3');
+      } else if (linkResult == 'not secure') {
+        await _playSound('assets/not_secure.mp3');
+      } else if (linkResult == 'suspicious domain' ||
+          linkResult == 'suspicious keyword' ||
+          linkResult == 'link too long' ||
+          linkResult == 'suspicious characters') {
+        await _playSound('assets/warning.mp3');
       }
     } catch (e) {
       print('Error: $e'); // Log any errors
@@ -58,19 +65,27 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
     }
   }
 
+  Color boxColor(String result) {
+    switch (result) {
+      case 'secure':
+        return Colors.green;
+      case 'not secure':
+        return Colors.red;
+      case 'suspicious domain':
+        return Colors.orange;
+      case 'suspicious keyword':
+        return Colors.yellow;
+      case 'link too long':
+        return Colors.purple;
+      default:
+        return Colors.transparent;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
-    Color boxColor;
-    if (result == 'good') {
-      boxColor = Colors.green;
-    } else if (result == 'Not good') {
-      boxColor = Colors.red;
-    } else {
-      boxColor = Colors.transparent;
-    }
 
     return Scaffold(
       backgroundColor: Colors.lightBlue[50],
@@ -160,7 +175,7 @@ class _LinkCheckerScreenState extends State<LinkCheckerScreen> {
                     width: double.infinity,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
-                      color: boxColor,
+                      color: boxColor(result),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     child: Text(

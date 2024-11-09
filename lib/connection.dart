@@ -21,7 +21,7 @@ class ApiService {
     // Handle the response
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
-      return jsonResponse['result'];
+      return jsonResponse['result']; // Return the result directly
     } else {
       throw Exception('Failed to check link');
     }
