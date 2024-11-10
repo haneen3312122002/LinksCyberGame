@@ -15,6 +15,7 @@ class _AdCryptoGameState extends State<AdCryptoGame>
   bool _isKeyVisible = false;
   bool _isKeyInSenderPhone = false; // للإشارة إلى وجود المفتاح في هاتف المرسل
   bool _isMessageSent = false; // للإشارة إلى أن الرسالة قد تم إرسالها
+  bool _isDecrypting = false; // للإشارة إلى عملية فك التشفير
 
   String _encryptedMessage = ""; // الرسالة المشفرة للمستقبل
   String _decryptedMessage = ""; // الرسالة بعد فك التشفير للمستقبل
@@ -27,19 +28,15 @@ class _AdCryptoGameState extends State<AdCryptoGame>
 
   // متحكمات الأنيميشن
   late AnimationController _keyAnimationController;
-  late Animation<Offset> _keyAnimation;
+  late Animation<double> _keyAnimation;
 
   late AnimationController _messageAnimationController;
-  late Animation<Offset> _messageAnimation;
+  late Animation<double> _messageAnimation;
 
   // مفاتيح GlobalKeys للحصول على مواقع العناصر
   final GlobalKey _keyIconKey = GlobalKey();
   final GlobalKey _senderPhoneKey = GlobalKey();
   final GlobalKey _receiverPhoneKey = GlobalKey();
-
-  // لإدارة OverlayEntries
-  OverlayEntry? _keyOverlayEntry;
-  OverlayEntry? _messageOverlayEntry;
 
   @override
   void initState() {
@@ -52,6 +49,16 @@ class _AdCryptoGameState extends State<AdCryptoGame>
     _messageAnimationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: 1),
+    );
+
+    _keyAnimation = CurvedAnimation(
+      parent: _keyAnimationController,
+      curve: Curves.easeInOut,
+    );
+
+    _messageAnimation = CurvedAnimation(
+      parent: _messageAnimationController,
+      curve: Curves.easeInOut,
     );
   }
 
@@ -70,62 +77,15 @@ class _AdCryptoGameState extends State<AdCryptoGame>
 
   // بدء أنيميشن المفتاح
   void _startKeyAnimation() {
-    final RenderBox keyIconBox =
-        _keyIconKey.currentContext!.findRenderObject() as RenderBox;
-    final keyIconPosition = keyIconBox.localToGlobal(Offset.zero);
+    setState(() {
+      _isKeyVisible = true;
+    });
 
-    final RenderBox senderPhoneBox =
-        _senderPhoneKey.currentContext!.findRenderObject() as RenderBox;
-    final senderPhonePosition = senderPhoneBox.localToGlobal(Offset.zero);
-
-    // إنشاء OverlayEntry لأيقونة المفتاح المتحركة
-    _keyOverlayEntry = OverlayEntry(
-      builder: (context) {
-        return AnimatedBuilder(
-          animation: _keyAnimationController,
-          builder: (context, child) {
-            return Positioned(
-              left: Tween<double>(
-                      begin: keyIconPosition.dx,
-                      end: senderPhonePosition.dx +
-                          senderPhoneBox.size.width / 2 -
-                          20)
-                  .animate(CurvedAnimation(
-                      parent: _keyAnimationController, curve: Curves.easeInOut))
-                  .value,
-              top: Tween<double>(
-                      begin: keyIconPosition.dy,
-                      end: senderPhonePosition.dy + 10)
-                  .animate(CurvedAnimation(
-                      parent: _keyAnimationController, curve: Curves.easeInOut))
-                  .value,
-              child: Opacity(
-                opacity: 1.0 - _keyAnimationController.value,
-                child: Icon(
-                  Icons.vpn_key,
-                  size: 40,
-                  color: Colors.orange,
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    // إدراج OverlayEntry في Overlay
-    Overlay.of(context)!.insert(_keyOverlayEntry!);
-
-    // بدء الأنيميشن
     _keyAnimationController.forward().then((_) {
-      // إزالة OverlayEntry بعد الانتهاء من الأنيميشن
-      _keyOverlayEntry?.remove();
-      _keyOverlayEntry = null;
-      _keyAnimationController.reset();
-
       setState(() {
         _isKeyInSenderPhone = true;
       });
+      _keyAnimationController.reset();
     });
   }
 
@@ -137,95 +97,20 @@ class _AdCryptoGameState extends State<AdCryptoGame>
         _encryptedMessage = _encryptMessage(_messageController.text);
         _decryptedMessage = "";
         _messageController.clear();
-        _startMessageAnimation();
+        _isMessageSent = true;
+      });
+
+      _messageAnimationController.forward().then((_) {
+        setState(() {
+          // يمكنك إضافة أي إجراءات أخرى هنا إذا لزم الأمر
+        });
+        _messageAnimationController.reset();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('يجب عليك إيجاد المفتاح أولاً!')),
       );
     }
-  }
-
-  // بدء أنيميشن الرسالة
-  void _startMessageAnimation() {
-    final RenderBox senderPhoneBox =
-        _senderPhoneKey.currentContext!.findRenderObject() as RenderBox;
-    final senderPhonePosition = senderPhoneBox.localToGlobal(Offset.zero);
-
-    final RenderBox receiverPhoneBox =
-        _receiverPhoneKey.currentContext!.findRenderObject() as RenderBox;
-    final receiverPhonePosition = receiverPhoneBox.localToGlobal(Offset.zero);
-
-    // إنشاء OverlayEntry لفقاعة الرسالة المتحركة
-    _messageOverlayEntry = OverlayEntry(
-      builder: (context) {
-        return AnimatedBuilder(
-          animation: _messageAnimationController,
-          builder: (context, child) {
-            return Positioned(
-              left: Tween<double>(
-                      begin: senderPhonePosition.dx +
-                          senderPhoneBox.size.width / 2 -
-                          20,
-                      end: receiverPhonePosition.dx +
-                          receiverPhoneBox.size.width / 2 -
-                          20)
-                  .animate(CurvedAnimation(
-                      parent: _messageAnimationController,
-                      curve: Curves.easeInOut))
-                  .value,
-              top: Tween<double>(
-                      begin: senderPhonePosition.dy + 80,
-                      end: receiverPhonePosition.dy + 10)
-                  .animate(CurvedAnimation(
-                      parent: _messageAnimationController,
-                      curve: Curves.easeInOut))
-                  .value,
-              child: Opacity(
-                opacity: 1.0 - _messageAnimationController.value,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.lightGreenAccent.withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.vpn_key, color: Colors.orange),
-                      SizedBox(width: 5),
-                      Text(
-                        _encryptedMessage,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily:
-                              'ComicSans', // خط مرح (تأكد من إضافة الخط في pubspec.yaml)
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    // إدراج OverlayEntry في Overlay
-    Overlay.of(context)!.insert(_messageOverlayEntry!);
-
-    // بدء الأنيميشن
-    _messageAnimationController.forward().then((_) {
-      // إزالة OverlayEntry بعد الانتهاء من الأنيميشن
-      _messageOverlayEntry?.remove();
-      _messageOverlayEntry = null;
-      _messageAnimationController.reset();
-
-      setState(() {
-        _isMessageSent = true;
-      });
-    });
   }
 
   // تشفير بسيط (تحويل كل حرف إلى الحرف التالي)
@@ -244,6 +129,15 @@ class _AdCryptoGameState extends State<AdCryptoGame>
           .map((char) => String.fromCharCode(char.codeUnitAt(0) - 1))
           .join();
       _encryptedMessage = "";
+      _isKeyInSenderPhone = false; // إخفاء المفتاح بعد فك التشفير
+      _isDecrypting = true;
+    });
+
+    // إعادة تعيين الحالة بعد فترة قصيرة لإخفاء الرسالة الأصلية
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _isDecrypting = false;
+      });
     });
   }
 
@@ -262,98 +156,219 @@ class _AdCryptoGameState extends State<AdCryptoGame>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlueAccent[100], // خلفية زاهية
-      body: Row(
+      body: Stack(
         children: [
-          // واجهة الدردشة داخل إطار الهاتف
-          Expanded(
-            child: Row(
-              children: [
-                // إطار الهاتف الأول (حنين)
-                _buildPhoneFrame(
-                  key: _senderPhoneKey,
-                  name: "حنين",
-                  alignment: Alignment.bottomLeft,
-                  message:
-                      _originalMessage.isNotEmpty ? _originalMessage : "المرسل",
-                  isSender: true,
-                  showKeyIcon: _isKeyInSenderPhone,
-                  imagePath: 'assets/hanenChat.png',
-                ),
-                // إطار الهاتف الثاني (بتول)
-                _buildPhoneFrame(
-                  key: _receiverPhoneKey,
-                  name: "بتول",
-                  alignment: Alignment.bottomLeft,
-                  message: _isMessageSent
-                      ? (_decryptedMessage.isNotEmpty
-                          ? _decryptedMessage
-                          : _encryptedMessage)
-                      : "المستقبل",
-                  showDecryptButton: _encryptedMessage.isNotEmpty,
-                  onDecrypt: _decryptMessage,
-                  imagePath: 'assets/batoolChat.png',
-                ),
-              ],
-            ),
-          ),
-          // قسم إدخال المفتاح وزر التحقق
-          Container(
-            width: 150,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.yellow[100], // خلفية زاهية
-              borderRadius: BorderRadius.circular(20), // حواف مستديرة
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "اكتب معلومات المفتاح",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple, // لون نص مرح
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                _buildTextField(_dayController, 'اليوم'),
-                SizedBox(height: 10),
-                _buildTextField(_monthController, 'الشهر'),
-                SizedBox(height: 10),
-                _buildTextField(_yearController, 'السنة'),
-                SizedBox(height: 20),
-                GestureDetector(
-                  key: _keyIconKey,
-                  onTap: _checkAnswer,
-                  child: Icon(
-                    Icons.check,
-                    size: 30,
-                    color: Colors.green,
-                  ),
-                ),
-                if (_isKeyVisible && !_isKeyInSenderPhone)
-                  AnimatedOpacity(
-                    opacity: _isKeyInSenderPhone ? 0.0 : 1.0,
-                    duration: Duration(milliseconds: 500),
-                    child: Icon(
-                      Icons.vpn_key,
-                      size: 40,
-                      color: Colors.orange,
+          Row(
+            children: [
+              // واجهة الدردشة داخل إطار الهاتف
+              Expanded(
+                child: Row(
+                  children: [
+                    // إطار الهاتف الأول (حنين)
+                    _buildPhoneFrame(
+                      key: _senderPhoneKey,
+                      name: "حنين",
+                      alignment: Alignment.bottomLeft,
+                      message: _originalMessage.isNotEmpty
+                          ? _originalMessage
+                          : "المرسل",
+                      isSender: true,
+                      showKeyIcon: _isKeyInSenderPhone,
+                      imagePath: 'assets/hanenChat.png',
                     ),
-                  ),
-              ],
-            ),
+                    // إطار الهاتف الثاني (بتول)
+                    _buildPhoneFrame(
+                      key: _receiverPhoneKey,
+                      name: "بتول",
+                      alignment: Alignment.bottomLeft,
+                      message: _isMessageSent
+                          ? (_decryptedMessage.isNotEmpty
+                              ? _decryptedMessage
+                              : _encryptedMessage)
+                          : "المستقبل",
+                      showDecryptButton: _encryptedMessage.isNotEmpty,
+                      onDecrypt: _decryptMessage,
+                      imagePath: 'assets/batoolChat.png',
+                    ),
+                  ],
+                ),
+              ),
+              // قسم إدخال المفتاح وزر التحقق
+              Container(
+                width: 150,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.yellow[100], // خلفية زاهية
+                  borderRadius: BorderRadius.circular(20), // حواف مستديرة
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "اكتب معلومات المفتاح",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.purple, // لون نص مرح
+                        fontFamily:
+                            'ComicSans', // خط مرح (تأكد من إضافة الخط في pubspec.yaml)
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(_dayController, 'اليوم'),
+                    SizedBox(height: 10),
+                    _buildTextField(_monthController, 'الشهر'),
+                    SizedBox(height: 10),
+                    _buildTextField(_yearController, 'السنة'),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      key: _keyIconKey,
+                      onTap: _checkAnswer,
+                      child: Icon(
+                        Icons.check,
+                        size: 30,
+                        color: Colors.green,
+                      ),
+                    ),
+                    if (_isKeyVisible && !_isKeyInSenderPhone)
+                      AnimatedOpacity(
+                        opacity: _isKeyInSenderPhone ? 0.0 : 1.0,
+                        duration: Duration(milliseconds: 500),
+                        child: Icon(
+                          Icons.vpn_key,
+                          size: 40,
+                          color: Colors.orange,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
+          // أنيميشن المفتاح والرسالة
+          _buildAnimations(),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnimations() {
+    return Stack(
+      children: [
+        // أنيميشن المفتاح
+        if (_isKeyVisible && !_isKeyInSenderPhone)
+          AnimatedBuilder(
+            animation: _keyAnimationController,
+            builder: (context, child) {
+              final RenderBox keyIconBox =
+                  _keyIconKey.currentContext!.findRenderObject() as RenderBox;
+              final keyIconPosition = keyIconBox.localToGlobal(Offset.zero);
+
+              final RenderBox senderPhoneBox = _senderPhoneKey.currentContext!
+                  .findRenderObject() as RenderBox;
+              final senderPhonePosition =
+                  senderPhoneBox.localToGlobal(Offset.zero);
+
+              return Positioned(
+                left: Tween<double>(
+                        begin:
+                            keyIconPosition.dx + keyIconBox.size.width / 2 - 20,
+                        end: senderPhonePosition.dx +
+                            senderPhoneBox.size.width / 2 -
+                            20)
+                    .animate(_keyAnimation)
+                    .value,
+                top: Tween<double>(
+                        begin: keyIconPosition.dy +
+                            keyIconBox.size.height / 2 -
+                            20,
+                        end: senderPhonePosition.dy + 10)
+                    .animate(_keyAnimation)
+                    .value,
+                child: Opacity(
+                  opacity: 1.0 - _keyAnimationController.value,
+                  child: Icon(
+                    Icons.vpn_key,
+                    size: 40,
+                    color: Colors.orange,
+                  ),
+                ),
+              );
+            },
+          ),
+        // أنيميشن الرسالة مع المفتاح
+        if (_isMessageSent)
+          AnimatedBuilder(
+            animation: _messageAnimationController,
+            builder: (context, child) {
+              final RenderBox senderPhoneBox = _senderPhoneKey.currentContext!
+                  .findRenderObject() as RenderBox;
+              final senderPhonePosition =
+                  senderPhoneBox.localToGlobal(Offset.zero);
+
+              final RenderBox receiverPhoneBox =
+                  _receiverPhoneKey.currentContext!.findRenderObject()
+                      as RenderBox;
+              final receiverPhonePosition =
+                  receiverPhoneBox.localToGlobal(Offset.zero);
+
+              return Positioned(
+                left: Tween<double>(
+                        begin: senderPhonePosition.dx +
+                            senderPhoneBox.size.width / 2 -
+                            20,
+                        end: receiverPhonePosition.dx +
+                            receiverPhoneBox.size.width / 2 -
+                            20)
+                    .animate(_messageAnimation)
+                    .value,
+                top: Tween<double>(
+                        begin: senderPhonePosition.dy + 80,
+                        end: receiverPhonePosition.dy + 10)
+                    .animate(_messageAnimation)
+                    .value,
+                child: Opacity(
+                  opacity: 1.0 - _messageAnimationController.value,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.vpn_key,
+                        color: Colors.orange,
+                        size: 20,
+                      ),
+                      SizedBox(width: 5),
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.lightGreenAccent.withOpacity(0.8),
+                          borderRadius:
+                              BorderRadius.circular(20), // حواف مستديرة
+                        ),
+                        child: Text(
+                          _encryptedMessage,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily:
+                                'ComicSans', // خط مرح (تأكد من إضافة الخط في pubspec.yaml)
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 
@@ -430,8 +445,11 @@ class _AdCryptoGameState extends State<AdCryptoGame>
                           if (showKeyIcon)
                             Padding(
                               padding: EdgeInsets.only(left: 10),
-                              child: Icon(Icons.vpn_key,
-                                  color: Colors.orange, size: 24),
+                              child: Icon(
+                                Icons.vpn_key,
+                                color: Colors.orange,
+                                size: 24,
+                              ),
                             ),
                         ],
                       ),

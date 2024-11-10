@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-
-// Data class to hold letter tile information
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/material.dart';
 
-// Data class to hold letter tile information (if not already defined in GameGround.dart)
+// Data class to hold letter tile information
 class LetterTileData {
   final String letter;
   final double x;
@@ -20,106 +17,96 @@ class MarioGameScreen extends StatefulWidget {
 }
 
 class _MarioGameScreenState extends State<MarioGameScreen> {
-  double _characterXPosition =
-      0; // Initial horizontal position of the character
-  double _characterYPosition = 0.0; // Start at the bottom
-  String _characterDirection = 'TopChar.png'; // Initial character image
-  Timer? _movementTimer; // Timer for continuous movement
-  String _randomWord = ""; // Variable to hold the random word
-  int _randomKey = 0; // Variable to hold the random key
-  String? _foundLetter; // Variable to hold the found letter
+  double _characterXPosition = 0;
+  double _characterYPosition = 0.0;
+  String _characterDirection = 'assets/character_top.png';
+  Timer? _movementTimer;
+  String _randomWord = "";
+  int _randomKey = 0;
+  String? _foundLetter;
 
-  // List of three-character words
   final List<String> _words = ["cat", "dog", "sun", "car", "bat", "hat", "map"];
 
   @override
   void initState() {
     super.initState();
-    _generateRandomWordAndKey(); // Generate a random word and key at the start of the game
+    _generateRandomWordAndKey();
   }
 
-  // Function to generate a random word and key
   void _generateRandomWordAndKey() {
     final random = Random();
     setState(() {
       _randomWord = _words[random.nextInt(_words.length)];
-      _randomKey = random.nextInt(10) + 1; // Random key between 1 and 10
+      _randomKey = random.nextInt(10) + 1;
     });
   }
 
-  // Function to start moving character in a specific direction continuously
   void _startMoving(String direction) {
-    _movementTimer?.cancel(); // Cancel any existing timer
+    _movementTimer?.cancel();
     _movementTimer = Timer.periodic(Duration(milliseconds: 16), (_) {
-      _moveCharacter(
-          direction); // Repeated move at high frequency for smoothness
+      _moveCharacter(direction);
     });
   }
 
-  // Function to stop continuous movement
   void _stopMoving() {
     _movementTimer?.cancel();
     _movementTimer = null;
   }
 
-  // Function to move character left, right, forward, or backward
   void _moveCharacter(String direction) {
     setState(() {
       double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
 
-      // Smaller step sizes for smoother movement
-      double moveDistanceX = screenWidth * 0.005; // Horizontal step size
-      double moveDistanceY = screenHeight * 0.005; // Vertical step size
+      double moveDistanceX = screenWidth * 0.005;
+      double moveDistanceY = screenHeight * 0.005;
 
       double characterWidth = 120.0;
       double characterHeight = 120.0;
 
-      // Update movement based on direction
       if (direction == 'left' && _characterXPosition > -screenWidth / 2) {
         _characterXPosition -= moveDistanceX;
-        _characterDirection = 'LeftChar.png';
+        _characterDirection = 'assets/character_left.png';
       } else if (direction == 'right' &&
           _characterXPosition < screenWidth / 2 - characterWidth) {
         _characterXPosition += moveDistanceX;
-        _characterDirection = 'RightChar.png';
+        _characterDirection = 'assets/character_right.png';
       } else if (direction == 'forward' &&
           _characterYPosition < screenHeight - characterHeight) {
         _characterYPosition += moveDistanceY;
-        _characterDirection = 'TopChar.png';
+        _characterDirection = 'assets/character_top.png';
       } else if (direction == 'backward' && _characterYPosition > 0) {
         _characterYPosition -= moveDistanceY;
-        _characterDirection = 'DownChar.png';
+        _characterDirection = 'assets/character_down.png';
       }
     });
   }
 
-  // Method to generate letter tiles with positions
   List<LetterTileData> _generateLetterTiles(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     List<LetterTileData> letterTiles = [];
 
-    // Letters A-M on the central vertical street (bottom to top)
+    // Letters A-M on the central vertical street
     for (int index = 0; index < 13; index++) {
-      final letter = String.fromCharCode(65 + index); // A to M
+      final letter = String.fromCharCode(65 + index);
       final x = screenWidth / 2 - 15;
       final y = 30 + (screenHeight / 14) * index;
       letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
     }
 
-    // Letters N-T on the left horizontal street, centered vertically
+    // Letters N-T on the left horizontal street
     for (int index = 0; index < 7; index++) {
-      final letter = String.fromCharCode(78 + index); // N to T
+      final letter = String.fromCharCode(78 + index);
       final x = (screenWidth / 14) * index + 20;
       final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
       letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
     }
 
-    // Letters U-Z on the right horizontal street, centered vertically
+    // Letters U-Z on the right horizontal street
     for (int index = 0; index < 6; index++) {
-      final letter = String.fromCharCode(85 + index); // U to Z
+      final letter = String.fromCharCode(85 + index);
       final x = screenWidth / 2 + (index * (screenWidth / 14)) + 40;
       final y = (screenHeight / 2) - 40 + (80 / 2) - 15;
       letterTiles.add(LetterTileData(letter: letter, x: x, y: y));
@@ -128,24 +115,19 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
     return letterTiles;
   }
 
-  // Method to check for collision with letters
   void _checkForLetter(BuildContext context, List<LetterTileData> letterTiles) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // Character dimensions
     double characterWidth = 120;
     double characterHeight = 120;
 
-    // Calculate character's position
     double characterLeft = (screenWidth / 2) + _characterXPosition - 25;
     double characterBottom = _characterYPosition;
 
     Rect characterRect = Rect.fromLTWH(
       characterLeft,
-      screenHeight -
-          characterBottom -
-          characterHeight, // Convert bottom to top coordinate
+      screenHeight - characterBottom - characterHeight,
       characterWidth,
       characterHeight,
     );
@@ -156,7 +138,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       double tileLeft = tile.x;
       double tileBottom = tile.y;
 
-      double tileWidth = 30; // As defined in LetterTile
+      double tileWidth = 30;
       double tileHeight = 30;
 
       Rect tileRect = Rect.fromLTWH(
@@ -167,17 +149,15 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       );
 
       if (characterRect.overlaps(tileRect)) {
-        // Collision detected
         setState(() {
           _foundLetter = tile.letter;
         });
         found = true;
-        break; // Exit loop after finding the first collision
+        break;
       }
     }
 
     if (!found) {
-      // If no collision, ensure _foundLetter is null
       setState(() {
         _foundLetter = null;
       });
@@ -186,15 +166,14 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double iconSize =
-        MediaQuery.of(context).size.width * 0.08; // Adjusted icon size
+    double iconSize = MediaQuery.of(context).size.width * 0.08;
     double buttonPadding = MediaQuery.of(context).size.width * 0.01;
     double fontSize = MediaQuery.of(context).size.width * 0.07;
 
-    // Generate the letter tiles
     List<LetterTileData> letterTiles = _generateLetterTiles(context);
 
     return Scaffold(
+      backgroundColor: Colors.lightBlue[50],
       body: Stack(
         children: [
           GameGround(
@@ -203,7 +182,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
             characterDirection: _characterDirection,
             letterTiles: letterTiles,
           ),
-          // Display the random word at the top left corner with fun styling
           Positioned(
             top: 60,
             left: 20,
@@ -212,19 +190,17 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               style: TextStyle(
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple, // Use a fun color
-                fontFamily: 'Comic Sans MS', // Apply a playful font style
+                color: Colors.purple,
+                fontFamily: 'ComicSans',
               ),
             ),
           ),
-          // Display the random key with a key icon on the top right corner
           Positioned(
             top: 60,
             right: 20,
             child: Row(
               children: [
-                Icon(Icons.vpn_key,
-                    color: Colors.orange, size: fontSize * 0.8), // Key icon
+                Icon(Icons.vpn_key, color: Colors.orange, size: fontSize * 0.8),
                 SizedBox(width: 5),
                 Text(
                   '$_randomKey',
@@ -232,19 +208,17 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
                     color: Colors.orange,
-                    fontFamily: 'Comic Sans MS', // Match the fun style
+                    fontFamily: 'ComicSans',
                   ),
                 ),
               ],
             ),
           ),
-          // Control buttons arranged in a diamond shape
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             right: MediaQuery.of(context).size.width * 0.05,
             child: Column(
               children: [
-                // Up Arrow
                 ArrowButton(
                   icon: Icons.arrow_upward,
                   onTapDown: (_) => _startMoving('forward'),
@@ -256,7 +230,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Left Arrow
                     ArrowButton(
                       icon: Icons.arrow_back,
                       onTapDown: (_) => _startMoving('left'),
@@ -266,7 +239,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                       padding: buttonPadding,
                     ),
                     SizedBox(width: buttonPadding),
-                    // Right Arrow
                     ArrowButton(
                       icon: Icons.arrow_forward,
                       onTapDown: (_) => _startMoving('right'),
@@ -277,7 +249,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                     ),
                   ],
                 ),
-                // Down Arrow
                 ArrowButton(
                   icon: Icons.arrow_downward,
                   onTapDown: (_) => _startMoving('backward'),
@@ -289,7 +260,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
-          // Check icon at the bottom left
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
@@ -297,14 +267,13 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               icon: Icon(
                 Icons.check_circle,
                 color: Colors.green,
-                size: iconSize * 1.5, // Adjust the size as needed
+                size: iconSize * 1.5,
               ),
               onPressed: () {
                 _checkForLetter(context, letterTiles);
               },
             ),
           ),
-          // Display the found letter
           if (_foundLetter != null)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.2,
@@ -313,14 +282,19 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.yellow[200],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black, width: 2),
+                  border: Border.all(color: Colors.orange, width: 2),
                 ),
                 child: Center(
                   child: Text(
                     _foundLetter!,
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                      fontFamily: 'ComicSans',
+                    ),
                   ),
                 ),
               ),
@@ -358,7 +332,7 @@ class ArrowButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: const Color.fromARGB(255, 100, 180, 255),
+          color: Colors.pinkAccent,
           boxShadow: [
             BoxShadow(
               color: Colors.black26,
@@ -370,7 +344,7 @@ class ArrowButton extends StatelessWidget {
         child: IconButton(
           icon: Icon(icon),
           color: Colors.white,
-          onPressed: () {}, // Required by IconButton but unused here
+          onPressed: () {},
           iconSize: iconSize,
           padding: EdgeInsets.all(padding),
         ),
@@ -394,18 +368,28 @@ class GameGround extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Stack(
       children: [
+        // Background
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/background.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
         // Central Vertical Street
         Align(
           alignment: Alignment.center,
           child: Container(
             width: 80,
             height: double.infinity,
-            color: Colors.grey[400],
+            color: Colors.green[200]?.withOpacity(0.5),
           ),
         ),
         // Horizontal Street on the Left
@@ -414,10 +398,7 @@ class GameGround extends StatelessWidget {
           child: Container(
             width: screenWidth / 2 - 40,
             height: 80,
-            color: Colors.blue[300],
-            child: Center(
-              child: Text("Left", style: TextStyle(color: Colors.white)),
-            ),
+            color: Colors.green[300]?.withOpacity(0.5),
           ),
         ),
         // Horizontal Street on the Right
@@ -426,13 +407,10 @@ class GameGround extends StatelessWidget {
           child: Container(
             width: screenWidth / 2 - 40,
             height: 80,
-            color: Colors.red[300],
-            child: Center(
-              child: Text("Right", style: TextStyle(color: Colors.white)),
-            ),
+            color: Colors.green[300]?.withOpacity(0.5),
           ),
         ),
-        // Use the letterTiles list to display the letters
+        // Letter Tiles
         ...letterTiles.map((tile) {
           return Positioned(
             left: tile.x,
@@ -440,16 +418,14 @@ class GameGround extends StatelessWidget {
             child: LetterTile(letter: tile.letter),
           );
         }).toList(),
-        // Character positioned on the game ground
+        // Character
         Positioned(
-          bottom: characterYPosition, // Adjust vertical position
-          left: (screenWidth / 2) +
-              characterXPosition -
-              25, // Adjust horizontal position
+          bottom: characterYPosition,
+          left: (screenWidth / 2) + characterXPosition - 25,
           child: Image.asset(
             characterDirection,
-            width: 120, // Character image width
-            height: 120, // Character image height
+            width: 120,
+            height: 120,
           ),
         ),
       ],
@@ -457,7 +433,6 @@ class GameGround extends StatelessWidget {
   }
 }
 
-// Widget to display each letter in a circular tile on the street
 class LetterTile extends StatelessWidget {
   final String letter;
 
@@ -471,11 +446,16 @@ class LetterTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.yellow[700],
         shape: BoxShape.circle,
+        border: Border.all(color: Colors.orange, width: 2),
       ),
       child: Center(
         child: Text(
           letter,
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'ComicSans',
+          ),
         ),
       ),
     );

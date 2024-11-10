@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; // إضافة هذه السطر
 import 'MovingBack.dart';
 import 'MarioBackground.dart';
 
@@ -220,11 +221,13 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
             left: 20,
             child: Text(
               _randomWord,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: Colors.purple, // Use a fun color
-                fontFamily: 'Comic Sans MS', // Apply a playful font style
+              style: GoogleFonts.pangolin(
+                // استخدام الخط من المكتبة
+                textStyle: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple, // Use a fun color
+                ),
               ),
             ),
           ),
@@ -239,11 +242,13 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 SizedBox(width: 5),
                 Text(
                   '$_randomKey',
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                    fontFamily: 'Comic Sans MS', // Match the fun style
+                  style: GoogleFonts.pangolin(
+                    // استخدام الخط من المكتبة
+                    textStyle: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
                   ),
                 ),
               ],
@@ -332,10 +337,13 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                       ),
                       child: Text(
                         letter,
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 14, 12, 12),
+                        style: GoogleFonts.pangolin(
+                          // استخدام الخط من المكتبة
+                          textStyle: TextStyle(
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 14, 12, 12),
+                          ),
                         ),
                       ),
                     );
@@ -397,3 +405,8 @@ class ArrowButton extends StatelessWidget {
     );
   }
 }
+
+// Data class to hold letter tile information
+
+
+// Additional classes (MarioBackground, GameGround) should be included here if needed
