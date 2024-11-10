@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'dart:async';
 import 'dart:math';
 
@@ -22,6 +23,7 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  late VideoPlayerController _videoController;
   int playerScore = 10; // النقاط المبدئية
   List<Target> targets = [];
   List<Bullet> bullets = [];
@@ -46,7 +48,17 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeVideo();
     startGame();
+  }
+
+  void _initializeVideo() {
+    _videoController = VideoPlayerController.asset('assets/GalaxyBack.mp4')
+      ..initialize().then((_) {
+        setState(() {});
+        _videoController.play();
+        _videoController.setLooping(true);
+      });
   }
 
   void startGame() {
@@ -84,6 +96,7 @@ class _GameScreenState extends State<GameScreen> {
   void dispose() {
     gameLoopTimer?.cancel();
     targetSpawnTimer?.cancel();
+    _videoController.dispose();
     super.dispose();
   }
 
@@ -187,58 +200,67 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        setState(() {
-          playerXPosition += details.delta.dx;
-          playerXPosition = playerXPosition.clamp(
-              0.0,
-              MediaQuery.of(context).size.width -
-                  70); // تحديث الحدود لحجم المركبة
-        });
-      },
-      onTapDown: (_) => shoot(), // اطلاق الطلقة فور الضغط على المركبة
-      child: Stack(
-        children: [
-          // مركبة اللاعب بحجم أكبر
-          Positioned(
-            bottom: 20,
-            left: playerXPosition,
-            child: Image.asset('assets/SpaceCraft.png', width: 70, height: 70),
-          ),
-          // رسم الأعداء باستخدام AnimatedPositioned لتحقيق الحركة الانسيابية
-          ...targets.map((target) => AnimatedPositioned(
-                duration: Duration(milliseconds: 50),
-                top: target.position.dy,
-                left: target.position.dx,
-                child: target.type == TargetType.virus
-                    ? Image.asset(target.imagePath,
-                        width: 40, height: 40) // صورة الفيروس بحجم أكبر
-                    : Icon(Icons.insert_drive_file,
-                        color: Colors.blue, size: 40), // أيقونة الملف بحجم أكبر
-              )),
-          // رسم الطلقات باستخدام AnimatedPositioned
-          ...bullets.map((bullet) => AnimatedPositioned(
-                duration: Duration(milliseconds: 50),
-                top: bullet.position.dy,
-                left: bullet.position.dx,
-                child: Container(
-                  width: 5,
-                  height: 25, // زيادة طول الطلقة
-                  color: Colors.red,
-                ),
-              )),
-          // عرض النقاط
-          Positioned(
-            top: 50,
-            right: 20,
-            child: Text(
-              'Score: $playerScore',
-              style: TextStyle(color: Colors.white, fontSize: 20),
+    return Stack(
+      children: [
+        // Video background covering the whole screen
+        if (_videoController.value.isInitialized)
+          Positioned.fill(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _videoController.value.size.width,
+                height: _videoController.value.size.height,
+                child: VideoPlayer(_videoController),
+              ),
             ),
           ),
-        ],
-      ),
+        // Game contents
+        GestureDetector(
+          onHorizontalDragUpdate: (details) {
+            setState(() {
+              playerXPosition += details.delta.dx;
+              playerXPosition = playerXPosition.clamp(
+                  0.0, MediaQuery.of(context).size.width - 70);
+            });
+          },
+          onTapDown: (_) => shoot(),
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: 20,
+                left: playerXPosition,
+                child:
+                    Image.asset('assets/SpaceCraft.png', width: 70, height: 70),
+              ),
+              ...targets.map((target) => Positioned(
+                    top: target.position.dy,
+                    left: target.position.dx,
+                    child: target.type == TargetType.virus
+                        ? Image.asset(target.imagePath, width: 40, height: 40)
+                        : Icon(Icons.insert_drive_file,
+                            color: Colors.blue, size: 40),
+                  )),
+              ...bullets.map((bullet) => Positioned(
+                    top: bullet.position.dy,
+                    left: bullet.position.dx,
+                    child: Container(
+                      width: 5,
+                      height: 25,
+                      color: Colors.red,
+                    ),
+                  )),
+              Positioned(
+                top: 50,
+                right: 20,
+                child: Text(
+                  'Score: $playerScore',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
