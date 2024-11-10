@@ -162,57 +162,162 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
       barrierDismissible: false, // منع إغلاق النافذة
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            title: Text('تحدي الوقت العكسي'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('الوقت المتبقي: $timeRemaining ثانية'),
-                SizedBox(height: 10),
-                Text(question.questionText),
-                SizedBox(height: 10),
-                ...question.options.map((option) {
-                  return ListTile(
-                    title: Text(option),
-                    leading: Radio<String>(
-                      value: option,
-                      groupValue: question.selectedOption,
-                      onChanged: (value) {
-                        setState(() {
-                          question.selectedOption = value;
-                        });
-                      },
-                    ),
-                  );
-                }).toList(),
-              ],
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  if (question.selectedOption == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('يرجى اختيار إجابة.')),
-                    );
-                    return;
-                  }
-                  if (question.selectedOption == question.correctAnswer) {
-                    // إجابة صحيحة
-                    challengeCompleted = true;
-                    challengeTimer?.cancel();
-                    Navigator.of(context).pop(); // إغلاق النافذة
-                    deleteVirus(file);
-                  } else {
-                    // إجابة خاطئة
-                    challengeCompleted = true;
-                    challengeTimer?.cancel();
-                    Navigator.of(context).pop(); // إغلاق النافذة
-                    virusSpread();
-                  }
-                },
-                child: Text('إرسال'),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.lightBlueAccent, Colors.lightGreenAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
               ),
-            ],
+              child: SingleChildScrollView(
+                // للسماح بالتمرير إذا كان المحتوى كبيرًا
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'الوقت المتبقي: $timeRemaining ثانية',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Icon(
+                      Icons.alarm,
+                      size: 60,
+                      color: Colors.yellowAccent,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      question.questionText,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 20),
+                    // تعديل الخيارات لاستبدال الصور بأيقونات Flutter
+                    ...question.options.map((option) {
+                      bool isSelected = question.selectedOption == option;
+                      int optionIndex = question.options.indexOf(option);
+                      IconData optionIcon;
+
+                      // اختيار أيقونة من Flutter لكل خيار
+                      switch (optionIndex % 4) {
+                        case 0:
+                          optionIcon = Icons.star;
+                          break;
+                        case 1:
+                          optionIcon = Icons.favorite;
+                          break;
+                        case 2:
+                          optionIcon = Icons.lightbulb;
+                          break;
+                        default:
+                          optionIcon = Icons.cake;
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            question.selectedOption = option;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          decoration: BoxDecoration(
+                            color:
+                                isSelected ? Colors.pinkAccent : Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(color: Colors.black26),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                optionIcon,
+                                color: isSelected ? Colors.white : Colors.grey,
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  option,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurpleAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                        elevation: 5,
+                      ),
+                      onPressed: () {
+                        if (question.selectedOption == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('يرجى اختيار إجابة.')),
+                          );
+                          return;
+                        }
+                        if (question.selectedOption == question.correctAnswer) {
+                          // إجابة صحيحة
+                          challengeCompleted = true;
+                          challengeTimer?.cancel();
+                          Navigator.of(context).pop(); // إغلاق النافذة
+                          deleteVirus(file);
+                        } else {
+                          // إجابة خاطئة
+                          challengeCompleted = true;
+                          challengeTimer?.cancel();
+                          Navigator.of(context).pop(); // إغلاق النافذة
+                          virusSpread();
+                        }
+                      },
+                      child: Text(
+                        'إرسال',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         });
       },
@@ -266,48 +371,167 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
   }
 
   // عرض نافذة عند فوز اللاعب
+  // عرض نافذة عند فوز اللاعب
   void showWinDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false, // منع إغلاق النافذة بالنقر خارجها
       builder: (context) {
-        return AlertDialog(
-          title: Text('تهانينا!'),
-          content: Text('لقد نجحت في إزالة جميع الفيروسات.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // إعادة تشغيل اللعبة إذا رغبت
-              },
-              child: Text('موافق'),
-            )
-          ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.lightGreenAccent, Colors.greenAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.emoji_events,
+                  color: Colors.yellow,
+                  size: 80,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'تهانينا!',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'لقد نجحت في إزالة جميع الفيروسات!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurpleAccent,
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // إعادة تشغيل اللعبة
+                    resetGame();
+                  },
+                  child: Text(
+                    'العب مرة أخرى',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-  // عرض نافذة عند خسارة اللاعب
+// عرض نافذة عند خسارة اللاعب
   void showLoseDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false, // منع إغلاق النافذة بالنقر خارجها
       builder: (context) {
-        return AlertDialog(
-          title: Text('انتهت اللعبة'),
-          content: Text(
-              'لم تقم بإزالة جميع الفيروسات في الوقت المحدد. حاول مرة أخرى.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // إعادة تشغيل اللعبة إذا رغبت
-              },
-              child: Text('موافق'),
-            )
-          ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.redAccent, Colors.orangeAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.sentiment_dissatisfied,
+                  color: Colors.white,
+                  size: 80,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'انتهت اللعبة',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'لم تقم بإزالة جميع الفيروسات في الوقت المحدد.\nحاول مرة أخرى!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurpleAccent,
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // إعادة تشغيل اللعبة
+                    resetGame();
+                  },
+                  child: Text(
+                    'حاول مرة أخرى',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
+  }
+
+// دالة لإعادة تشغيل اللعبة
+  void resetGame() {
+    setState(() {
+      timeLeft = 120;
+      message = '';
+      gameEnded = false;
+      initializeGame();
+      startTimer();
+    });
   }
 
   // إغلاق نافذة برنامج مكافحة الفيروسات
@@ -332,7 +556,12 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
         children: [
           // خلفية سطح المكتب
           Container(
-            color: Colors.blueGrey.shade700, // استخدم لون خلفية بدلاً من الصورة
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/AntiGameBack.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           // عرض أيقونات الملفات على سطح المكتب
           Positioned.fill(
@@ -357,10 +586,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                               showAntivirusWindow = true;
                             });
                           },
-                          child: Icon(
-                            Icons.shield,
-                            color: Colors.white,
-                            size: 50,
+                          child: Image.asset(
+                            'assets/antivirus_icon.png',
+                            width: 50,
+                            height: 50,
                           ),
                         ),
                         SizedBox(height: 5),
@@ -374,12 +603,12 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                   } else {
                     FileItem file = fileList[index - 1];
 
-                    // تحديد لون الأيقونة بناءً على حالة الملف
-                    Color iconColor = Colors.white;
+                    // تحديد الصورة المناسبة بناءً على حالة الملف
+                    String imagePath = 'assets/child_file.png';
                     if (file.scanned && file.isInfected) {
-                      iconColor = Colors.red; // الملفات المصابة
+                      imagePath = 'assets/child_file_infected.png';
                     } else if (file.scanned && !file.isInfected) {
-                      iconColor = Colors.green; // الملفات السليمة
+                      imagePath = 'assets/child_file_safe.png';
                     }
 
                     return Column(
@@ -388,10 +617,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                           onTap: () {
                             attemptDeleteVirus(file);
                           },
-                          child: Icon(
-                            Icons.insert_drive_file,
-                            color: iconColor,
-                            size: 40,
+                          child: Image.asset(
+                            imagePath,
+                            width: 50,
+                            height: 50,
                           ),
                         ),
                         SizedBox(height: 5),
@@ -408,27 +637,65 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
             ),
           ),
           // إضافة المؤقت في الزاوية العلوية اليمنى
+          // إضافة المؤقت في الزاوية العلوية اليمنى
           Positioned(
             top: 10,
             right: 10,
             child: Container(
               padding: EdgeInsets.all(8.0),
-              color: Colors.black54,
-              child: Row(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Icon(
-                    Icons.access_time,
-                    color: Colors.white,
+                  // دائرة خارجية
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [Colors.pinkAccent, Colors.orangeAccent],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(width: 5),
-                  Text(
-                    '$timeLeft ثانية',
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                  // دائرة داخلية لتمثيل الوقت المتبقي
+                  Positioned(
+                    child: Text(
+                      '$timeLeft',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  // أيقونة الساعة
+                  Positioned(
+                    bottom: 8,
+                    child: Icon(
+                      Icons.alarm,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+
+          // عرض نافذة برنامج مكافحة الفيروسات إذا تم فتحها
           // عرض نافذة برنامج مكافحة الفيروسات إذا تم فتحها
           if (showAntivirusWindow)
             Positioned(
@@ -439,17 +706,25 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
               child: Material(
                 elevation: 5,
                 color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
                 child: Column(
                   children: [
                     // شريط العنوان مع زر الإغلاق
                     Container(
-                      color: Colors.blueGrey,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.purpleAccent,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       child: Row(
                         children: [
+                          Icon(Icons.shield, color: Colors.yellowAccent),
+                          SizedBox(width: 10),
                           Text(
                             'برنامج مكافحة الفيروسات',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                           Spacer(),
                           GestureDetector(
@@ -467,68 +742,120 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                           children: [
                             // عرض الرسالة
                             if (message.isNotEmpty)
-                              Text(
-                                message,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.green),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Text(
+                                  message,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.black87),
+                                ),
                               ),
                             SizedBox(height: 10),
                             // اختيار نوع المسح
-                            Row(
-                              children: [
-                                Text('اختر نوع المسح: '),
-                                DropdownButton<String>(
-                                  value: selectedScanOption,
-                                  items: scanOptions.map((option) {
-                                    return DropdownMenuItem<String>(
-                                      value: option,
-                                      child: Text(option),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedScanOption = value!;
-                                      if (selectedScanOption != 'مخصص') {
-                                        customScanFiles.clear();
-                                      }
-                                    });
-                                  },
-                                ),
-                                Spacer(),
-                                ElevatedButton(
-                                  onPressed: performScan,
-                                  child: Text('مسح'),
-                                ),
-                              ],
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.lightBlueAccent,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'اختر نوع المسح:',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Wrap(
+                                    spacing: 10,
+                                    children: scanOptions.map((option) {
+                                      bool isSelected =
+                                          selectedScanOption == option;
+                                      return ChoiceChip(
+                                        label: Text(
+                                          option,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.black87,
+                                          ),
+                                        ),
+                                        selected: isSelected,
+                                        selectedColor: Colors.pinkAccent,
+                                        onSelected: (selected) {
+                                          setState(() {
+                                            selectedScanOption = option;
+                                            if (selectedScanOption != 'مخصص') {
+                                              customScanFiles.clear();
+                                            }
+                                          });
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ],
+                              ),
                             ),
+                            SizedBox(height: 20),
+                            // زر المسح
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 15, horizontal: 30),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              onPressed: performScan,
+                              icon: Icon(Icons.search),
+                              label: Text(
+                                'بدء المسح',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            SizedBox(height: 20),
                             // إذا كان المسح مخصصًا، عرض تعليمات واختيار الملفات
                             if (selectedScanOption == 'مخصص')
                               Expanded(
-                                child: ListView.builder(
-                                  itemCount: fileList.length,
-                                  itemBuilder: (context, index) {
-                                    FileItem file = fileList[index];
-                                    bool isSelected =
-                                        customScanFiles.contains(file);
-                                    return ListTile(
-                                      leading: Icon(
-                                        Icons.insert_drive_file,
-                                        color: Colors.blue,
-                                      ),
-                                      title: Text(file.fileName),
-                                      onTap: () {
-                                        setState(() {
-                                          if (isSelected) {
-                                            customScanFiles.remove(file);
-                                          } else {
-                                            customScanFiles.add(file);
-                                          }
-                                        });
-                                      },
-                                      selected: isSelected,
-                                      selectedTileColor: Colors.grey.shade200,
-                                    );
-                                  },
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.yellowAccent.shade100,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: ListView.builder(
+                                    itemCount: fileList.length,
+                                    itemBuilder: (context, index) {
+                                      FileItem file = fileList[index];
+                                      bool isSelected =
+                                          customScanFiles.contains(file);
+                                      return ListTile(
+                                        leading: Icon(
+                                          Icons.insert_drive_file,
+                                          color: isSelected
+                                              ? Colors.pinkAccent
+                                              : Colors.blueAccent,
+                                        ),
+                                        title: Text(file.fileName),
+                                        onTap: () {
+                                          setState(() {
+                                            if (isSelected) {
+                                              customScanFiles.remove(file);
+                                            } else {
+                                              customScanFiles.add(file);
+                                            }
+                                          });
+                                        },
+                                        selected: isSelected,
+                                        selectedTileColor: Colors.pink.shade100,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                           ],
@@ -545,6 +872,4 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
   }
 }
 
-// فئة برنامج مكافحة الفيروسات: توفر المسح والأسئلة للتحدي
-
-// فئة السؤال: تمثل سؤالاً في الأمن السيبراني
+// تأكد من أن فئة FileItem تحتوي على حقل scanned
