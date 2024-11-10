@@ -176,4 +176,15 @@ flutter:
     #adcryptomami
     - assets/batoolChat.png
     - assets/hanenChat.png
+    #galaxy attack 
+    - assets/SpaceCraft.png
+    - assets/TrojanH.png
+    - assets/Worm.png
+    - assets/RansomV.png
+    - assets/Botnet.png
+    - assets/Spyware.png
+    - assets/DownloaderV.png
+    - assets/TimeBumb.png
+    - assets/InfectionV.png
+    
     

@@ -10,6 +10,8 @@ import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
 import 'package:cybergame/portGame/port_game.dart';
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:cybergame/MarioGame/MarioScreen.dart';
+import 'package:flame/game.dart';
+import 'package:cybergame/GalaxyGame/GalaxyGameScreen.dart';
 
 class CryptoPage extends StatelessWidget {
   @override
@@ -95,6 +97,10 @@ class GamePartsCard extends StatelessWidget {
       case 9:
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MalsGameScreen()));
+        break;
+      case 10:
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => GalaxyAttackGame()));
         break;
 
       case 12:
