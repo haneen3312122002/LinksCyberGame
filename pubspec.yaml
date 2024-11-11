@@ -1,39 +1,18 @@
 name: cybergame
 description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using flutter pub publish. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
+publish_to: 'none' 
+
 version: 1.0.0+1
 
 environment:
   sdk: '>=3.3.2 <4.0.0'
 
-# Dependencies specify other packages that your package needs in order to work.
-# To automatically upgrade your package dependencies to the latest versions
-# consider running flutter pub upgrade --major-versions. Alternatively,
-# dependencies can be manually updated by changing the version numbers below to
-# the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run flutter pub outdated.
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:  # Add this line
-    sdk: flutter    
-
-  
+  flutter_localizations:
+    sdk: flutter  
   cupertino_icons: ^1.0.6
   flutter_awesome_bottom_sheet: ^0.0.2
   awesome_dialog: ^3.2.1
@@ -47,62 +26,18 @@ dependencies:
   flame: 1.19.0
   fluttertoast: ^8.2.8
   google_fonts: ^6.2.1
-
+  chewie: ^1.8.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
 
-# The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
 
-
-  # To add assets to your application, add an assets section, like this:
   assets:
-    #LinksGame:
-    - assets/linksBack.gif
-    - assets/the_char.mp4
-    - assets/blueBasket.png
-    - assets/redBasket.png
-    - assets/back.png
-    - assets/victory.mp3
-    - assets/the_char.mp3
-    - assets/loss.mp3
-    - assets/secure.mp3
-    - assets/click.mp3
-    - assets/put.mp3
-    - assets/error.mp3
-    - assets/LinkSong.mp3
-
-    #DoorsGame:
-    - assets/doors.png
-    - assets/door1.mp4
-    - assets/door2.mp4
-    - assets/door3.mp4
-    - assets/DoorsVideo.mp4
-    #CryptoGame:
-    - assets/casel.png
-    - assets/caselSong.mp3  
-    
-
-    #PartsPage:
-    - assets/PartsPage.png
-    - assets/Cryptographygame.png
-    - assets/webSecurityPart.png
-    - assets/netWorkPart.png
-    - assets/CyberAttackPart.png
-    - assets/SpaceBack.png
-    - assets/linkback.png
-    - assets/doorback.png
-    - assets/carback.png
-    - assets/viros.png
-    - assets/ports.png
-    - assets/fiveback.png
-    - assets/eightback.png
-    - assets/sixback.png
-    - assets/nineback.png
+    - assets/10back.png
     - assets/11back.png
     - assets/14back.png
     - assets/15back.png
@@ -111,106 +46,141 @@ flutter:
     - assets/18back.png
     - assets/19back.png
     - assets/20back.png
-    - assets/20back.png
+    - assets/21back.png
     - assets/22back.png
     - assets/23back.png
     - assets/24back.png
     - assets/25back.png
-    - assets/10back.png
-
-
-    #homepage:
-    - assets/BackGround1.png 
-    #sessionLayer: 
-    - assets/NetworkBackground.png 
-    - assets/tunnel.png
-    - assets/sessionLayer.mp4
-    - assets/Winning.mp3
-    #HttpGame:
-    - assets/Street1.png
-    - assets/Street.mp4
-    - assets/MoveChar.webm
-    - assets/HttpStop.gif
-    - assets/HttpsStop.gif
-    - assets/Stop.mp3
-    - assets/Walking.mp3
-    #postdGame:
-    - assets/portBack.png 
-
-    #carGame :
-    - assets/car.mp4
-    - assets/carsong.mp3
-    - assets/correct.mp3
-
-    #trojanHorseGame :
-    - assets/desktop1.png
-    - assets/desktop2.png
-    - assets/Evil.mp3
-    - assets/Evil_laugh.mp3
-    - assets/instalogo.png 
-    - assets/trojenHorse.png 
-    - assets/TroBack.png
-    - assets/HourseL1.png
+    - assets/AntiGameBack.png
+    - assets/antivirus_icon.png
+    - assets/back.png
+    - assets/BackGround1.png
+    - assets/batoolChat.png
+    - assets/blueBasket.png
+    - assets/Botnet.png
     - assets/Box.png
-    - assets/Danger.png
-    - assets/Lock.png
-    - assets/transfer_arrow.png
-    - assets/MobileSecurityPart.png
-    - assets/wifi_spread.png
-    - assets/network_cable.png
-    - assets/phone.png 
-    - assets/phishing_email.png
-    - assets/malicious_link.png
-    - assets/mesage.png
-
-
-    #Mario:
-    - assets/UnderGround1.png 
-    - assets/UnderGround2.png 
+    - assets/car.mp4
+    - assets/carback.png
+    - assets/carsong.mp3
+    - assets/casel.png
+    - assets/caselSong.mp3
+    - assets/child_file.png
+    - assets/child_file_infected.png
+    - assets/child_file_safe.png
+    - assets/click.mp3
     - assets/Clouds.png
-    - assets/LeftChar.png
-    - assets/TopChar.png
-    - assets/RightChar.png
-    - assets/DownChar.png
-    - assets/StaticLeftChar.png
-    - assets/StaticRightChar.png
-    - assets/MarioBackground.mp4
-    #net game:
-    - assets/Stand.png  
     - assets/Computer1.png
     - assets/Computer2.png
     - assets/Computer3.png
-    - assets/Router.png
-    - assets/Printer.png
-    - assets/RO.png
-    - assets/SW.png
-    - assets/Tab.png
-    - assets/ROVID.gif
-    - assets/SWVID.gif
-    - assets/networkbuild.mp3
-    - assets/Switch.mp3
-    - assets/Router.mp3
-    - assets/NetworkBack.png
-    #antihame:
-    - assets/WinBack.png  
-    #adcryptomami
-    - assets/batoolChat.png
-    - assets/hanenChat.png
-    #galaxy attack 
-    - assets/SpaceCraft.png
-    - assets/TrojanH.png
-    - assets/Worm.png
-    - assets/RansomV.png
-    - assets/Botnet.png
-    - assets/Spyware.png
+    - assets/correct.mp3
+    - assets/Cryptographygame.png
+    - assets/CyberAttackPart.png
+    - assets/Danger.png
+    - assets/desktop1.png
+    - assets/desktop2.png
+    - assets/door1-highlight.mp4
+    - assets/door1.mp4
+    - assets/door2-highlight.mp4
+    - assets/door2.mp4
+    - assets/door3.mp4
+    - assets/doorback.png
+    - assets/doors.png
+    - assets/DoorsVideo.mp4
+    - assets/DownChar.png
     - assets/DownloaderV.png
-    - assets/TimeBumb.png
-    - assets/InfectionV.png
+    - assets/eightback.png
+    - assets/error.mp3
+    - assets/ether.png
+    - assets/Evil.mp3
+    - assets/Evil_laugh.mp3
+    - assets/fiber.png
+    - assets/filenames.txt
+    - assets/fiveback.png
     - assets/GalaxyBack.mp4
-    - assets/Soundgunshots.mp3
-    - assets/pom.mp3
     - assets/GalaxySong.mp3
-    
-    
-    
-    
+    - assets/hanenChat.png
+    - assets/HourseL1.png
+    - assets/HttpMusic.mp3
+    - assets/HttpsStop.gif
+    - assets/HttpStop.gif
+    - assets/InfectionV.png
+    - assets/instalogo.png
+    - assets/LeftChar.gif
+    - assets/LeftChar.png
+    - assets/LeftMaha.png
+    - assets/linkback.png
+    - assets/linksBack.gif
+    - assets/LinkSong.mp3
+    - assets/Lock.png
+    - assets/loss.mp3
+    - assets/MahaTalking.gif
+    - assets/malicious_link.png
+    - assets/MarioBackground.mp4
+    - assets/mesage.png
+    - assets/MobileSecurityPart.png
+    - assets/modem.png
+    - assets/MoveChar.webm
+    - assets/NetworkBack.png
+    - assets/NetworkBackground.png
+    - assets/networkbuild.mp3
+    - assets/netWorkPart.png
+    - assets/network_cable.png
+    - assets/nineback.png
+    - assets/partsPage.png
+    - assets/phishing_email.png
+    - assets/phone.png
+    - assets/pom.mp3
+    - assets/portBack.png
+    - assets/ports.png
+    - assets/Printer.png
+    - assets/put.mp3
+    - assets/question_background.png
+    - assets/Ransom.png
+    - assets/RansomV.png
+    - assets/redBasket.png
+    - assets/RightChar.gif
+    - assets/RightChar.png
+    - assets/RightMaha.png
+    - assets/RO.png
+    - assets/Router.mp3
+    - assets/router.png
+    - assets/RouterNew.png
+    - assets/ROVID.gif
+    - assets/secure.mp3
+    - assets/sessionLayer.mp4
+    - assets/sixback.png
+    - assets/Soundgunshots.mp3
+    - assets/SpaceBack.png
+    - assets/SpaceCraft.png
+    - assets/Spyware.png
+    - assets/Stand.png
+    - assets/StaticLeftChar.png
+    - assets/StaticRightChar.png
+    - assets/Stop.mp3
+    - assets/Street.mp4
+    - assets/Street1.png
+    - assets/SW.png
+    - assets/Switch.mp3
+    - assets/switch.png
+    - assets/SwitchNew.png
+    - assets/SWVID.gif
+    - assets/Tab.png
+    - assets/the_char.mp3
+    - assets/the_char.mp4
+    - assets/TimeBumb.png
+    - assets/TopChar.png
+    - assets/transfer_arrow.png
+    - assets/TroBack.png
+    - assets/TrojanH.png
+    - assets/trojenHorse.png
+    - assets/tunnel.png
+    - assets/UnderGround1.png
+    - assets/UnderGround2.png
+    - assets/victory.mp3
+    - assets/viros.png
+    - assets/Walking.mp3
+    - assets/webSecurityPart.png
+    - assets/wifi_spread.png
+    - assets/WinBack.png
+    - assets/Winning.mp3
+    - assets/Worm.png

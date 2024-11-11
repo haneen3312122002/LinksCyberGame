@@ -3,8 +3,6 @@ import 'package:video_player/video_player.dart';
 import 'dart:async';
 import 'dart:math';
 
-void main() => runApp(GalaxyAttackGame());
-
 class GalaxyAttackGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

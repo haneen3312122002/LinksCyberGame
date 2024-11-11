@@ -2,10 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui; // لاستخدام الرسم منخفض المستوى
-
-void main() {
-  runApp(ConnectDotsGame());
-}
+import 'GalaxyGameScreen.dart';
 
 /// ويدجت الجذر للتطبيق
 class ConnectDotsGame extends StatelessWidget {
@@ -62,48 +59,49 @@ class GameLevel {
 /// قائمة بالمستويات المعرفة مسبقًا مع ترتيب النقاط
 /// قائمة بالمستويات المعرفة مسبقًا مع ترتيب النقاط
 final List<GameLevel> levels = [
+  // المستوى الأول
   GameLevel(
     gridWidth: 5,
     gridHeight: 5,
     dots: [
       // النقاط الوردية
-      Dot(x: 0, y: 0, imagePath: 'assets/pink_dot.png', color: Colors.pink),
-      Dot(x: 2, y: 2, label: 'وردي', color: Colors.pink),
+      Dot(x: 0, y: 0, imagePath: 'assets/TrojanH.png', color: Colors.pink),
+      Dot(x: 2, y: 2, label: 'Trojan', color: Colors.pink),
 
       // النقاط البرتقالية
-      Dot(x: 3, y: 4, imagePath: 'assets/orange_dot.png', color: Colors.orange),
-      Dot(x: 1, y: 2, label: 'برتقالي', color: Colors.orange),
+      Dot(x: 3, y: 4, imagePath: 'assets/Worm.png', color: Colors.orange),
+      Dot(x: 1, y: 2, label: 'Worm', color: Colors.orange),
 
       // النقاط الصفراء
-      Dot(x: 0, y: 4, imagePath: 'assets/yellow_dot.png', color: Colors.yellow),
-      Dot(x: 3, y: 1, label: 'أصفر', color: Colors.yellow),
+      Dot(x: 0, y: 4, imagePath: 'assets/RansomV.png', color: Colors.yellow),
+      Dot(x: 3, y: 1, label: 'Ransomware', color: Colors.yellow),
 
       // النقاط الزرقاء
-      Dot(x: 2, y: 3, imagePath: 'assets/blue_dot.png', color: Colors.blue),
-      Dot(x: 4, y: 4, label: 'أزرق', color: Colors.blue),
+      Dot(x: 2, y: 3, imagePath: 'assets/Botnet.png', color: Colors.blue),
+      Dot(x: 4, y: 4, label: 'Botnet', color: Colors.blue),
     ],
   ),
 
-  // المستوى الجديد
+  // المستوى الثاني
   GameLevel(
-    gridWidth: 6, // زيادة حجم الشبكة إلى 6x6 لتتوافق مع المواقع المحددة
+    gridWidth: 6,
     gridHeight: 6,
     dots: [
       // النقاط الصفراء
-      Dot(x: 0, y: 3, color: Colors.yellow, label: 'صفراء'),
-      Dot(x: 3, y: 5, color: Colors.yellow),
+      Dot(x: 0, y: 3, imagePath: 'assets/Spyware.png', color: Colors.yellow),
+      Dot(x: 3, y: 5, label: 'Spyware', color: Colors.yellow),
 
       // النقاط الحمراء
-      Dot(x: 0, y: 4, color: Colors.red, label: 'حمراء'),
-      Dot(x: 4, y: 3, color: Colors.red),
+      Dot(x: 0, y: 4, imagePath: 'assets/DownloaderV.png', color: Colors.red),
+      Dot(x: 4, y: 3, label: 'Downloader', color: Colors.red),
 
       // النقاط الزرقاء
-      Dot(x: 3, y: 2, color: Colors.blue, label: 'زرقاء'),
-      Dot(x: 4, y: 4, color: Colors.blue),
+      Dot(x: 3, y: 2, imagePath: 'assets/TimeBumb.png', color: Colors.blue),
+      Dot(x: 4, y: 4, label: 'Time Bomb', color: Colors.blue),
 
       // النقاط البرتقالية
-      Dot(x: 0, y: 5, color: Colors.orange, label: 'برتقالية'),
-      Dot(x: 2, y: 2, color: Colors.orange),
+      Dot(x: 0, y: 5, imagePath: 'assets/InfectionV.png', color: Colors.orange),
+      Dot(x: 2, y: 2, label: 'Infection', color: Colors.orange),
     ],
   ),
 ];
@@ -491,6 +489,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   /// الانتقال إلى مستوى اللعبة التالي
+
   void _goToNextLevel() {
     if (widget.levelIndex + 1 < levels.length) {
       Navigator.of(context).pushReplacement(
@@ -499,8 +498,12 @@ class _GameScreenState extends State<GameScreen> {
         ),
       );
     } else {
-      // لا مزيد من المستويات
-      _showGameCompletedDialog();
+      // الانتقال إلى GalaxyAttackGame بعد المستوى الثاني
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => GalaxyAttackGame(),
+        ),
+      );
     }
   }
 
@@ -559,33 +562,10 @@ class PathPainter extends CustomPainter {
     required this.gridHeight,
   });
 
-  /// يرسم المسارات والشبكة على الكانفاس
   @override
   void paint(Canvas canvas, Size size) {
     double cellSize = size.width / gridWidth;
-
-    Paint gridPaint = Paint()
-      ..color = Colors.grey.shade800
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
-    // رسم الشبكة
-    for (int i = 0; i <= gridWidth; i++) {
-      // الخطوط الرأسية
-      canvas.drawLine(
-        Offset(i * cellSize, 0),
-        Offset(i * cellSize, cellSize * gridHeight),
-        gridPaint,
-      );
-    }
-    for (int i = 0; i <= gridHeight; i++) {
-      // الخطوط الأفقية
-      canvas.drawLine(
-        Offset(0, i * cellSize),
-        Offset(cellSize * gridWidth, i * cellSize),
-        gridPaint,
-      );
-    }
+    double radius = cellSize * 0.3; // نصف قطر الدائرة
 
     Paint pathPaint = Paint()
       ..style = PaintingStyle.stroke
@@ -595,7 +575,7 @@ class PathPainter extends CustomPainter {
     for (var path in paths) {
       pathPaint
         ..color = path.color
-        ..strokeWidth = cellSize * 0.3;
+        ..strokeWidth = cellSize * 0.2;
 
       Path drawPath = Path();
       for (int i = 0; i < path.gridPositions.length; i++) {
@@ -604,10 +584,29 @@ class PathPainter extends CustomPainter {
           (gridPos.dx + 0.5) * cellSize,
           (gridPos.dy + 0.5) * cellSize,
         );
+
         if (i == 0) {
-          drawPath.moveTo(point.dx, point.dy);
+          // بدء الخط عند حافة الدائرة الأولى
+          Offset nextPoint = Offset(
+            (path.gridPositions[i + 1].dx + 0.5) * cellSize,
+            (path.gridPositions[i + 1].dy + 0.5) * cellSize,
+          );
+          Offset direction = (nextPoint - point).normalize() * radius;
+          drawPath.moveTo(
+            point.dx + direction.dx,
+            point.dy + direction.dy,
+          );
         } else {
-          drawPath.lineTo(point.dx, point.dy);
+          // إنهاء الخط عند حافة الدائرة الأخيرة
+          Offset previousPoint = Offset(
+            (path.gridPositions[i - 1].dx + 0.5) * cellSize,
+            (path.gridPositions[i - 1].dy + 0.5) * cellSize,
+          );
+          Offset direction = (point - previousPoint).normalize() * radius;
+          drawPath.lineTo(
+            point.dx - direction.dx,
+            point.dy - direction.dy,
+          );
         }
       }
       canvas.drawPath(drawPath, pathPaint);
@@ -617,7 +616,7 @@ class PathPainter extends CustomPainter {
     if (currentColor != null && currentPath.isNotEmpty) {
       pathPaint
         ..color = currentColor!
-        ..strokeWidth = cellSize * 0.3;
+        ..strokeWidth = cellSize * 0.2;
 
       Path drawPath = Path();
       for (int i = 0; i < currentPath.length; i++) {
@@ -626,17 +625,41 @@ class PathPainter extends CustomPainter {
           (gridPos.dx + 0.5) * cellSize,
           (gridPos.dy + 0.5) * cellSize,
         );
+
         if (i == 0) {
-          drawPath.moveTo(point.dx, point.dy);
+          Offset nextPoint = Offset(
+            (currentPath[i + 1].dx + 0.5) * cellSize,
+            (currentPath[i + 1].dy + 0.5) * cellSize,
+          );
+          Offset direction = (nextPoint - point).normalize() * radius;
+          drawPath.moveTo(
+            point.dx + direction.dx,
+            point.dy + direction.dy,
+          );
         } else {
-          drawPath.lineTo(point.dx, point.dy);
+          Offset previousPoint = Offset(
+            (currentPath[i - 1].dx + 0.5) * cellSize,
+            (currentPath[i - 1].dy + 0.5) * cellSize,
+          );
+          Offset direction = (point - previousPoint).normalize() * radius;
+          drawPath.lineTo(
+            point.dx - direction.dx,
+            point.dy - direction.dy,
+          );
         }
       }
       canvas.drawPath(drawPath, pathPaint);
     }
   }
 
-  /// تحديد ما إذا كان الرسام يجب أن يعيد الرسم
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+extension on Offset {
+  Offset normalize() {
+    double length = this.distance;
+    if (length == 0) return Offset.zero;
+    return Offset(this.dx / length, this.dy / length);
+  }
 }
