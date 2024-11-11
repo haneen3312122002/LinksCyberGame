@@ -62,23 +62,50 @@ class GameLevel {
 /// قائمة بالمستويات المعرفة مسبقًا مع ترتيب النقاط
 /// قائمة بالمستويات المعرفة مسبقًا مع ترتيب النقاط
 final List<GameLevel> levels = [
-  GameLevel(gridWidth: 5, gridHeight: 5, dots: [
-    // النقاط الوردية
-    Dot(x: 0, y: 0, imagePath: 'assets/pink_dot.png', color: Colors.pink),
-    Dot(x: 2, y: 2, label: 'وردي', color: Colors.pink),
+  GameLevel(
+    gridWidth: 5,
+    gridHeight: 5,
+    dots: [
+      // النقاط الوردية
+      Dot(x: 0, y: 0, imagePath: 'assets/pink_dot.png', color: Colors.pink),
+      Dot(x: 2, y: 2, label: 'وردي', color: Colors.pink),
 
-    // النقاط البرتقالية
-    Dot(x: 3, y: 4, imagePath: 'assets/orange_dot.png', color: Colors.orange),
-    Dot(x: 1, y: 2, label: 'برتقالي', color: Colors.orange),
+      // النقاط البرتقالية
+      Dot(x: 3, y: 4, imagePath: 'assets/orange_dot.png', color: Colors.orange),
+      Dot(x: 1, y: 2, label: 'برتقالي', color: Colors.orange),
 
-    // النقاط الصفراء
-    Dot(x: 0, y: 4, imagePath: 'assets/yellow_dot.png', color: Colors.yellow),
-    Dot(x: 3, y: 1, label: 'أصفر', color: Colors.yellow),
+      // النقاط الصفراء
+      Dot(x: 0, y: 4, imagePath: 'assets/yellow_dot.png', color: Colors.yellow),
+      Dot(x: 3, y: 1, label: 'أصفر', color: Colors.yellow),
 
-    // النقاط الزرقاء
-    Dot(x: 2, y: 3, imagePath: 'assets/blue_dot.png', color: Colors.blue),
-    Dot(x: 4, y: 4, label: 'أزرق', color: Colors.blue),
-  ]),
+      // النقاط الزرقاء
+      Dot(x: 2, y: 3, imagePath: 'assets/blue_dot.png', color: Colors.blue),
+      Dot(x: 4, y: 4, label: 'أزرق', color: Colors.blue),
+    ],
+  ),
+
+  // المستوى الجديد
+  GameLevel(
+    gridWidth: 6, // زيادة حجم الشبكة إلى 6x6 لتتوافق مع المواقع المحددة
+    gridHeight: 6,
+    dots: [
+      // النقاط الصفراء
+      Dot(x: 0, y: 3, color: Colors.yellow, label: 'صفراء'),
+      Dot(x: 3, y: 5, color: Colors.yellow),
+
+      // النقاط الحمراء
+      Dot(x: 0, y: 4, color: Colors.red, label: 'حمراء'),
+      Dot(x: 4, y: 3, color: Colors.red),
+
+      // النقاط الزرقاء
+      Dot(x: 3, y: 2, color: Colors.blue, label: 'زرقاء'),
+      Dot(x: 4, y: 4, color: Colors.blue),
+
+      // النقاط البرتقالية
+      Dot(x: 0, y: 5, color: Colors.orange, label: 'برتقالية'),
+      Dot(x: 2, y: 2, color: Colors.orange),
+    ],
+  ),
 ];
 
 // باقي الكود كما هو...
