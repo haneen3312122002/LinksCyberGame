@@ -242,7 +242,7 @@ class CryptoGamesGrid extends StatelessWidget {
     'assets/viros.png',
     'assets/eightback.png',
     'assets/nineback.png',
-    'assets/images/firewall.png',
+    'assets/10back.png',
     'assets/11back.png',
     'assets/ports.png',
     'assets/carback.png',
@@ -252,12 +252,12 @@ class CryptoGamesGrid extends StatelessWidget {
     'assets/17back.png',
     'assets/18back.png',
     'assets/19back.png',
-    'assets/images/cyberbullying.png',
-    'assets/images/cyber_crime_law.png',
-    'assets/images/incident_response.png',
-    'assets/images/final_challenge.png',
-    'assets/images/security_audits.png',
-    'assets/images/user_training.png',
+    'assets/20back.png',
+    'assets/20back.png',
+    'assets/22back.png',
+    'assets/23back.png',
+    'assets/24back.png',
+    'assets/25back.png',
   ];
 
   final List<String> partsTitles = [
