@@ -202,7 +202,7 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Video background covering the whole screen
+        // الخلفية الفيديو
         if (_videoController.value.isInitialized)
           Positioned.fill(
             child: FittedBox(
@@ -214,7 +214,7 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
           ),
-        // Game contents
+        // محتوى اللعبة
         GestureDetector(
           onHorizontalDragUpdate: (details) {
             setState(() {
@@ -238,7 +238,8 @@ class _GameScreenState extends State<GameScreen> {
                     child: target.type == TargetType.virus
                         ? Image.asset(target.imagePath, width: 40, height: 40)
                         : Icon(Icons.insert_drive_file,
-                            color: Colors.blue, size: 40),
+                            color: const Color.fromARGB(255, 24, 161, 24),
+                            size: 40),
                   )),
               ...bullets.map((bullet) => Positioned(
                     top: bullet.position.dy,
@@ -252,9 +253,33 @@ class _GameScreenState extends State<GameScreen> {
               Positioned(
                 top: 50,
                 right: 20,
-                child: Text(
-                  'Score: $playerScore',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.speed, // أيقونة العداد
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                    SizedBox(width: 8),
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$playerScore',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

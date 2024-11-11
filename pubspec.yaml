@@ -99,6 +99,17 @@ flutter:
     - assets/carback.png
     - assets/viros.png
     - assets/ports.png
+    - assets/fiveback.png
+    - assets/eightback.png
+    - assets/sixback.png
+    - assets/nineback.png
+    - assets/11back.png
+    - assets/14back.png
+    - assets/15back.png
+    - assets/16back.png
+    - assets/17back.png
+    - assets/18back.png
+    - assets/19back.png
 
     #homepage:
     - assets/BackGround1.png 
@@ -189,6 +200,9 @@ flutter:
     - assets/InfectionV.png
     - assets/GalaxyBack.mp4
     - assets/Soundgunshots.mp3
+    - assets/pom.mp3
+    - assets/GalaxySong.mp3
+    
     
     
     
