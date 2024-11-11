@@ -95,11 +95,11 @@ class GamePartsCard extends StatelessWidget {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => AntiGameScreen()));
         break;
-      case 9:
+      case 10:
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => MalsGameScreen()));
         break;
-      case 10:
+      case 9:
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ConnectDotsGame()));
         break;
