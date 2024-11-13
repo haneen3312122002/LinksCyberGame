@@ -105,7 +105,6 @@ flutter:
     - assets/HttpStop.gif
     - assets/InfectionV.png
     - assets/instalogo.png
-    - assets/LeftChar.gif
     - assets/LeftChar.png
     - assets/LeftMaha.png
     - assets/linkback.png
@@ -138,7 +137,6 @@ flutter:
     - assets/Ransom.png
     - assets/RansomV.png
     - assets/redBasket.png
-    - assets/RightChar.gif
     - assets/RightChar.png
     - assets/RightMaha.png
     - assets/RO.png
