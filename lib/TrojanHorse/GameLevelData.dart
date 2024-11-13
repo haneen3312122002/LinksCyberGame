@@ -7,26 +7,31 @@ class GameLevels {
     GameLevelData(
       question: "ما الكلمة المشتركة بين الصور التي ترتبط بفيروسات التروجان؟",
       answer: "حصان",
-      images: ["HourseL1.png", "Box.png", "Danger.png", "Lock.png"],
+      images: [
+        "assets/HourseL1.png",
+        "assets/Box.png",
+        "assets/Danger.png",
+        "assets/Lock.png"
+      ],
     ),
     GameLevelData(
       question: "ما الكلمة المشتركة التي ترتبط بطريقة انتشار الفيروسات؟",
       answer: "انتشار",
       images: [
-        "network_cable.png",
-        "wifi_spread.png",
-        "MobileSecurityPart.png",
-        "transfer_arrow.png"
+        "assets/network_cable.png",
+        "assets/wifi_spread.png",
+        "assets/MobileSecurityPart.png",
+        "assets/transfer_arrow.png"
       ],
     ),
     GameLevelData(
       question: "ما الكلمة التي تصف هجومًا خداعيًا؟",
       answer: "تصيد",
       images: [
-        "phishing_email.png",
-        "malicious_link.png",
-        "mesage.png",
-        "phone.png"
+        "assets/phishing_email.png",
+        "assets/malicious_link.png",
+        "assets/mesage.png",
+        "assets/phone.png"
       ],
     ),
   ];
