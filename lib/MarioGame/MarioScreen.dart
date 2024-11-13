@@ -71,18 +71,18 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       // Update movement based on direction
       if (direction == 'left' && _characterXPosition > -screenWidth / 2) {
         _characterXPosition -= moveDistanceX;
-        _characterDirection = 'LeftChar.png';
+        _characterDirection = 'assets/LeftChar.png';
       } else if (direction == 'right' &&
           _characterXPosition < screenWidth / 2 - characterWidth) {
         _characterXPosition += moveDistanceX;
-        _characterDirection = 'RightChar.png';
+        _characterDirection = 'assets/RightChar.png';
       } else if (direction == 'forward' &&
           _characterYPosition < screenHeight - characterHeight) {
         _characterYPosition += moveDistanceY;
-        _characterDirection = 'TopChar.png';
+        _characterDirection = 'assets/TopChar.png';
       } else if (direction == 'backward' && _characterYPosition > 0) {
         _characterYPosition -= moveDistanceY;
-        _characterDirection = 'DownChar.png';
+        _characterDirection = 'assets/DownChar.png';
       }
     });
   }
