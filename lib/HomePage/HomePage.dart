@@ -92,12 +92,12 @@ class HomePage extends StatelessWidget {
 
           // Game Parts Grid
           Positioned(
-            top: 200, // Increase this value to move the grid down
+            top: 100, // Increase this value to move the grid down
             left: 0,
             right: 0,
             bottom: 0,
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(1.0),
               child: CryptoGamesGrid(), // Grid of game part cards
             ),
           ),

@@ -16,7 +16,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   double _characterXPosition =
       0; // Initial horizontal position of the character
   double _characterYPosition = 0.0; // Start at the bottom
-  String _characterDirection = 'TopChar.png'; // Initial character image
+  String _characterDirection = 'assets/TopChar.png'; // Initial character image
   Timer? _movementTimer; // Timer for continuous movement
   String _randomWord = ""; // Variable to hold the random word
   int _randomKey = 0; // Variable to hold the random key

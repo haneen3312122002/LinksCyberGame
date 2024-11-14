@@ -60,8 +60,7 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
 
   Future<void> _playMusic() async {
     try {
-      await _audioPlayer
-          .setAsset('assets/caselSong.mp3'); // Path to the audio file
+      await _audioPlayer.setAsset('caselSong.mp3'); // Path to the audio file
       await _audioPlayer.setLoopMode(LoopMode.one); // Repeat the audio
       await _audioPlayer.play(); // Play the audio
     } catch (e) {
@@ -78,74 +77,54 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
+        final double screenWidth = MediaQuery.of(context).size.width;
+        final double screenHeight = MediaQuery.of(context).size.height;
+        final double fontSize = screenWidth * 0.02;
+
         return AlertDialog(
           backgroundColor: Colors.brown,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           title: Text(
             'ادخل معلوماتك الشخصية من فضلك',
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: 'اسمك',
-                  labelStyle: TextStyle(color: Colors.brown),
-                  filled: true,
-                  fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTextField(
+                  controller: nameController,
+                  label: 'اسمك',
+                  fontSize: fontSize,
+                  screenWidth: screenWidth / 4,
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: birthdayController,
-                decoration: InputDecoration(
-                  labelText: 'تاريخ ميلادك',
-                  labelStyle: TextStyle(color: Colors.brown),
-                  filled: true,
-                  fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+                SizedBox(height: screenHeight * 0.015),
+                _buildTextField(
+                  controller: birthdayController,
+                  label: 'تاريخ ميلادك',
+                  fontSize: fontSize,
+                  screenWidth: screenWidth,
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  labelText: 'رقم الهاتف',
-                  labelStyle: TextStyle(color: Colors.brown),
-                  filled: true,
-                  fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
+                SizedBox(height: screenHeight * 0.015),
+                _buildTextField(
+                  controller: phoneController,
+                  label: 'رقم الهاتف',
+                  fontSize: fontSize,
+                  screenWidth: screenWidth,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
-                print('');
                 personalInfo = {
                   'name': nameController.text,
                   'birthday': birthdayController.text,
@@ -168,12 +147,45 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
               },
               child: Text(
                 'ابدا اللعبة ',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: fontSize * 0.9),
               ),
             ),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required double fontSize,
+    required double screenWidth,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.brown,
+          fontSize: fontSize,
+        ),
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: EdgeInsets.symmetric(
+          vertical: screenWidth * 0.02,
+          horizontal: screenWidth * 0.03,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white),
+        ),
+      ),
+      style: TextStyle(fontSize: fontSize * 0.9),
     );
   }
 
