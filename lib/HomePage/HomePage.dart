@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'GamePartsCard.dart';
+import 'CryptoGamesGrid.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -7,9 +8,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          BackgroundImage(), // Full-screen background image
-
-          // Settings Icon Button (Top Left)
+          BackgroundImage(),
           Positioned(
             top: 40,
             left: 20,
@@ -20,8 +19,6 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
-
-          // Start Button with Neon Effect (Top Right)
           Positioned(
             top: 40,
             right: 20,
@@ -30,8 +27,7 @@ class HomePage extends StatelessWidget {
                 // Add start journey functionality here
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 98, 210, 255), // Button color
+                backgroundColor: const Color.fromARGB(255, 98, 210, 255),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
@@ -59,10 +55,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Neon Text
           Positioned(
-            top: 200, // Adjust this to position the text higher or lower
+            top: 190,
             left: 0,
             right: 0,
             child: Center(
@@ -70,7 +64,7 @@ class HomePage extends StatelessWidget {
                 "WELCOME TO THE KIDS TRIP",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: 28,
                   color: Colors.cyanAccent,
                   fontWeight: FontWeight.bold,
                   shadows: [
@@ -89,14 +83,15 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Game Parts Grid
           Positioned(
             top: 100, // Increase this value to move the grid down
+            top: 250,
             left: 0,
             right: 0,
             bottom: 0,
             child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: CryptoGamesGrid(),
               padding: const EdgeInsets.all(1.0),
               child: CryptoGamesGrid(), // Grid of game part cards
             ),
@@ -113,7 +108,7 @@ class BackgroundImage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/BackGround1.png'), // Full-screen background
+          image: AssetImage('assets/BackGround1.png'),
           fit: BoxFit.cover,
         ),
       ),
