@@ -94,8 +94,8 @@ class GamePartsCard extends StatelessWidget {
     // تحديد القياسات بناءً على الشاشة
     double screenWidth = MediaQuery.of(context).size.width;
     double circleDiameter = screenWidth * 0.2; // قطر الدائرة بنسبة ثابتة
-    double containerWidth = screenWidth * 0.55; // عرض المربع
-    double containerHeight = 50; // ارتفاع المربع
+    double containerWidth = screenWidth * 0.5; // تقليل عرض المربع إلى 50%
+    double containerHeight = 40; // تقليل ارتفاع المربع
 
     return Center(
       child: Column(
@@ -128,7 +128,7 @@ class GamePartsCard extends StatelessWidget {
           ),
           SizedBox(height: 10), // مسافة صغيرة بين الدائرة والمربع
 
-          // المربع الذي يحتوي على النص
+          // المربع الذي يحتوي على النص فقط
           Container(
             width: containerWidth,
             height: containerHeight,
@@ -156,37 +156,6 @@ class GamePartsCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // دائرة صغيرة في زاوية المربع تحتوي على رقم القسم
-          Positioned(
-            right: 8,
-            top: -8,
-            child: Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.yellow,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  partNumber.toString(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
