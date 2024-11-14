@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 190,
+            top: 160,
             left: 0,
             right: 0,
             child: Center(
