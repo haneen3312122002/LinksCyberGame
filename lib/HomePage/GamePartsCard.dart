@@ -128,75 +128,69 @@ class GamePartsCard extends StatelessWidget {
           ),
           SizedBox(height: 10), // مسافة صغيرة بين الدائرة والمربع
 
-          // المربع الذي يحتوي على النص ورقم المرحلة
-          Stack(
-            clipBehavior: Clip.none, // السماح برقم المرحلة بالخروج من المربع
-            children: [
-              // المربع الرئيسي الذي يحتوي على العنوان
-              Container(
-                width: containerWidth,
-                height: containerHeight,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 38, 179, 255),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.yellow, width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+          // المربع الذي يحتوي على النص
+          Container(
+            width: containerWidth,
+            height: containerHeight,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 38, 179, 255),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.yellow, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
                 ),
-                child: InkWell(
-                  onTap: () {
-                    navigateToPart(context);
-                  },
-                  child: Center(
-                    child: Text(
-                      partTitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
+              ],
+            ),
+            child: InkWell(
+              onTap: () {
+                navigateToPart(context);
+              },
+              child: Center(
+                child: Text(
+                  partTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
                 ),
               ),
-              // رقم المرحلة على يمين المربع وجزء منه خارج المربع
-              Positioned(
-                right: -12, // السماح لرقم المرحلة بالخروج جزئيًا من المربع
-                top: containerHeight / 4, // موضع رأسي بحيث يكون في منتصف المربع
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.yellow,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
+            ),
+          ),
+          // دائرة صغيرة في زاوية المربع تحتوي على رقم القسم
+          Positioned(
+            right: 8,
+            top: -8,
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.yellow,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
                   ),
-                  child: Center(
-                    child: Text(
-                      partNumber.toString(),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                ],
+              ),
+              child: Center(
+                child: Text(
+                  partNumber.toString(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),
