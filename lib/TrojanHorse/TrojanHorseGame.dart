@@ -3,6 +3,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'HackerScreen.dart';
 import 'VictimScreen.dart';
 import 'GameLevelData.dart';
+import 'dart:math';
 
 class TrojanHorseGame extends StatefulWidget {
   @override
@@ -10,17 +11,14 @@ class TrojanHorseGame extends StatefulWidget {
 }
 
 class _TrojanHorseGameState extends State<TrojanHorseGame> {
-  final ValueNotifier<String> virusTypeNotifier =
-      ValueNotifier(''); // للتحكم في نوع الفيروس
-  final ValueNotifier<bool> fakeGoogleIconNotifier =
-      ValueNotifier(false); // للتحكم في إظهار الأيقونة المزيفة
+  final ValueNotifier<String> virusTypeNotifier = ValueNotifier('');
+  final ValueNotifier<bool> fakeGoogleIconNotifier = ValueNotifier(false);
   final ValueNotifier<Color> backgroundColorNotifier =
-      ValueNotifier(Colors.red); // للتحكم في لون الخلفية
+      ValueNotifier(Colors.red);
 
   late AudioPlayer backgroundAudioPlayer;
-  bool isAuthenticated = false; // متغير لتحديد حالة المصادقة لإظهار الشاشتين
-
-  final GameLevels gameLevels = GameLevels(); // إعدادات اللعبة لمراحل التحدي
+  bool isAuthenticated = false;
+  final GameLevels gameLevels = GameLevels();
 
   @override
   void initState() {
@@ -45,7 +43,6 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
     }
   }
 
-  // التحقق من إجابة المرحلة الحالية لتحديد التقدم في اللعبة
   void _checkAnswer() {
     if (gameLevels.checkAnswer()) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,52 +60,116 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
     }
   }
 
-  // إعداد شاشة اللعبة قبل الانتقال إلى الشاشتين
-  Widget _buildGameInterface(double screenWidth, double screenHeight) {
-    final double imageSize = screenWidth * 0.10;
-    final double fontSize = screenWidth * 0.020;
-    final double boxSize = screenWidth * 0.03;
-    final double buttonWidth = screenWidth * 0.05;
+  Widget _buildGameInterface(BoxConstraints constraints) {
+    final double imageSize = constraints.maxWidth * 0.08; // تقليل حجم الصورة
+    final double fontSize = constraints.maxWidth * 0.015; // تقليل حجم الخط
+    final double boxSize = constraints.maxWidth * 0.05;
+    final double buttonWidth = constraints.maxWidth * 0.06;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 144, 149, 180),
+      backgroundColor: const Color(0xFF2A2D43), // لون خلفية فضائي
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.02),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(constraints.maxWidth * 0.02),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'المرحلة ${gameLevels.currentStep + 1}: ${gameLevels.getCurrentLevel().question}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontSize * 1.4, fontWeight: FontWeight.bold),
+              // صندوق يحتوي على مؤشر المرحلة والسؤال بتصميم متصل
+              Container(
+                padding: EdgeInsets.all(1.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0), // حواف دائرية
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(
+                            255, 56, 172, 255), // لون خاص بمؤشر المرحلة
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Text(
+                        '🚀 المرحلة ${gameLevels.currentStep + 1}',
+                        style: TextStyle(
+                          fontSize: fontSize * 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: constraints.maxWidth * 0.02),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(
+                              255, 255, 255, 255), // لون خاص بالسؤال
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Text(
+                          gameLevels.getCurrentLevel().question,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: fontSize * 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: const Color.fromARGB(255, 63, 10, 154),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: screenHeight * 0.015),
-              _buildImageGrid(imageSize),
-              SizedBox(height: screenHeight * 0.015),
+              SizedBox(height: constraints.maxHeight * 0.02),
+              // استدعاء الدالة الجديدة لتوزيع الصور والأحرف بشكل هرمي على الجانبين
+              _buildLetteredImageGrid(imageSize, fontSize, buttonWidth),
+              SizedBox(height: constraints.maxHeight * 0.015),
               _buildAnswerDisplay(boxSize, fontSize),
-              SizedBox(height: screenHeight * 0.015),
-              _buildLetterGrid(fontSize, buttonWidth),
-              SizedBox(height: screenHeight * 0.015),
+              SizedBox(height: constraints.maxHeight * 0.02),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.greenAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
                     onPressed: _checkAnswer,
-                    child: Text('تحقق من الإجابة',
-                        style: TextStyle(fontSize: fontSize * 0.9)),
+                    child: Text(
+                      'تحقق من الإجابة',
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
-                  SizedBox(width: screenWidth * 0.02),
+                  SizedBox(width: constraints.maxWidth * 0.02),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
                     onPressed: () {
                       setState(() {
                         gameLevels.removeLastLetter();
                       });
                     },
-                    child:
-                        Text('مسح', style: TextStyle(fontSize: fontSize * 0.9)),
+                    child: Text(
+                      'مسح',
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -119,47 +180,163 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
     );
   }
 
-  // دالة لتحديث نوع الفيروس وإرساله إلى شاشة الضحية
   void _onVirusSend(String virusType) {
     virusTypeNotifier.value = virusType;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+  Widget _buildLetteredImageGrid(
+      double imageSize, double fontSize, double buttonWidth) {
+    // قائمة الصور
+    List<String> images = gameLevels.getCurrentLevel().images;
 
-    // التحقق من حالة المصادقة لعرض الشاشة المناسبة
-    if (!isAuthenticated) {
-      return _buildGameInterface(screenSize.width, screenSize.height);
-    }
+    // قائمة الأحرف
+    List<String> letters =
+        List<String>.from(gameLevels.getCurrentLevel().answer.split(''))
+          ..addAll(['أ', 'ب', 'ت', 'ث', 'ج', 'ح', 'خ']);
+    letters.shuffle(); // خلط الأحرف
 
-    // إذا كانت المصادقة ناجحة، يتم عرض شاشتي الهاكر والضحية جنباً إلى جنب
-    return Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: HackerScreen(
-              onVirusSend: _onVirusSend,
-              backgroundColorNotifier: backgroundColorNotifier,
-              showFakeGoogleIconNotifier: fakeGoogleIconNotifier,
-            ),
+    // تقسيم الأحرف إلى نصفين
+    List<String> leftLetters = letters.sublist(0, letters.length ~/ 2);
+    List<String> rightLetters = letters.sublist(letters.length ~/ 2);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // هرم الأحرف على الجانب الأيسر
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (leftLetters.length > 0)
+              _buildCenteredRow([leftLetters[0]], fontSize, buttonWidth),
+            if (leftLetters.length > 1)
+              _buildCenteredRow(
+                  leftLetters.sublist(1, min(3, leftLetters.length)),
+                  fontSize,
+                  buttonWidth),
+            if (leftLetters.length > 3)
+              _buildCenteredRow(
+                  leftLetters.sublist(3, min(6, leftLetters.length)),
+                  fontSize,
+                  buttonWidth),
+          ],
+        ),
+        SizedBox(width: 10), // مسافة بين الأحرف والصور
+
+        // شبكة الصور
+        SizedBox(
+          width: imageSize * 2.5,
+          child: GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            mainAxisSpacing: imageSize * 0.15,
+            crossAxisSpacing: imageSize * 0.15,
+            children: images
+                .map((image) => Container(
+                      width: imageSize,
+                      height: imageSize,
+                      child: Image.asset(
+                        image,
+                        width: imageSize,
+                        height: imageSize,
+                        fit: BoxFit.cover,
+                      ),
+                    ))
+                .toList(),
           ),
-          SizedBox(width: screenSize.width * 0.005),
-          Expanded(
-            flex: 1,
-            child: VictimScreen(
-              virusTypeNotifier: virusTypeNotifier,
-              showFakeGoogleIconNotifier: fakeGoogleIconNotifier,
-              backgroundColorNotifier: backgroundColorNotifier,
-            ),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(width: 10), // مسافة بين الصور والأحرف على اليمين
+
+        // هرم الأحرف على الجانب الأيمن
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (rightLetters.length > 0)
+              _buildCenteredRow([rightLetters[0]], fontSize, buttonWidth),
+            if (rightLetters.length > 1)
+              _buildCenteredRow(
+                  rightLetters.sublist(1, min(3, rightLetters.length)),
+                  fontSize,
+                  buttonWidth),
+            if (rightLetters.length > 3)
+              _buildCenteredRow(
+                  rightLetters.sublist(3, min(6, rightLetters.length)),
+                  fontSize,
+                  buttonWidth),
+          ],
+        ),
+      ],
     );
   }
 
-  // عناصر أخرى لشاشة اللعبة
+// دالة مساعدة لإنشاء صف مركزي يحتوي على أزرار الحروف
+  Widget _buildCenteredRow(
+      List<String> letters, double fontSize, double buttonWidth) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: letters.map((letter) {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.0),
+          child: SizedBox(
+            width: buttonWidth,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightBlueAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  gameLevels.addLetter(letter);
+                });
+              },
+              child: Text(
+                letter,
+                style: TextStyle(fontSize: fontSize, color: Colors.white),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (!isAuthenticated) {
+          return _buildGameInterface(constraints);
+        }
+        return Scaffold(
+          body: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: HackerScreen(
+                  onVirusSend: _onVirusSend,
+                  backgroundColorNotifier: backgroundColorNotifier,
+                  showFakeGoogleIconNotifier: fakeGoogleIconNotifier,
+                ),
+              ),
+              SizedBox(width: constraints.maxWidth * 0.005),
+              Expanded(
+                flex: 1,
+                child: VictimScreen(
+                  virusTypeNotifier: virusTypeNotifier,
+                  showFakeGoogleIconNotifier: fakeGoogleIconNotifier,
+                  backgroundColorNotifier: backgroundColorNotifier,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildImageGrid(double imageSize) {
     List<String> images = gameLevels.getCurrentLevel().images;
     return Center(
@@ -168,8 +345,8 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
         child: GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
-          mainAxisSpacing: imageSize * 0.2,
-          crossAxisSpacing: imageSize * 0.2,
+          mainAxisSpacing: imageSize * 0.15,
+          crossAxisSpacing: imageSize * 0.15,
           children: images
               .map((image) => Container(
                     width: imageSize,
@@ -200,12 +377,21 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
         return SizedBox(
           width: buttonWidth,
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightBlueAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
             onPressed: () {
               setState(() {
                 gameLevels.addLetter(letter);
               });
             },
-            child: Text(letter, style: TextStyle(fontSize: fontSize)),
+            child: Text(
+              letter,
+              style: TextStyle(fontSize: fontSize, color: Colors.white),
+            ),
           ),
         );
       }).toList(),
@@ -225,13 +411,15 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
           margin: EdgeInsets.all(boxSize * 0.05),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.black),
-            color:
-                index < currentAnswer.length ? Colors.blue[100] : Colors.white,
+            color: index < currentAnswer.length
+                ? Colors.deepPurple[100]
+                : Colors.white,
+            borderRadius: BorderRadius.circular(8.0),
           ),
           child: Center(
             child: Text(
               index < currentAnswer.length ? currentAnswer[index] : '',
-              style: TextStyle(fontSize: fontSize),
+              style: TextStyle(fontSize: fontSize, color: Colors.black),
             ),
           ),
         );

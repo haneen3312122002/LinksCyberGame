@@ -101,6 +101,7 @@ class GamePartsCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(),
           // الدائرة التي تحتوي على الصورة
           Container(
             width: circleDiameter,
