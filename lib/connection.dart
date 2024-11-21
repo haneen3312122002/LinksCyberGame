@@ -77,6 +77,7 @@ class ApiServicePasswordGame {
     }
   }
 }
+
 //......................mario game api
 
 // api_service.dart
@@ -95,8 +96,7 @@ class MarioApiService {
 
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://your_backend_api_url/compare_word'), // Replace with your API URL
+        Uri.parse('http://192.168.100.2:5000'), // Replace with your API URL
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
