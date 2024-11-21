@@ -207,8 +207,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   void _collectCurrentLetter() {
     if (_currentLetter != null && !_collectedLetters.contains(_currentLetter)) {
       setState(() {
-        _collectedLetters.insert(
-            0, _currentLetter!); // Add to collected letters
+        _collectedLetters.add(_currentLetter!); // Add to end of list
         _currentLetter = null; // Reset current letter after collecting
       });
     }
