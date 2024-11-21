@@ -77,3 +77,41 @@ class ApiServicePasswordGame {
     }
   }
 }
+//......................mario game api
+
+// api_service.dart
+
+class MarioApiService {
+  static Future<bool> compareWord({
+    required String collectedWord,
+    required String displayedWord,
+    required int key,
+  }) async {
+    final Map<String, dynamic> data = {
+      'collected_word': collectedWord,
+      'displayed_word': displayedWord,
+      'key': key,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://your_backend_api_url/compare_word'), // Replace with your API URL
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        bool result = responseData['result'];
+        return result;
+      } else {
+        // Handle server error
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle network error
+      throw Exception('Network error: $e');
+    }
+  }
+}

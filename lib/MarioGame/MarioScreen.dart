@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // إضافة هذه السطر
+import 'package:google_fonts/google_fonts.dart'; // Adding this line
+import 'package:http/http.dart' as http; // For API calls
+import 'package:cybergame/connection.dart';
 import 'MovingBack.dart';
 import 'MarioBackground.dart';
-
-// Data class to hold letter tile information
 
 class MarioGameScreen extends StatefulWidget {
   @override
@@ -21,6 +21,10 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   String _randomWord = ""; // Variable to hold the random word
   int _randomKey = 0; // Variable to hold the random key
   List<String> _collectedLetters = []; // List to hold collected letters
+  String? _apiResult; // Variable to hold API result
+
+  String?
+      _currentLetter; // Variable to hold the current letter the character is standing on
 
   // List of three-character words
   final List<String> _words = ["cat", "dog", "sun", "car", "bat", "hat", "map"];
@@ -84,6 +88,10 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
         _characterYPosition -= moveDistanceY;
         _characterDirection = 'assets/DownChar.png';
       }
+
+      // After moving, check for letter
+      List<LetterTileData> letterTiles = _generateLetterTiles(context);
+      _checkForLetter(context, letterTiles);
     });
   }
 
@@ -180,18 +188,78 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       // Check if the character's center is within close proximity of the tile's center
       if ((characterCenter - tileCenter).distance <= 30) {
         // Adjust the distance threshold as needed
-        if (!_collectedLetters.contains(tile.letter)) {
-          setState(() {
-            _collectedLetters.insert(0, tile.letter); // Add to start of list
-          });
-          found = true;
-        }
+        setState(() {
+          _currentLetter = tile.letter; // Set the current letter
+        });
+        found = true;
         break; // Exit loop after finding the first exact collision
       }
     }
 
     if (!found) {
-      // No action needed if no collision
+      setState(() {
+        _currentLetter = null; // No letter under character
+      });
+    }
+  }
+
+  // Function to collect the current letter
+  void _collectCurrentLetter() {
+    if (_currentLetter != null && !_collectedLetters.contains(_currentLetter)) {
+      setState(() {
+        _collectedLetters.insert(
+            0, _currentLetter!); // Add to collected letters
+        _currentLetter = null; // Reset current letter after collecting
+      });
+    }
+  }
+
+  // Function to display the collected word
+  void _displayCollectedWord() {
+    String collectedWord = _collectedLetters.join();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Collected Word'),
+          content: Text(
+            collectedWord.isNotEmpty ? collectedWord : 'No letters collected.',
+            style: TextStyle(fontSize: 24),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Method to submit the collected word to the API
+  void _submitWord() async {
+    final String collectedWord = _collectedLetters.join().toLowerCase();
+    final String displayedWord = _randomWord.toLowerCase();
+    final int key = _randomKey;
+
+    try {
+      bool result = await MarioApiService.compareWord(
+        collectedWord: collectedWord,
+        displayedWord: displayedWord,
+        key: key,
+      );
+
+      setState(() {
+        _apiResult = result ? 'Correct!' : 'Incorrect!';
+      });
+    } catch (e) {
+      // Handle errors from the ApiService
+      setState(() {
+        _apiResult = e.toString();
+      });
     }
   }
 
@@ -222,7 +290,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
             child: Text(
               _randomWord,
               style: GoogleFonts.pangolin(
-                // استخدام الخط من المكتبة
+                // Using font from the library
                 textStyle: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
@@ -243,7 +311,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 Text(
                   '$_randomKey',
                   style: GoogleFonts.pangolin(
-                    // استخدام الخط من المكتبة
+                    // Using font from the library
                     textStyle: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
@@ -254,6 +322,22 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
+          // Display the current letter at the top center
+          if (_currentLetter != null)
+            Positioned(
+              top: 60,
+              left: MediaQuery.of(context).size.width / 2 - fontSize * 2,
+              child: Text(
+                'Current Letter: $_currentLetter',
+                style: GoogleFonts.pangolin(
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+            ),
           // Control buttons arranged in a diamond shape
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
@@ -290,7 +374,6 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                       iconSize: iconSize,
                       padding: buttonPadding,
                     ),
-
                     // Right Arrow
                   ],
                 ),
@@ -306,23 +389,37 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
-          // Check icon at the bottom left with collected letters
+          // Buttons and collected letters at the bottom left
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.08,
             left: MediaQuery.of(context).size.width * 0.05,
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: iconSize * 1.5, // Adjust the size as needed
-                  ),
-                  onPressed: () {
-                    _checkForLetter(context, letterTiles);
-                  },
+                // Buttons Row
+                Row(
+                  children: [
+                    // Display Collected Word Button
+                    ElevatedButton(
+                      onPressed: _displayCollectedWord,
+                      child: Text('Display Word'),
+                    ),
+                    SizedBox(width: 10),
+                    // Collect Letter Button
+                    ElevatedButton(
+                      onPressed:
+                          _currentLetter != null ? _collectCurrentLetter : null,
+                      child: Text('Collect Letter'),
+                    ),
+                    SizedBox(width: 10),
+                    // Submit Button
+                    ElevatedButton(
+                      onPressed: _submitWord,
+                      child: Text('Submit'),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 10),
+                SizedBox(height: 10),
                 // Display collected letters from left to right
                 Row(
                   children: _collectedLetters.map((letter) {
@@ -338,7 +435,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                       child: Text(
                         letter,
                         style: GoogleFonts.pangolin(
-                          // استخدام الخط من المكتبة
+                          // Using font from the library
                           textStyle: TextStyle(
                             fontSize: fontSize,
                             fontWeight: FontWeight.bold,
@@ -352,6 +449,18 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
+          // Display API result in the center of the screen
+          if (_apiResult != null)
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                color: Colors.white.withOpacity(0.8),
+                child: Text(
+                  _apiResult!,
+                  style: TextStyle(fontSize: 24, color: Colors.red),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -405,8 +514,5 @@ class ArrowButton extends StatelessWidget {
     );
   }
 }
-
-// Data class to hold letter tile information
-
 
 // Additional classes (MarioBackground, GameGround) should be included here if needed
