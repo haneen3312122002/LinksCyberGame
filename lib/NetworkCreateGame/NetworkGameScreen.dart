@@ -48,20 +48,69 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   List<Offset> _generateDevicePositions(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final centerX = screenWidth / 2;
-    final centerY = screenHeight / 2;
-    final radius = min(screenWidth, screenHeight) * 0.45;
 
-    List<Offset> positions = [
-      Offset(centerX - screenWidth * 0.05, centerY),
-      Offset(centerX + screenWidth * 0.05, centerY),
+    // تحديد مركز الشاشة أفقيًا
+    final centerX = screenWidth / 2;
+
+    // تحديد المسافة العمودية بين الطبقات (زيادة المسافة العمودية)
+    final verticalSpacing = screenHeight * 0.2; // زيادة من 0.15 إلى 0.2
+
+    // تحديد المسافة العلوية لبدء الطبقة الأولى (زيادة المسافة من أعلى الشاشة)
+    final startY =
+        screenHeight * 0.05; // تقليل من 0.1 إلى 0.05 لزيادة المسافة العلوية
+
+    // تحديد الطبقات وعدد الأجهزة في كل طبقة
+    final layers = [
+      1, // الطبقة الأولى: دائرة واحدة
+      1, // الطبقة الثانية: دائرة واحدة
+      2, // الطبقة الثالثة: دائرتان
+      5, // الطبقة الرابعة: خمس دوائر
     ];
 
-    for (int i = 0; i < 6; i++) {
-      double angle = (2.2 * pi / 6) * i;
-      double x = centerX + radius * cos(angle);
-      double y = centerY + radius * sin(angle);
-      positions.add(Offset(x, y));
+    // تحديد المسافة العمودية الإضافية للطبقة الأخيرة
+    final extraSpacingLastLayer =
+        screenHeight * 0.05; // مسافة إضافية للطبقة الأخيرة
+
+    List<Offset> positions = [];
+
+    for (int layerIndex = 0; layerIndex < layers.length; layerIndex++) {
+      int numberOfDevices = layers[layerIndex];
+      double layerY = startY + layerIndex * verticalSpacing;
+
+      // إذا كانت الطبقة هي الأخيرة، نضيف المسافة العمودية الإضافية
+      if (layerIndex == layers.length - 1) {
+        layerY += extraSpacingLastLayer;
+      }
+
+      // حساب المسافات الأفقية بناءً على عدد الأجهزة في الطبقة
+      // لضمان التوزيع المتساوي والمتمركز
+      double horizontalSpacing;
+      if (numberOfDevices > 1) {
+        // المسافة بين الأجهزة تعتمد على عددها (زيادة المسافة الأفقية)
+        horizontalSpacing = screenWidth * 0.2; // زيادة من 0.15 إلى 0.2
+      } else {
+        // إذا كانت الطبقة تحتوي على جهاز واحد، يتم وضعه في مركز الشاشة
+        horizontalSpacing = 0;
+      }
+
+      for (int deviceIndex = 0; deviceIndex < numberOfDevices; deviceIndex++) {
+        double xPosition;
+
+        if (numberOfDevices == 1) {
+          // إذا كانت الطبقة تحتوي على جهاز واحد، يتم وضعه في مركز الشاشة
+          xPosition = centerX;
+        } else {
+          // إذا كانت الطبقة تحتوي على أكثر من جهاز، يتم توزيعها بشكل متساوٍ حول المركز
+          // حساب الإزاحة من المركز
+          double totalWidth = (numberOfDevices - 1) * horizontalSpacing;
+          double startX = centerX - totalWidth / 2;
+
+          xPosition = startX + deviceIndex * horizontalSpacing;
+        }
+
+        // إضافة الموقع إلى القائمة
+        positions.add(Offset(xPosition, layerY));
+      }
     }
 
     return positions;
