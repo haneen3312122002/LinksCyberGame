@@ -88,7 +88,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       double horizontalSpacing;
       if (numberOfDevices > 1) {
         // المسافة بين الأجهزة تعتمد على عددها (زيادة المسافة الأفقية)
-        horizontalSpacing = screenWidth * 0.2; // زيادة من 0.15 إلى 0.2
+        horizontalSpacing = screenWidth * 0.15; // زيادة من 0.15 إلى 0.2
       } else {
         // إذا كانت الطبقة تحتوي على جهاز واحد، يتم وضعه في مركز الشاشة
         horizontalSpacing = 0;
@@ -112,7 +112,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
         // إزاحة الدائرة الأولى في الطبقة الثالثة إلى اليسار قليلاً
         if (layerIndex == 2 && deviceIndex == 0) {
           // تحديد مقدار الإزاحة (مثلاً 20 نقطة إلى اليسار)
-          double xOffset = -20.0; // تم تقليل الإزاحة من -200.0 إلى -20.0
+          double xOffset = -190.0; // تم تقليل الإزاحة من -200.0 إلى -20.0
           xPosition += xOffset;
         }
 
@@ -165,7 +165,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       return false;
     } else if (deviceType == 'switch' &&
         deviceConnectionsCount['switch']! >= 2) {
-      // طبقة 3 بها دائرتان
+      // طبقة 3 بها سويتشين
       _showMessage('السويتش متصل بالفعل بحد أقصى.');
       return false;
     } else if (deviceType == 'internet' &&
@@ -257,7 +257,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                         deviceTypeAtPosition = 'internet';
                       } else if (index == 1) {
                         deviceTypeAtPosition = 'router';
-                      } else if (index == 2) {
+                      } else if (index == 2 || index == 3) {
+                        // تعديل هنا
                         deviceTypeAtPosition = 'switch';
                       } else {
                         deviceTypeAtPosition = 'device'; // generic
@@ -269,7 +270,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                         allowedDeviceTypes = ['internet'];
                       } else if (index == 1) {
                         allowedDeviceTypes = ['router'];
-                      } else if (index == 2) {
+                      } else if (index == 2 || index == 3) {
+                        // تعديل هنا
                         allowedDeviceTypes = ['switch'];
                       } else {
                         // الطبقة الرابعة: أي جهاز آخر غير إنترنت، راوتر، سويتش
