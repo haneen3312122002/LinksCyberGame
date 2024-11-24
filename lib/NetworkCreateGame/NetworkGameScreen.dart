@@ -19,6 +19,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   Map<String, int> deviceConnectionsCount = {
     'router': 0,
     'switch': 0,
+    'internet': 0, // إضافة الإنترنت
   };
   Map<String, int> devicePositions = {};
 
@@ -108,6 +109,13 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
           xPosition = startX + deviceIndex * horizontalSpacing;
         }
 
+        // إزاحة الدائرة الأولى في الطبقة الثالثة إلى اليسار قليلاً
+        if (layerIndex == 2 && deviceIndex == 0) {
+          // تحديد مقدار الإزاحة (مثلاً 20 نقطة إلى اليسار)
+          double xOffset = -20.0; // تم تقليل الإزاحة من -200.0 إلى -20.0
+          xPosition += xOffset;
+        }
+
         // إضافة الموقع إلى القائمة
         positions.add(Offset(xPosition, layerY));
       }
@@ -130,9 +138,9 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }
 
   void endDraggingLine(Offset end, String? deviceType, bool wifiStatus) {
-    if (startDragPosition != null) {
+    if (startDragPosition != null && canConnectDevice(deviceType ?? '')) {
       Color lineColor = const Color.fromARGB(255, 221, 111, 255);
-      if (deviceType == 'تابلت' && wifiStatus) {
+      if (deviceType == 'Tab' && wifiStatus) {
         lineColor = const Color.fromARGB(
             255, 12, 220, 19); // Green color if from tablet with WiFi on
       }
@@ -145,18 +153,26 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
         });
         startDragPosition = null;
         currentDragPosition = null;
+        addConnection(deviceType ?? '');
       });
       checkCentralDevices();
     }
   }
 
   bool canConnectDevice(String deviceType) {
-    if (deviceType == 'router' && deviceConnectionsCount['router']! >= 3) {
-      _showMessage('الراوتر لا يقبل أكثر من 3 توصيلات. استخدم السويتش.');
+    if (deviceType == 'router' && deviceConnectionsCount['router']! >= 1) {
+      _showMessage('الراوتر لا يقبل أكثر من توصيل واحد.');
       return false;
     } else if (deviceType == 'switch' &&
-        deviceConnectionsCount['switch']! >= 4) {
-      _showMessage('السويتش متصل بالفعل بأربع أجهزة.');
+        deviceConnectionsCount['switch']! >= 2) {
+      // طبقة 3 بها دائرتان
+      _showMessage('السويتش متصل بالفعل بحد أقصى.');
+      return false;
+    } else if (deviceType == 'internet' &&
+        deviceConnectionsCount['internet']! >= 1) {
+      // طبقة 1 تسمح بجهاز واحد
+      // مثال على حد التوصيل للإنترنت
+      _showMessage('الإنترنت متصل بالفعل بجهاز واحد.');
       return false;
     }
     return true;
@@ -187,14 +203,19 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
 
   void checkCentralDevices() {
     if (devicePositions['router'] != null &&
-        devicePositions['switch'] != null) {
+        devicePositions['switch'] != null &&
+        devicePositions['internet'] != null) {
+      // التأكد من وجود الإنترنت
       final routerPosition = devicePositions['router'];
       final switchPosition = devicePositions['switch'];
+      final internetPosition = devicePositions['internet'];
       if ((routerPosition == 0 || routerPosition == 1) &&
-          (switchPosition == 0 || switchPosition == 1)) {
-        // Correct positioning
+          (switchPosition == 0 || switchPosition == 1) &&
+          (internetPosition == 0 || internetPosition == 1)) {
+        // الوضع الصحيح للأجهزة المركزية
       } else {
-        _showMessage('يجب وضع الراوتر والسويتش في المواقع المركزية فقط.');
+        _showMessage(
+            'يجب وضع الراوتر والسويتش والإنترنت في المواقع المركزية فقط.');
       }
     }
   }
@@ -229,10 +250,44 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                     ...devicePositionsList.asMap().entries.map((entry) {
                       int index = entry.key;
                       Offset position = entry.value;
+                      String? deviceTypeAtPosition;
+
+                      // تحديد نوع الجهاز بناءً على الفهرس
+                      if (index == 0) {
+                        deviceTypeAtPosition = 'internet';
+                      } else if (index == 1) {
+                        deviceTypeAtPosition = 'router';
+                      } else if (index == 2) {
+                        deviceTypeAtPosition = 'switch';
+                      } else {
+                        deviceTypeAtPosition = 'device'; // generic
+                      }
+
+                      // تحديد أنواع الأجهزة المسموح بها لكل طبقة
+                      List<String> allowedDeviceTypes;
+                      if (index == 0) {
+                        allowedDeviceTypes = ['internet'];
+                      } else if (index == 1) {
+                        allowedDeviceTypes = ['router'];
+                      } else if (index == 2) {
+                        allowedDeviceTypes = ['switch'];
+                      } else {
+                        // الطبقة الرابعة: أي جهاز آخر غير إنترنت، راوتر، سويتش
+                        allowedDeviceTypes = [
+                          'Computer1',
+                          'Computer2',
+                          'Computer3',
+                          'Printer',
+                          'Tab'
+                        ];
+                      }
+
                       return Positioned(
                         left: position.dx,
                         top: position.dy,
                         child: DeviceBase(
+                          allowedDeviceTypes:
+                              allowedDeviceTypes, // تمرير أنواع الأجهزة المسموح بها
                           onDragStart: (start) => startDraggingLine(start),
                           onDragUpdate: (update) => updateDraggingLine(update),
                           onDragEnd: (end, deviceType, wifiStatus) =>
@@ -271,6 +326,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       if (distance < 10.0) {
         setState(() {
           connections.removeAt(i);
+          // هنا يمكنك تعديل deviceConnectionsCount إذا لزم الأمر
         });
         break;
       }

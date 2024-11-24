@@ -5,15 +5,15 @@ class DeviceBase extends StatefulWidget {
   final Function(Offset) onDragStart;
   final Function(Offset) onDragUpdate;
   final Function(Offset, String?, bool) onDragEnd;
-  final String? asset;
   final Function(bool) onVideoStatusChanged;
+  final List<String> allowedDeviceTypes; // قائمة بأنواع الأجهزة المسموح بها
 
   DeviceBase({
     required this.onDragStart,
     required this.onDragUpdate,
     required this.onDragEnd,
-    this.asset,
     required this.onVideoStatusChanged,
+    required this.allowedDeviceTypes, // تمرير القائمة عبر البنية
   });
 
   @override
@@ -22,6 +22,7 @@ class DeviceBase extends StatefulWidget {
 
 class _DeviceBaseState extends State<DeviceBase> {
   String? currentAsset;
+  IconData? currentIcon;
   bool showVideoControl = false;
   bool isVideoOpen = false;
   bool isWifiOn = false;
@@ -33,7 +34,6 @@ class _DeviceBaseState extends State<DeviceBase> {
   @override
   void initState() {
     super.initState();
-    currentAsset = widget.asset;
   }
 
   @override
@@ -49,18 +49,33 @@ class _DeviceBaseState extends State<DeviceBase> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return DragTarget<Map<String, String>>(
-      onAccept: (receivedData) {
-        setState(() {
-          currentAsset = receivedData['asset'];
-          deviceType = receivedData['label'];
-          showVideoControl = (currentAsset == 'assets/RO.png' ||
-              currentAsset == 'assets/SW.png');
-          showWifiControl = (currentAsset == 'assets/Tab.png');
-        });
-        // Initialize the audio player if the device is a router
-        if (deviceType == 'راوتر') {
-          _audioPlayer.setAsset('assets/Router.mp3');
+    return DragTarget<Map<String, dynamic>>(
+      onAccept: (receivedData) async {
+        String incomingDeviceType = receivedData['label'];
+
+        // التحقق مما إذا كان الجهاز المسموح به
+        if (widget.allowedDeviceTypes.contains(incomingDeviceType)) {
+          setState(() {
+            currentAsset = receivedData['asset'];
+            currentIcon = receivedData['icon'];
+            deviceType = incomingDeviceType;
+            // تحديث شرط عرض التحكم بالفيديو بناءً على نوع الجهاز
+            showVideoControl = (currentAsset == 'assets/RO.png' ||
+                currentAsset == 'assets/SW.png');
+            showWifiControl = (deviceType == 'Tab');
+          });
+
+          // Initialize the audio player based on device type
+          if (deviceType == 'router') {
+            await _audioPlayer.setAsset('assets/Router.mp3');
+          }
+          // إزالة تحميل Internet.mp3 لأنه لم يعد له فائدة
+          // else if (deviceType == 'internet') {
+          //   await _audioPlayer.setAsset('assets/Internet.mp3'); // تأكد من وجود هذا الملف
+          // }
+        } else {
+          // عرض رسالة تنبيه إذا كان الجهاز غير مسموح به في هذه الطبقة
+          _showInvalidDeviceMessage();
         }
       },
       builder: (context, accepted, rejected) {
@@ -68,19 +83,19 @@ class _DeviceBaseState extends State<DeviceBase> {
           children: [
             GestureDetector(
               onPanStart: (details) {
-                if (deviceType == 'تابلت' && !isWifiOn) {
+                if (deviceType == 'Tab' && !isWifiOn) {
                   return;
                 }
                 widget.onDragStart(details.globalPosition);
               },
               onPanUpdate: (details) {
-                if (deviceType == 'تابلت' && !isWifiOn) {
+                if (deviceType == 'Tab' && !isWifiOn) {
                   return;
                 }
                 widget.onDragUpdate(details.globalPosition);
               },
               onPanEnd: (details) {
-                if (deviceType == 'تابلت' && !isWifiOn) {
+                if (deviceType == 'Tab' && !isWifiOn) {
                   return;
                 }
                 widget.onDragEnd(details.globalPosition, deviceType, isWifiOn);
@@ -88,7 +103,7 @@ class _DeviceBaseState extends State<DeviceBase> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  currentAsset == null
+                  (currentAsset == null && currentIcon == null)
                       ? Container(
                           width: screenWidth * 0.08,
                           height: screenWidth * 0.08,
@@ -98,12 +113,18 @@ class _DeviceBaseState extends State<DeviceBase> {
                             border: Border.all(color: Colors.white, width: 2),
                           ),
                         )
-                      : Image.asset(
-                          currentAsset!,
-                          width: screenWidth * 0.08,
-                          height: screenWidth * 0.08,
-                          fit: BoxFit.contain,
-                        ),
+                      : (currentAsset != null
+                          ? Image.asset(
+                              currentAsset!,
+                              width: screenWidth * 0.08,
+                              height: screenWidth * 0.08,
+                              fit: BoxFit.contain,
+                            )
+                          : Icon(
+                              currentIcon,
+                              color: Colors.white,
+                              size: screenWidth * 0.08,
+                            )),
                   if (showWifiControl)
                     Positioned(
                       top: 0,
@@ -145,8 +166,8 @@ class _DeviceBaseState extends State<DeviceBase> {
                     }
                   });
 
-                  // Play or stop the audio if the device is a router
-                  if (deviceType == 'راوتر') {
+                  // Play or stop the audio based on device type
+                  if (deviceType == 'router') {
                     if (isVideoOpen) {
                       await _audioPlayer.play();
                     } else {
@@ -160,6 +181,22 @@ class _DeviceBaseState extends State<DeviceBase> {
           ],
         );
       },
+    );
+  }
+
+  void _showInvalidDeviceMessage() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('تنبيه'),
+        content: Text('هذا الجهاز غير مسموح به في هذه الطبقة.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('إغلاق'),
+          ),
+        ],
+      ),
     );
   }
 }
