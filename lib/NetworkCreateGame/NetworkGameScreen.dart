@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:just_audio/just_audio.dart'; // Import just_audio for background music
 import 'NetNodes.dart';
 import 'Slider.dart';
+import 'package:flutter/services.dart';
 
 class NetworkGameScreen extends StatefulWidget {
   @override
@@ -12,6 +13,8 @@ class NetworkGameScreen extends StatefulWidget {
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
   final AudioPlayer _backgroundAudioPlayer =
       AudioPlayer(); // Background music player
+// الجزء الثابت من عنوان IP
+  static const String fixedIPPart = '192.168.1.';
 
   Offset? startDragPosition;
   Offset? currentDragPosition;
@@ -26,6 +29,12 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   bool isGifPlaying = false;
   int gifPlayingCount = 0;
   bool devicesUnlocked = false;
+
+  // خريطة لتخزين عناوين IP لكل جهاز بناءً على فهرسه
+  Map<int, String> deviceIPs = {};
+
+  // مجموعة لتتبع عناوين IP المستخدمة لضمان عدم التكرار
+  Set<String> usedIPs = {};
 
   @override
   void initState() {
@@ -112,7 +121,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
         // إزاحة الدائرة الأولى في الطبقة الثالثة إلى اليسار قليلاً
         if (layerIndex == 2 && deviceIndex == 0) {
           // تحديد مقدار الإزاحة (مثلاً 20 نقطة إلى اليسار)
-          double xOffset = -190.0; // تم تقليل الإزاحة من -200.0 إلى -20.0
+          double xOffset = -190.0; // تم تقليل الإزاحة من -200.0 إلى -190.0
           xPosition += xOffset;
         }
 
@@ -142,7 +151,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       Color lineColor = const Color.fromARGB(255, 221, 111, 255);
       if (deviceType == 'Tab' && wifiStatus) {
         lineColor = const Color.fromARGB(
-            255, 12, 220, 19); // Green color if from tablet with WiFi on
+            255, 12, 220, 19); // لون أخضر إذا كان من تابلت مع WiFi مفعل
       }
 
       setState(() {
@@ -220,6 +229,86 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     }
   }
 
+  // دالة للتعامل مع الضغط على جهاز معين لإدخال عنوان IP
+  void _onDeviceTap(int index) {
+    String? currentIP = deviceIPs[index];
+    // استخراج الخانة الرابعة من عنوان IP الحالي إذا كانت موجودة
+    String currentLastOctet = '';
+    if (currentIP != null && currentIP.startsWith(fixedIPPart)) {
+      currentLastOctet = currentIP.substring(fixedIPPart.length);
+    }
+    TextEditingController _ipController =
+        TextEditingController(text: currentLastOctet);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('إدخال عنوان IP'),
+          content: Row(
+            children: [
+              Text(fixedIPPart),
+              Expanded(
+                child: TextField(
+                  controller: _ipController,
+                  decoration: InputDecoration(
+                    hintText: 'الخانة الرابعة',
+                  ),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('إلغاء'),
+            ),
+            TextButton(
+              onPressed: () {
+                String enteredLastOctet = _ipController.text.trim();
+                String fullIP = fixedIPPart + enteredLastOctet;
+                if (!_validateLastOctet(enteredLastOctet)) {
+                  _showMessage(
+                      'الخانة الرابعة غير صالحة. يجب أن تكون بين 0 و 255.');
+                  return;
+                }
+                if (usedIPs.contains(fullIP) && deviceIPs[index] != fullIP) {
+                  _showMessage('هذا عنوان IP مستخدم بالفعل.');
+                  return;
+                }
+                setState(() {
+                  if (deviceIPs.containsKey(index)) {
+                    usedIPs.remove(deviceIPs[index]!);
+                  }
+                  deviceIPs[index] = fullIP;
+                  usedIPs.add(fullIP);
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('حفظ'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // دالة للتحقق من صحة عنوان IP
+  // دالة للتحقق من صحة الخانة الرابعة من عنوان IP
+  bool _validateLastOctet(String octet) {
+    if (octet.isEmpty) return false;
+    int? num = int.tryParse(octet);
+    if (num == null || num < 0 || num > 255) return false;
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final devicePositionsList = _generateDevicePositions(context);
@@ -258,10 +347,9 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                       } else if (index == 1) {
                         deviceTypeAtPosition = 'router';
                       } else if (index == 2 || index == 3) {
-                        // تعديل هنا
                         deviceTypeAtPosition = 'switch';
                       } else {
-                        deviceTypeAtPosition = 'device'; // generic
+                        deviceTypeAtPosition = 'device'; // عام
                       }
 
                       // تحديد أنواع الأجهزة المسموح بها لكل طبقة
@@ -271,10 +359,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                       } else if (index == 1) {
                         allowedDeviceTypes = ['router'];
                       } else if (index == 2 || index == 3) {
-                        // تعديل هنا
                         allowedDeviceTypes = ['switch'];
                       } else {
-                        // الطبقة الرابعة: أي جهاز آخر غير إنترنت، راوتر، سويتش
                         allowedDeviceTypes = [
                           'Computer1',
                           'Computer2',
@@ -287,25 +373,48 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                       return Positioned(
                         left: position.dx,
                         top: position.dy,
-                        child: DeviceBase(
-                          allowedDeviceTypes:
-                              allowedDeviceTypes, // تمرير أنواع الأجهزة المسموح بها
-                          onDragStart: (start) => startDraggingLine(start),
-                          onDragUpdate: (update) => updateDraggingLine(update),
-                          onDragEnd: (end, deviceType, wifiStatus) =>
-                              endDraggingLine(end, deviceType, wifiStatus),
-                          onVideoStatusChanged: (isPlaying) {
-                            setState(() {
-                              if (isPlaying) {
-                                gifPlayingCount++;
-                                isGifPlaying = true;
-                                devicesUnlocked = true;
-                              } else {
-                                gifPlayingCount = max(0, gifPlayingCount - 1);
-                                isGifPlaying = gifPlayingCount > 0;
-                              }
-                            });
-                          },
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () => _onDeviceTap(index),
+                              child: DeviceBase(
+                                allowedDeviceTypes:
+                                    allowedDeviceTypes, // تمرير أنواع الأجهزة المسموح بها
+                                onDragStart: (start) =>
+                                    startDraggingLine(start),
+                                onDragUpdate: (update) =>
+                                    updateDraggingLine(update),
+                                onDragEnd: (end, deviceType, wifiStatus) =>
+                                    endDraggingLine(
+                                        end, deviceType, wifiStatus),
+                                onVideoStatusChanged: (isPlaying) {
+                                  setState(() {
+                                    if (isPlaying) {
+                                      gifPlayingCount++;
+                                      isGifPlaying = true;
+                                      devicesUnlocked = true;
+                                    } else {
+                                      gifPlayingCount =
+                                          max(0, gifPlayingCount - 1);
+                                      isGifPlaying = gifPlayingCount > 0;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            if (deviceIPs.containsKey(index))
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  deviceIPs[index]!,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    backgroundColor: Colors.black54,
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       );
                     }).toList(),
