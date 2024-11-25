@@ -13,7 +13,7 @@ class NetworkGameScreen extends StatefulWidget {
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
   final AudioPlayer _backgroundAudioPlayer =
       AudioPlayer(); // Background music player
-// الجزء الثابت من عنوان IP
+  // الجزء الثابت من عنوان IP
   static const String fixedIPPart = '192.168.1.';
 
   Offset? startDragPosition;
@@ -198,12 +198,73 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('تنبيه'),
-        content: Text(message),
+        // تعديل خلفية النافذة الحوارية لجعلها ملونة وشفافة
+        backgroundColor:
+            Colors.pinkAccent.withOpacity(0.9), // خلفية زاهية وشفافة
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning,
+              color: Colors.yellowAccent,
+              size: 28,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'تنبيه',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // لون النص أبيض ليتباين مع الخلفية الزاهية
+                fontSize: 22, // حجم خط أكبر للنص
+              ),
+            ),
+          ],
+        ),
+        content: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: Colors.white,
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: Colors.white, // لون النص أبيض
+                  fontSize: 18, // حجم خط أكبر للنص
+                ),
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('إغلاق'),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  'إغلاق',
+                  style: TextStyle(
+                    color: Colors.white, // لون النص داخل الزر أبيض
+                    fontSize: 18, // حجم خط أكبر للنص
+                  ),
+                ),
+              ],
+            ),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.orangeAccent, // خلفية الزر زاهية
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
+              ),
+            ),
           ),
         ],
       ),
@@ -244,15 +305,44 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('إدخال عنوان IP'),
+          backgroundColor: const Color.fromARGB(255, 199, 216, 255)
+              .withOpacity(0.9), // خلفية زاهية وشفافة
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.network_check,
+                color: Colors.blueAccent,
+                size: 28,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'إدخال عنوان IP',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87, // لون النص داكن ليتباين مع الخلفية
+                  fontSize: 22, // حجم خط أكبر للنص
+                ),
+              ),
+            ],
+          ),
           content: Row(
             children: [
-              Text(fixedIPPart),
+              Text(
+                fixedIPPart,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                ),
+              ),
               Expanded(
                 child: TextField(
                   controller: _ipController,
                   decoration: InputDecoration(
                     hintText: 'الخانة الرابعة',
+                    hintStyle: TextStyle(color: Colors.grey),
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
@@ -268,7 +358,28 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('إلغاء'),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.cancel,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    'إلغاء',
+                    style: TextStyle(
+                      color: Colors.white, // لون النص داخل الزر أبيض
+                      fontSize: 18, // حجم خط أكبر للنص
+                    ),
+                  ),
+                ],
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.redAccent, // خلفية الزر زاهية
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -292,7 +403,28 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('حفظ'),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.save,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    'حفظ',
+                    style: TextStyle(
+                      color: Colors.white, // لون النص داخل الزر أبيض
+                      fontSize: 18, // حجم خط أكبر للنص
+                    ),
+                  ),
+                ],
+              ),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.green, // خلفية الزر زاهية
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
+                ),
+              ),
             ),
           ],
         );
@@ -405,12 +537,19 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                             if (deviceIPs.containsKey(index))
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  deviceIPs[index]!,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    backgroundColor: Colors.black54,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    deviceIPs[index]!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),
