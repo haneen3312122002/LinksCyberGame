@@ -165,6 +165,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
         addConnection(deviceType ?? '');
       });
       checkCentralDevices();
+      _checkWinCondition(); // فحص شروط الفوز بعد إضافة التوصيلة
     }
   }
 
@@ -305,8 +306,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color.fromARGB(255, 199, 216, 255)
-              .withOpacity(0.9), // خلفية زاهية وشفافة
+          backgroundColor:
+              Colors.lightGreenAccent.withOpacity(0.9), // خلفية زاهية وشفافة
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20), // زوايا مستديرة
           ),
@@ -402,6 +403,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                   usedIPs.add(fullIP);
                 });
                 Navigator.of(context).pop();
+                _checkWinCondition(); // فحص شروط الفوز بعد تعيين IP
               },
               child: Row(
                 children: [
@@ -597,6 +599,382 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                 lengthSquared));
     final projection = Offset(lineStart.dx + t * dx, lineStart.dy + t * dy);
     return (point - projection).distance;
+  }
+
+  // دالة لفحص شروط الفوز
+  void _checkWinConditionA() {
+    // 1. التأكد من وجود جميع الأجهزة في الطبقات الصحيحة
+    bool correctLayer = true;
+    if (devicePositions.length != 9) {
+      correctLayer = false;
+    } else {
+      // طبقة 1: الإنترنت
+      String? internetType = _getDeviceTypeAtLayer(0);
+      if (internetType != 'internet') {
+        correctLayer = false;
+      }
+
+      // طبقة 2: الراوتر
+      String? routerType = _getDeviceTypeAtLayer(1);
+      if (routerType != 'router') {
+        correctLayer = false;
+      }
+
+      // طبقة 3: السويتشين
+      String? switch1Type = _getDeviceTypeAtLayer(2);
+      String? switch2Type = _getDeviceTypeAtLayer(3);
+      if (switch1Type != 'switch' || switch2Type != 'switch') {
+        correctLayer = false;
+      }
+
+      // طبقة 4: الكمبيوتر، التابلت والطابعة
+      List<String?> layer4Types = [
+        _getDeviceTypeAtLayer(4),
+        _getDeviceTypeAtLayer(5),
+        _getDeviceTypeAtLayer(6),
+        _getDeviceTypeAtLayer(7),
+        _getDeviceTypeAtLayer(8),
+      ];
+      for (var type in layer4Types) {
+        if (type != 'Computer1' &&
+            type != 'Computer2' &&
+            type != 'Computer3' &&
+            type != 'Printer' &&
+            type != 'Tab') {
+          correctLayer = false;
+          break;
+        }
+      }
+    }
+
+    if (!correctLayer) {
+      return; // الشروط غير مستوفاة
+    }
+
+    // 2. التأكد من أن كل جهاز له عنوان IP فريد
+    if (deviceIPs.length != 9 || usedIPs.length != 9) {
+      return; // بعض الأجهزة ليس لها IP أو هناك تكرار
+    }
+
+    // 3. التأكد من التوصيلات الصحيحة
+    // تعريف الخريطة لتتبع التوصيلات
+    Map<String, List<String>> connectionsMap = {};
+
+    for (var connection in connections) {
+      String startDevice = _getDeviceTypeByPosition(connection['start']);
+      String endDevice = _getDeviceTypeByPosition(connection['end']);
+
+      if (startDevice.isEmpty || endDevice.isEmpty) continue;
+
+      if (!connectionsMap.containsKey(startDevice)) {
+        connectionsMap[startDevice] = [];
+      }
+      connectionsMap[startDevice]!.add(endDevice);
+    }
+
+    // التوصيل الصحيح:
+    // الراوتر متصل بالإنترنت
+    // السويتشين متصلين بالراوتر
+    // باقي الأجهزة متصلة بالسويتشين
+
+    bool correctConnections = true;
+
+    // 3.1. الراوتر متصل بالإنترنت
+    if (!(connectionsMap.containsKey('router') &&
+        connectionsMap['router']!.contains('internet'))) {
+      correctConnections = false;
+    }
+
+    // 3.2. السويتشين متصلين بالراوتر
+    if (!(connectionsMap.containsKey('switch') &&
+        connectionsMap['switch']!.contains('router'))) {
+      correctConnections = false;
+    }
+
+    // 3.3. باقي الأجهزة متصلة بالسويتشين
+    List<String> layer4Devices = [
+      'Computer1',
+      'Computer2',
+      'Computer3',
+      'Printer',
+      'Tab'
+    ];
+    for (var device in layer4Devices) {
+      bool connectedToSwitch = false;
+      if (connectionsMap.containsKey(device)) {
+        for (var connectedDevice in connectionsMap[device]!) {
+          if (connectedDevice == 'switch') {
+            connectedToSwitch = true;
+            break;
+          }
+        }
+      }
+      if (!connectedToSwitch) {
+        correctConnections = false;
+        break;
+      }
+    }
+
+    if (correctConnections) {
+      _showWinDialog();
+    }
+  }
+
+  // دالة للحصول على نوع الجهاز بناءً على موقع التوصيل
+  String _getDeviceTypeByPosition(Offset position) {
+    for (int index = 0;
+        index < _generateDevicePositions(context).length;
+        index++) {
+      Offset devicePos = _generateDevicePositions(context)[index];
+      // حساب مدى قرب نقطة التوصيل من موقع الجهاز
+      double distance = (devicePos - position).distance;
+      if (distance < 30.0) {
+        // حد قريب
+        String? deviceType = _getDeviceTypeAtLayer(index);
+        return deviceType ?? '';
+      }
+    }
+    return '';
+  }
+
+  // دالة للحصول على نوع الجهاز في طبقة معينة
+  String? _getDeviceTypeAtLayer(int index) {
+    if (index == 0) return 'internet';
+    if (index == 1) return 'router';
+    if (index == 2 || index == 3) return 'switch';
+    if (index >= 4 && index <= 8) {
+      // يمكن تخصيص أنواع الأجهزة لكل فهرس إذا لزم الأمر
+      return deviceIPs[index] != null
+          ? deviceTypeFromIP(deviceIPs[index]!)
+          : null;
+    }
+    return null;
+  }
+
+  // دالة لاسترجاع نوع الجهاز من عنوان IP (يمكن تعديلها حسب الحاجة)
+  String deviceTypeFromIP(String ip) {
+    // هنا يمكنك تحديد نوع الجهاز بناءً على IP أو أي منطق آخر
+    // على سبيل المثال:
+    if (ip.endsWith('1')) return 'Computer1';
+    if (ip.endsWith('2')) return 'Computer2';
+    if (ip.endsWith('3')) return 'Computer3';
+    if (ip.endsWith('4')) return 'Printer';
+    if (ip.endsWith('5')) return 'Tab';
+    return 'device';
+  }
+
+  // دالة لعرض مربع حوار الفوز
+  void _showWinDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor:
+            Colors.yellowAccent.withOpacity(0.9), // خلفية زاهية وشفافة
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.emoji_events,
+              color: Colors.orange,
+              size: 28,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'تهانينا!',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87, // لون النص داكن ليتباين مع الخلفية
+                fontSize: 22, // حجم خط أكبر للنص
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              color: Colors.green,
+              size: 60,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'لقد فزت في اللعبة!',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _resetGame(); // إعادة ضبط اللعبة إذا رغبت بذلك
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.refresh,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  'إعادة',
+                  style: TextStyle(
+                    color: Colors.white, // لون النص داخل الزر أبيض
+                    fontSize: 18, // حجم خط أكبر للنص
+                  ),
+                ),
+              ],
+            ),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.blueAccent, // خلفية الزر زاهية
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // دالة لإعادة ضبط اللعبة بعد الفوز
+  void _resetGame() {
+    setState(() {
+      connections.clear();
+      deviceConnectionsCount = {
+        'router': 0,
+        'switch': 0,
+        'internet': 0,
+      };
+      deviceIPs.clear();
+      usedIPs.clear();
+    });
+  }
+
+  // دالة لفحص شروط الفوز
+  void _checkWinCondition() {
+    // 1. التأكد من وجود جميع الأجهزة في الطبقات الصحيحة
+    bool correctLayer = true;
+    if (devicePositions.length != 9) {
+      correctLayer = false;
+    } else {
+      // طبقة 1: الإنترنت
+      String? internetType = _getDeviceTypeAtLayer(0);
+      if (internetType != 'internet') {
+        correctLayer = false;
+      }
+
+      // طبقة 2: الراوتر
+      String? routerType = _getDeviceTypeAtLayer(1);
+      if (routerType != 'router') {
+        correctLayer = false;
+      }
+
+      // طبقة 3: السويتشين
+      String? switch1Type = _getDeviceTypeAtLayer(2);
+      String? switch2Type = _getDeviceTypeAtLayer(3);
+      if (switch1Type != 'switch' || switch2Type != 'switch') {
+        correctLayer = false;
+      }
+
+      // طبقة 4: الكمبيوتر، التابلت والطابعة
+      List<String?> layer4Types = [
+        _getDeviceTypeAtLayer(4),
+        _getDeviceTypeAtLayer(5),
+        _getDeviceTypeAtLayer(6),
+        _getDeviceTypeAtLayer(7),
+        _getDeviceTypeAtLayer(8),
+      ];
+      for (var type in layer4Types) {
+        if (type != 'Computer1' &&
+            type != 'Computer2' &&
+            type != 'Computer3' &&
+            type != 'Printer' &&
+            type != 'Tab') {
+          correctLayer = false;
+          break;
+        }
+      }
+    }
+
+    if (!correctLayer) {
+      return; // الشروط غير مستوفاة
+    }
+
+    // 2. التأكد من أن كل جهاز له عنوان IP فريد
+    if (deviceIPs.length != 9 || usedIPs.length != 9) {
+      return; // بعض الأجهزة ليس لها IP أو هناك تكرار
+    }
+
+    // 3. التأكد من التوصيلات الصحيحة
+    // تعريف الخريطة لتتبع التوصيلات
+    Map<String, List<String>> connectionsMap = {};
+
+    for (var connection in connections) {
+      String startDevice = _getDeviceTypeByPosition(connection['start']);
+      String endDevice = _getDeviceTypeByPosition(connection['end']);
+
+      if (startDevice.isEmpty || endDevice.isEmpty) continue;
+
+      if (!connectionsMap.containsKey(startDevice)) {
+        connectionsMap[startDevice] = [];
+      }
+      connectionsMap[startDevice]!.add(endDevice);
+    }
+
+    // التوصيل الصحيح:
+    // الراوتر متصل بالإنترنت
+    // السويتشين متصلين بالراوتر
+    // باقي الأجهزة متصلة بالسويتشين
+
+    bool correctConnections = true;
+
+    // 3.1. الراوتر متصل بالإنترنت
+    if (!(connectionsMap.containsKey('router') &&
+        connectionsMap['router']!.contains('internet'))) {
+      correctConnections = false;
+    }
+
+    // 3.2. السويتشين متصلين بالراوتر
+    if (!(connectionsMap.containsKey('switch') &&
+        connectionsMap['switch']!.contains('router'))) {
+      correctConnections = false;
+    }
+
+    // 3.3. باقي الأجهزة متصلة بالسويتشين
+    List<String> layer4Devices = [
+      'Computer1',
+      'Computer2',
+      'Computer3',
+      'Printer',
+      'Tab'
+    ];
+    for (var device in layer4Devices) {
+      bool connectedToSwitch = false;
+      if (connectionsMap.containsKey(device)) {
+        for (var connectedDevice in connectionsMap[device]!) {
+          if (connectedDevice == 'switch') {
+            connectedToSwitch = true;
+            break;
+          }
+        }
+      }
+      if (!connectedToSwitch) {
+        correctConnections = false;
+        break;
+      }
+    }
+
+    if (correctConnections) {
+      _showWinDialog();
+    }
   }
 }
 
