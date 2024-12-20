@@ -432,29 +432,39 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 // Display collected letters from left to right
                 Row(
                   children: _collectedLetters.map((letter) {
-                    return Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                      width: 50.0, // Fixed width for uniform circles
-                      height: 50.0, // Fixed height for uniform circles
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(
-                            255, 187, 67, 127), // Background color
-                        shape: BoxShape.circle, // Makes the container circular
-                        border: Border.all(
+                    return GestureDetector(
+                      onTap: () {
+                        // On tapping a collected letter, remove it from collected letters
+                        // It will then reappear in the display since it's no longer collected.
+                        setState(() {
+                          _collectedLetters.remove(letter);
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 4.0, vertical: 2.0),
+                        width: 50.0, // Fixed width for uniform circles
+                        height: 50.0, // Fixed height for uniform circles
+                        decoration: BoxDecoration(
                           color: const Color.fromARGB(
-                              255, 51, 5, 37), // Border color
-                          width: 1.0, // Border width
+                              255, 187, 67, 127), // Background color
+                          shape:
+                              BoxShape.circle, // Makes the container circular
+                          border: Border.all(
+                            color: const Color.fromARGB(
+                                255, 51, 5, 37), // Border color
+                            width: 1.0, // Border width
+                          ),
                         ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          letter,
-                          style: GoogleFonts.pangolin(
-                            textStyle: TextStyle(
-                              fontSize: fontSize - 10, // Dynamic font size
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white, // Set text color to white
+                        child: Center(
+                          child: Text(
+                            letter,
+                            style: GoogleFonts.pangolin(
+                              textStyle: TextStyle(
+                                fontSize: fontSize - 10, // Dynamic font size
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // Set text color to white
+                              ),
                             ),
                           ),
                         ),
@@ -470,11 +480,98 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
           if (_apiResult != null)
             Center(
               child: Container(
+                width: MediaQuery.of(context).size.width *
+                    0.7, // Make the width shorter
                 padding: EdgeInsets.all(16.0),
-                color: Colors.white.withOpacity(0.8),
-                child: Text(
-                  _apiResult!,
-                  style: TextStyle(fontSize: 24, color: Colors.red),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 0, 229, 255)
+                      .withOpacity(0.9), // Bright background
+                  borderRadius: BorderRadius.circular(
+                      20.0), // Rounded corners for fun shape
+                  border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: 4), // Fun border color
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(66, 39, 7, 199),
+                      offset: Offset(5, 5),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.emoji_emotions, // Fun icon
+                      color: const Color.fromARGB(255, 0, 72, 255),
+                      size: 50,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      _apiResult!,
+                      style: GoogleFonts.pangolin(
+                        textStyle: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                        ),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 15),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        iconColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _apiResult = null; // Hide the dialog when pressed
+                        });
+                      },
+                      child: Text(
+                        'حسناً!',
+                        style: GoogleFonts.pangolin(
+                          textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    // Retry Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(184, 0, 255, 106),
+                        iconColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _collectedLetters.clear();
+                          _apiResult = null;
+                          _generateRandomWordAndKey(); // Generate a new word and key for a fresh start
+                        });
+                      },
+                      child: Text(
+                        'إعادة اللعب',
+                        style: GoogleFonts.pangolin(
+                          textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -511,7 +608,7 @@ class ArrowButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: const Color.fromARGB(255, 100, 180, 255),
+          color: const Color.fromARGB(255, 197, 104, 255),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,
@@ -532,4 +629,4 @@ class ArrowButton extends StatelessWidget {
   }
 }
 
-// Additional classes (MarioBackground, GameGround) should be included here if needed
+// You should have MarioBackground, GameGround, and LetterTileData classes somewhere in your code as before.
