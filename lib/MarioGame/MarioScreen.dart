@@ -293,7 +293,8 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 textStyle: TextStyle(
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple, // Use a fun color
+                  color: const Color.fromARGB(
+                      255, 231, 98, 255), // Use a fun color
                 ),
               ),
             ),
@@ -301,7 +302,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
           // Display the random key with a key icon on the top right corner
           Positioned(
             top: 60,
-            right: 20,
+            right: 40,
             child: Row(
               children: [
                 Icon(Icons.vpn_key,
@@ -324,13 +325,13 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
           // Display the current letter at the top center
           if (_currentLetter != null)
             Positioned(
-              top: 60,
-              left: MediaQuery.of(context).size.width / 2 - fontSize * 2,
+              top: 150,
+              right: MediaQuery.of(context).size.width / 8.5 - fontSize * 2,
               child: Text(
-                'Current Letter: $_currentLetter',
+                'الحرف الحالي: $_currentLetter',
                 style: GoogleFonts.pangolin(
                   textStyle: TextStyle(
-                    fontSize: fontSize,
+                    fontSize: fontSize - 0.5,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,
                   ),
@@ -390,8 +391,8 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
           ),
           // Buttons and collected letters at the bottom left
           Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.08,
-            left: MediaQuery.of(context).size.width * 0.05,
+            bottom: MediaQuery.of(context).size.height * 0.2,
+            left: MediaQuery.of(context).size.width * 0.2,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -399,22 +400,31 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 Row(
                   children: [
                     // Display Collected Word Button
-                    ElevatedButton(
+                    IconButton(
+                      icon: Icon(Icons.text_snippet),
+                      color: const Color.fromARGB(
+                          255, 204, 0, 255), // Customize color as needed
+                      tooltip: 'اعرض الكلمة',
                       onPressed: _displayCollectedWord,
-                      child: Text('Display Word'),
                     ),
                     SizedBox(width: 10),
                     // Collect Letter Button
-                    ElevatedButton(
+                    IconButton(
+                      icon: Icon(Icons.add_circle),
+                      color: _currentLetter != null
+                          ? const Color.fromARGB(255, 128, 255, 0)
+                          : Colors.grey,
+                      tooltip: 'خذ الحرف',
                       onPressed:
                           _currentLetter != null ? _collectCurrentLetter : null,
-                      child: Text('Collect Letter'),
                     ),
                     SizedBox(width: 10),
                     // Submit Button
-                    ElevatedButton(
+                    IconButton(
+                      icon: Icon(Icons.send),
+                      color: Colors.blue, // Customize color as needed
+                      tooltip: 'تحقق من النتيجة',
                       onPressed: _submitWord,
-                      child: Text('Submit'),
                     ),
                   ],
                 ),
@@ -423,22 +433,29 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
                 Row(
                   children: _collectedLetters.map((letter) {
                     return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 2.0),
-                      padding: EdgeInsets.all(4.0),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                      width: 50.0, // Fixed width for uniform circles
+                      height: 50.0, // Fixed height for uniform circles
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 187, 67, 127),
+                        color: const Color.fromARGB(
+                            255, 187, 67, 127), // Background color
+                        shape: BoxShape.circle, // Makes the container circular
                         border: Border.all(
-                            color: const Color.fromARGB(255, 51, 5, 37)),
-                        borderRadius: BorderRadius.circular(4.0),
+                          color: const Color.fromARGB(
+                              255, 51, 5, 37), // Border color
+                          width: 1.0, // Border width
+                        ),
                       ),
-                      child: Text(
-                        letter,
-                        style: GoogleFonts.pangolin(
-                          // Using font from the library
-                          textStyle: TextStyle(
-                            fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 14, 12, 12),
+                      child: Center(
+                        child: Text(
+                          letter,
+                          style: GoogleFonts.pangolin(
+                            textStyle: TextStyle(
+                              fontSize: fontSize - 10, // Dynamic font size
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white, // Set text color to white
+                            ),
                           ),
                         ),
                       ),
@@ -448,6 +465,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
               ],
             ),
           ),
+
           // Display API result in the center of the screen
           if (_apiResult != null)
             Center(
