@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:just_audio/just_audio.dart';
-
+import 'package:cybergame/SocialMesiaGame/Login.dart';
 // Local imports (replace with your actual file paths)
 import 'Block.dart';
 import 'photo.dart'; // e.g., BackgroundPhoto widget
 import 'RightMin.dart'; // e.g., RightSideMenu widget
 import 'Wall.dart'; // e.g., WallArea widget
-import 'package:cybergame/connection.dart';
+import 'package:cybergame/connection.dart'; // Where ApiServicePasswordGame is located
 
-/// ---------------------------------------------------------------------------
-/// Flutter widget representing your game/screen
-/// ---------------------------------------------------------------------------
+// Import the second page (no changes here)
+
 class CryptoGameScreen extends StatefulWidget {
   final Map<String, String> personalInfo;
 
@@ -126,16 +125,33 @@ class _CryptoGameScreenState extends State<CryptoGameScreen> {
         animType: AnimType.scale,
         title: 'قوة كلمة المرور',
         desc: _buildDialogDescription(strength),
+
+        // Keep the existing OK button logic
         btnOkOnPress: () {
-          // If you want to navigate to another screen when password is Mid or Strong:
-          // if (strength == 'Strong' || strength == 'Mid') {
-          //   Navigator.push(context, MaterialPageRoute(...));
-          // }
+          // (Existing code left intact, no changes here)
         },
         btnOkText: (strength == 'Strong' || strength == 'Mid')
-            ? 'إلى الصفحة التالية'
-            : 'حسناً',
+            ? 'إعادة المحاولة'
+            : 'اعادة المحاولة',
         btnOkColor: passwordColor,
+
+        // ADD: A second button that ONLY appears if password is Strong or Mid
+        btnCancelText:
+            (strength == 'Strong' || strength == 'Mid') ? 'التالي' : null,
+        btnCancelOnPress: () {
+          if (strength == 'Strong' || strength == 'Mid') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SecondPage(
+                  personalInfo: widget.personalInfo,
+                  password: password,
+                  passwordColor: passwordColor,
+                ),
+              ),
+            );
+          }
+        },
       ).show();
     } catch (e) {
       // Show an error dialog

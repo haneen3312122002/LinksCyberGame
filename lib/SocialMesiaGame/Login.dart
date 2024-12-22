@@ -1,6 +1,8 @@
 import 'package:cybergame/PasswordGame/CryptoGameScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cybergame/PasswordGame/PassVideo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cybergame/HomePage/HomePage.dart';
 
 class LoginPage extends StatelessWidget {
   // Controllers to capture user input
@@ -161,8 +163,10 @@ class SecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Set the password field with the passed password
+    // Set the first TextField
     passwordController.text = password;
+    // ALSO set the second TextField to display the passed password
+    confirmPasswordController.text = password;
 
     return Scaffold(
       body: Stack(
@@ -240,15 +244,15 @@ class SecondPage extends StatelessWidget {
                       TextField(
                         controller: confirmPasswordController,
                         decoration: InputDecoration(
-                          labelText: 'تأكيد كلمة المرور',
+                          labelText: 'كلمة المرور',
                           border: OutlineInputBorder(),
                           prefixIcon:
                               Icon(Icons.lock_outline, color: Colors.purple),
                         ),
-                        obscureText: true,
+                        obscureText: false,
                       ),
                       SizedBox(height: 20),
-                      // Back Button
+                      // Back Button AND NEW "Login" button
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -264,7 +268,54 @@ class SecondPage extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey,
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 15.0),
+                                horizontal: 20.0,
+                                vertical: 15.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+
+                          // NEW: Login button
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              // Store user data (personal info + password) in shared preferences
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+
+                              // Example of storing the personal info
+                              prefs.setString(
+                                  'name', personalInfo['name'] ?? '');
+                              prefs.setString(
+                                  'email', personalInfo['email'] ?? '');
+                              prefs.setString('dob', personalInfo['dob'] ?? '');
+                              // If you also want to store phone, do likewise:
+                              // prefs.setString('phone', personalInfo['phone'] ?? '');
+
+                              // Store the password from the text field
+                              prefs.setString(
+                                  'password', passwordController.text);
+
+                              // Navigate to HomePage()
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.login, color: Colors.white),
+                            label: Text(
+                              'تسجيل الدخول',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                                vertical: 15.0,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
