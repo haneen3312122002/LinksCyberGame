@@ -105,6 +105,11 @@ class GamePartsCard extends StatelessWidget {
           context,
           MaterialPageRoute(builder: (context) => CarGameScreen()),
         );
+      case 14:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CarGameScreen()),
+        );
         break;
       default:
         Navigator.push(

@@ -16,6 +16,7 @@ class CryptoGamesGrid extends StatelessWidget {
     'assets/11back.png',
     'assets/ports.png',
     'assets/carback.png',
+    'assets/newGameImage.png', // Add the new image
   ];
 
   final List<String> partsTitles = [
@@ -32,6 +33,7 @@ class CryptoGamesGrid extends StatelessWidget {
     'جرب هجوم الDOS',
     'ما هي البروتوكولات والمنافذ؟',
     'بروتوكولات نقل البيانات',
+    'لعبة جديدة: تعرف على الأمن', // Add the new title
   ];
 
   final Map<String, String> personalInfo = {
