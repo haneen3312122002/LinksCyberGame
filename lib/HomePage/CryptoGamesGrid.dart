@@ -34,6 +34,13 @@ class CryptoGamesGrid extends StatelessWidget {
     'بروتوكولات نقل البيانات',
   ];
 
+  final Map<String, String> personalInfo = {
+    'name': 'John Doe',
+    'email': 'johndoe@example.com',
+    'phone': '1234567890',
+    'dob': '01-01-1990',
+  }; // Example personal info
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -53,6 +60,7 @@ class CryptoGamesGrid extends StatelessWidget {
           partTitle: partsTitles[index],
           imagePath: imagesPaths[index],
           partNumber: index + 1,
+          personalInfo: personalInfo, // Pass the personal info to each card
         );
       },
     );

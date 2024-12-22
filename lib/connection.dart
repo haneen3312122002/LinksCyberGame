@@ -31,49 +31,64 @@ class ApiService {
 
 // API service for the password game
 
+/// ---------------------------------------------------------------------------
+/// Service class to handle calling the password-check endpoint
+/// ---------------------------------------------------------------------------
 class ApiServicePasswordGame {
-  static const String baseUrl =
-      'http://192.168.100.2:5000'; // Replace with actual IP
+  // Replace with the actual IP/port of your Flask server
+  static const String baseUrl = 'http://192.168.100.100:5000';
 
   // Send both the password and personal info to the backend for validation
   static Future<String> checkPasswordAndInfo(
-      String password, Map<String, String> personalInfo) async {
+    String password,
+    Map<String, String> personalInfo,
+  ) async {
+    // Basic validation
     if (password.isEmpty) {
       throw Exception('Password cannot be empty');
     }
 
     final url = Uri.parse('$baseUrl/check_password_and_info');
+
     final body = jsonEncode({
       'passwordKey': password,
       'InfoKey': personalInfo,
     });
 
-    // Send a POST request with the password and personal info
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      String strength = jsonResponse['strength'];
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        String strength = jsonResponse['strength'];
 
-      // Ensure that the response contains a valid strength value
-      if (strength == 'Strong' ||
-          strength == 'Mid' ||
-          strength == 'Weak' ||
-          strength == 'You are using personal info') {
-        return strength;
+        // Check for known strength values
+        if (strength == 'Strong' ||
+            strength == 'Mid' ||
+            strength == 'Weak' ||
+            strength == 'You are using personal info') {
+          return strength;
+        } else {
+          throw Exception(
+            'Unexpected strength value returned from the server: $strength',
+          );
+        }
+      } else if (response.statusCode == 400) {
+        throw Exception(
+          'Invalid request: Ensure that both password and personal info are provided',
+        );
       } else {
-        throw Exception('Unexpected strength value returned from the server');
+        throw Exception(
+          'Failed to check password and personal information. '
+          'Status Code: ${response.statusCode}',
+        );
       }
-    } else if (response.statusCode == 400) {
-      throw Exception(
-          'Invalid request: Ensure that both password and personal information are provided');
-    } else {
-      throw Exception(
-          'Failed to check password and personal information: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Error occurred while validating the password: $e');
     }
   }
 }

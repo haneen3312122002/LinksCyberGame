@@ -16,66 +16,95 @@ import 'package:cybergame/GalaxyGame/GalaxyGameScreen.dart';
 import 'package:cybergame/GalaxyGame/ConnectVirusGame.dart';
 
 class GamePartsCard extends StatelessWidget {
-  final String partTitle; // عنوان الجزء أو اللعبة
-  final String imagePath; // مسار الصورة المرتبطة بالجزء
-  final int partNumber; // رقم الجزء للتمييز بين الشاشات المختلفة
+  final String partTitle; // Game part title
+  final String imagePath; // Image path for the game part
+  final int partNumber; // Part number to differentiate between screens
+  final Map<String, String>
+      personalInfo; // Personal info passed to certain screens
 
   GamePartsCard({
     required this.partTitle,
     required this.imagePath,
     required this.partNumber,
+    required this.personalInfo,
   });
 
-  // يقوم بتحديد واجهة اللعبة المناسبة بناءً على `partNumber`
+  // Determines the appropriate game screen based on `partNumber`
   void navigateToPart(BuildContext context) {
     switch (partNumber) {
       case 1:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => NetworkGameScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => NetworkGameScreen()),
+        );
         break;
       case 2:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => PassVideoScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PassVideoScreen(personalInfo: personalInfo),
+          ),
+        );
         break;
       case 3:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DoorsVideoScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DoorsVideoScreen()),
+        );
         break;
       case 4:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LinksVideoScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LinksVideoScreen()),
+        );
         break;
       case 5:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MarioGameScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MarioGameScreen()),
+        );
         break;
       case 6:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AdCryptoGame()));
+          context,
+          MaterialPageRoute(builder: (context) => AdCryptoGame()),
+        );
         break;
       case 7:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => TrojanHorseGame()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TrojanHorseGame()),
+        );
         break;
       case 8:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => AntiGameScreen()));
+          context,
+          MaterialPageRoute(builder: (context) => AntiGameScreen()),
+        );
         break;
       case 10:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MalsGameScreen()));
+          context,
+          MaterialPageRoute(builder: (context) => MalsGameScreen()),
+        );
         break;
       case 9:
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ConnectDotsGame()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ConnectDotsGame()),
+        );
         break;
       case 12:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => port_game()));
+          context,
+          MaterialPageRoute(builder: (context) => port_game()),
+        );
         break;
       case 13:
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CarGameScreen()));
+          context,
+          MaterialPageRoute(builder: (context) => CarGameScreen()),
+        );
         break;
       default:
         Navigator.push(
@@ -92,18 +121,19 @@ class GamePartsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // تحديد القياسات بناءً على الشاشة
+    // Determine dimensions based on the screen size
     double screenWidth = MediaQuery.of(context).size.width;
-    double circleDiameter = screenWidth * 0.2; // قطر الدائرة بنسبة ثابتة
-    double containerWidth = screenWidth * 0.5; // تقليل عرض المربع إلى 50%
-    double containerHeight = 40; // تقليل ارتفاع المربع
+    double circleDiameter =
+        screenWidth * 0.2; // Circle diameter as a fixed percentage
+    double containerWidth = screenWidth * 0.5; // Reduce the box width to 50%
+    double containerHeight = 40; // Reduce the box height
 
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(),
-          // الدائرة التي تحتوي على الصورة
+          // Circle containing the image
           Container(
             width: circleDiameter,
             height: circleDiameter,
@@ -111,7 +141,7 @@ class GamePartsCard extends StatelessWidget {
               shape: BoxShape.circle,
               color: Colors.green,
               border: Border.all(
-                  color: Colors.yellow, width: 2), // إضافة حدود للدائرة
+                  color: Colors.yellow, width: 2), // Add a border to the circle
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -128,9 +158,9 @@ class GamePartsCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 10), // مسافة صغيرة بين الدائرة والمربع
+          SizedBox(height: 10), // Small spacing between the circle and the box
 
-          // المربع الذي يحتوي على النص فقط
+          // Box containing the text only
           Container(
             width: containerWidth,
             height: containerHeight,
