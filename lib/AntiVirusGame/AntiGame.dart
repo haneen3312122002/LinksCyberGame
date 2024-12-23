@@ -1,7 +1,9 @@
+// AntiGameScreen.dart
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-import "AntiVirusProgram.dart";
+import 'AntiVirusProgram.dart';
 import 'Questions.dart';
 
 // شاشة اللعبة: التحكم الرئيسي في واجهة المستخدم ومنطق اللعبة
@@ -62,6 +64,9 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
 
       fileList.add(file);
     }
+
+    // إعادة تهيئة أسئلة البرنامج المضاد للفيروسات
+    antivirusProgram.resetQuestions();
   }
 
   // بدء مؤقت اللعبة
@@ -138,7 +143,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
 
     // اختيار سؤال بناءً على نوع الفيروس
     Question question =
-        antivirusProgram.getQuestionByVirusType(file.virusType!);
+        antivirusProgram.getQuestionByVirusType(file.virusType ?? 'عام');
 
     // بدء مؤقت التحدي
     challengeTimer = Timer.periodic(Duration(seconds: 1), (Timer t) {
@@ -171,7 +176,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.lightBlueAccent, Colors.lightGreenAccent],
+                  colors: [
+                    Colors.lightBlueAccent,
+                    const Color.fromARGB(255, 4, 19, 61)
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -187,14 +195,14 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 205, 198, 198),
                       ),
                     ),
                     SizedBox(height: 10),
                     Icon(
                       Icons.alarm,
                       size: 60,
-                      color: Colors.yellowAccent,
+                      color: const Color.fromARGB(255, 210, 42, 0),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -207,7 +215,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
-                    // تعديل الخيارات لاستبدال الصور بأيقونات Flutter
+                    // عرض الخيارات كأزرار قابلة للنقر
                     ...question.options.map((option) {
                       bool isSelected = question.selectedOption == option;
                       int optionIndex = question.options.indexOf(option);
@@ -240,8 +248,9 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                           padding: EdgeInsets.symmetric(
                               vertical: 15, horizontal: 10),
                           decoration: BoxDecoration(
-                            color:
-                                isSelected ? Colors.pinkAccent : Colors.white,
+                            color: isSelected
+                                ? const Color.fromARGB(255, 64, 163, 255)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(15),
                             border: Border.all(color: Colors.black26),
                             boxShadow: [
@@ -276,7 +285,8 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                     SizedBox(height: 20),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent,
+                        backgroundColor:
+                            const Color.fromARGB(255, 77, 119, 255),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -371,7 +381,6 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
   }
 
   // عرض نافذة عند فوز اللاعب
-  // عرض نافذة عند فوز اللاعب
   void showWinDialog() {
     showDialog(
       context: context,
@@ -420,7 +429,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: const Color.fromARGB(255, 77, 119, 255),
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -447,7 +456,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
     );
   }
 
-// عرض نافذة عند خسارة اللاعب
+  // عرض نافذة عند خسارة اللاعب
   void showLoseDialog() {
     showDialog(
       context: context,
@@ -461,7 +470,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.redAccent, Colors.orangeAccent],
+                colors: [
+                  const Color.fromARGB(255, 228, 120, 120),
+                  const Color.fromARGB(255, 192, 19, 19)
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -496,7 +508,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: const Color.fromARGB(255, 77, 139, 255),
                     padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -523,7 +535,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
     );
   }
 
-// دالة لإعادة تشغيل اللعبة
+  // دالة لإعادة تشغيل اللعبة
   void resetGame() {
     setState(() {
       timeLeft = 120;
@@ -637,10 +649,9 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
             ),
           ),
           // إضافة المؤقت في الزاوية العلوية اليمنى
-          // إضافة المؤقت في الزاوية العلوية اليمنى
           Positioned(
-            top: 10,
-            right: 10,
+            top: 4,
+            right: 4,
             child: Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
@@ -657,7 +668,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [Colors.pinkAccent, Colors.orangeAccent],
+                        colors: [
+                          const Color.fromARGB(243, 202, 1, 1),
+                          const Color.fromARGB(255, 137, 2, 2)
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -675,7 +689,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                     child: Text(
                       '$timeLeft',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -696,7 +710,6 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
           ),
 
           // عرض نافذة برنامج مكافحة الفيروسات إذا تم فتحها
-          // عرض نافذة برنامج مكافحة الفيروسات إذا تم فتحها
           if (showAntivirusWindow)
             Positioned(
               left: 50,
@@ -712,7 +725,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                     // شريط العنوان مع زر الإغلاق
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.purpleAccent,
+                        color: const Color.fromARGB(255, 64, 151, 251),
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(20)),
                       ),
@@ -720,7 +733,8 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                           EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       child: Row(
                         children: [
-                          Icon(Icons.shield, color: Colors.yellowAccent),
+                          Icon(Icons.shield,
+                              color: const Color.fromARGB(255, 13, 2, 109)),
                           SizedBox(width: 10),
                           Text(
                             'برنامج مكافحة الفيروسات',
@@ -745,7 +759,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                               Container(
                                 padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.greenAccent,
+                                  color: const Color.fromARGB(255, 13, 42, 99),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Text(
@@ -759,7 +773,7 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                             Container(
                               padding: EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.lightBlueAccent,
+                                color: Color.fromARGB(255, 54, 103, 201),
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Column(
@@ -785,7 +799,8 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                                           ),
                                         ),
                                         selected: isSelected,
-                                        selectedColor: Colors.pinkAccent,
+                                        selectedColor:
+                                            Color.fromARGB(255, 13, 42, 99),
                                         onSelected: (selected) {
                                           setState(() {
                                             selectedScanOption = option;
@@ -804,7 +819,8 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                             // زر المسح
                             ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor:
+                                    const Color.fromARGB(255, 3, 0, 52),
                                 padding: EdgeInsets.symmetric(
                                     vertical: 15, horizontal: 30),
                                 shape: RoundedRectangleBorder(
@@ -838,8 +854,10 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                                         leading: Icon(
                                           Icons.insert_drive_file,
                                           color: isSelected
-                                              ? Colors.pinkAccent
-                                              : Colors.blueAccent,
+                                              ? const Color.fromARGB(
+                                                  255, 68, 125, 151)
+                                              : const Color.fromARGB(
+                                                  255, 0, 31, 84),
                                         ),
                                         title: Text(file.fileName),
                                         onTap: () {
@@ -852,7 +870,8 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
                                           });
                                         },
                                         selected: isSelected,
-                                        selectedTileColor: Colors.pink.shade100,
+                                        selectedTileColor: const Color.fromARGB(
+                                            255, 225, 56, 56),
                                       );
                                     },
                                   ),
@@ -871,5 +890,3 @@ class _AntiGameScreenState extends State<AntiGameScreen> {
     );
   }
 }
-
-// تأكد من أن فئة FileItem تحتوي على حقل scanned
