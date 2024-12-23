@@ -8,14 +8,14 @@ class Stage {
   double? fontSize;
   IconData? icon;
 
-  // Constructor لتعيين الخصائص الافتراضية
-  Stage(
-    this._stageName, {
+  // Constructor بتعامل مسمى مع جعل stageName مطلوبًا
+  Stage({
+    required String stageName,
     this.textColor = Colors.white,
     this.backgroundColor = Colors.redAccent,
     this.fontSize = 26.0,
     this.icon = Icons.videogame_asset,
-  });
+  }) : _stageName = stageName;
 
   // Getter للحصول على اسم المرحلة
   String get stageName => _stageName;

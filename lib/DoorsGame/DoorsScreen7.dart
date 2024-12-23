@@ -74,9 +74,10 @@ class _DoorsScreen7State extends State<DoorsScreen7> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'انتظار الرد', true), // Correct answer
-                _buildDoor(context, 'معالجة الرد', false),
-                _buildDoor(context, 'إنهاء الاتصال', false),
+                _buildDoor(
+                    context, 'إعادة تشغيل الجهاز', true), // Correct answer
+                _buildDoor(context, 'ترك الجهاز مغلقًا لمدة يومين', false),
+                _buildDoor(context, 'عدم استخدام الجهاز مرة أخرى', false),
               ],
             ),
           ),

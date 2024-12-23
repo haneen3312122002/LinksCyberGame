@@ -74,9 +74,12 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'إضافة بيانات الطلب', false),
-                _buildDoor(context, 'إرسال الطلب', false),
-                _buildDoor(context, 'تحديد نوع الطلب',
+                _buildDoor(context, 'إرسال رسائل إلى جميع جهات الاتصال', false),
+                _buildDoor(context,
+                    'مشاركة معلوماتك الشخصية عبر البريد الإلكتروني', false),
+                _buildDoor(
+                    context,
+                    'تجنب فتح أي رسائل أو نوافذ مشبوهة  على الجهاز.',
                     true), // Correct answer triggers door3.mp4
               ],
             ),

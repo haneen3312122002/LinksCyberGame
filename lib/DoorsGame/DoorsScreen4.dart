@@ -73,9 +73,11 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'انتظار الرد', false),
-                _buildDoor(context, 'اختيار بروتوكول', false),
-                _buildDoor(context, 'Authorization',
+                _buildDoor(context, 'تحميل الملفات من مواقع غير معروفة', false),
+                _buildDoor(context, 'تنزيل تطبيقات جديدة لحل المشكلة', false),
+                _buildDoor(
+                    context,
+                    'إغلاق جميع التطبيقات أو البرامج المفتوحة التي قد تكون متأثرة.',
                     true), // Correct answer triggers door4.mp4
               ],
             ),

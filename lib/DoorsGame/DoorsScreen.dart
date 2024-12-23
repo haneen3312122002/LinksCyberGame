@@ -4,6 +4,7 @@ import 'DoorsScreen2.dart';
 import 'stage.dart'; // استدعاء Stage class
 import 'SoundManager.dart'; // استدعاء SoundManager class
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'DoorImageScreen.dart';
 
 class DoorsScreen extends StatelessWidget {
   final int currentStep = 1; // المرحلة الحالية هي 1 من 10
@@ -146,7 +147,8 @@ class _VideoScreenState extends State<VideoScreen> {
       if (_controller.value.position == _controller.value.duration) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoorsScreen2()),
+          //نقل الى الفيديو التالي
+          MaterialPageRoute(builder: (context) => DoorImageScreen()),
         );
       }
     });
