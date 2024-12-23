@@ -4,6 +4,7 @@ import 'DoorsScreen4.dart';
 import 'stage.dart'; // استدعاء كلاس Stage
 import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'afterdoor3.dart';
 
 class DoorsScreen3 extends StatefulWidget {
   @override
@@ -143,7 +144,7 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
         Navigator.pop(context); // إغلاق الـ Dialog بعد انتهاء الفيديو
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoorsScreen4()),
+          MaterialPageRoute(builder: (context) => DesktopScreen3()),
         );
       }
     });

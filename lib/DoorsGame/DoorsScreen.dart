@@ -64,10 +64,12 @@ class DoorsScreen extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'اختيار البروتوكول',
+                _buildDoor(context, ' إبلاغ شخص بالغ موثوق',
                     isCorrect: true), // الباب الصحيح
-                _buildDoor(context, 'اضافة بيانات الطلب', isCorrect: false),
-                _buildDoor(context, 'ارسال الطلب', isCorrect: false),
+                _buildDoor(context, 'اعادة تشغيل الجهاز فورا ',
+                    isCorrect: false),
+                _buildDoor(context, 'تنزيل تطبيقات جديدة لحل المشكلة ',
+                    isCorrect: false),
               ],
             ),
           ),

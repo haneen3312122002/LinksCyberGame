@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'DoorsScreen3.dart';
+import 'DoorsScreen4.dart';
 
-class DesktopScreen extends StatefulWidget {
+class DesktopScreen3 extends StatefulWidget {
   @override
   _DesktopScreen3State createState() => _DesktopScreen3State();
 }
@@ -19,19 +19,20 @@ class ImageData {
   });
 }
 
-class _DesktopScreen3State extends State<DesktopScreen> {
+class _DesktopScreen3State extends State<DesktopScreen3> {
   bool _isWifiOn = false;
 
   // قائمة بيانات الصور لعرضها في الشبكة مع تحديد العرض والارتفاع لكل صورة
   final List<ImageData> _images = [
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
+    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
   ];
 
   @override
@@ -98,7 +99,7 @@ class _DesktopScreen3State extends State<DesktopScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DoorsScreen3()),
+                        MaterialPageRoute(builder: (context) => DoorsScreen4()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
