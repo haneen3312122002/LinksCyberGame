@@ -2,6 +2,7 @@ import 'package:cybergame/AdvanceCeypto/AdCryptoMaim.dart';
 import 'package:cybergame/AntiVirusGame/AntiGame.dart';
 import 'package:cybergame/MalGame/MalGameScreen.dart';
 import 'package:cybergame/PasswordGame/PassVideo.dart';
+import 'package:cybergame/SocialMesiaGame/Pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:cybergame/CarGame/CarMain.dart';
 import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
@@ -108,7 +109,7 @@ class GamePartsCard extends StatelessWidget {
       case 14:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CarGameScreen()),
+          MaterialPageRoute(builder: (context) => InstaHomePage()),
         );
         break;
       default:
