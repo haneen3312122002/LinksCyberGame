@@ -4,6 +4,7 @@ import 'DoorsScreen3.dart';
 import 'stage.dart'; // استدعاء كلاس Stage
 import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'afterdoor2.dart';
 
 class DoorsScreen2 extends StatefulWidget {
   @override
@@ -74,10 +75,10 @@ class _DoorsScreen2State extends State<DoorsScreen2> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'إنهاء الاتصال', isCorrect: false),
-                _buildDoor(context, 'تحديد عنوان URL',
+                _buildDoor(context, 'زيادة سطوع الشاشة ', isCorrect: false),
+                _buildDoor(context, 'فصل الجهاز عن الإنترنت',
                     isCorrect: true), // Correct answer triggers door2.mp4
-                _buildDoor(context, 'تحديد نوع الطلب', isCorrect: false),
+                _buildDoor(context, ' تغيير  خلفية الشاشة  ', isCorrect: false),
               ],
             ),
           ),
@@ -139,7 +140,7 @@ class _DoorsScreen2State extends State<DoorsScreen2> {
         Navigator.pop(context); // إغلاق الـ Dialog بعد انتهاء الفيديو
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoorsScreen3()),
+          MaterialPageRoute(builder: (context) => DesktopScreen()),
         );
       }
     });

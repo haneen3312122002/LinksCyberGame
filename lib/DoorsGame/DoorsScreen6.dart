@@ -74,9 +74,10 @@ class _DoorsScreen6State extends State<DoorsScreen6> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'انتظار الرد', false),
-                _buildDoor(context, 'تحديد نوع الطلب', false),
-                _buildDoor(context, 'إرسال الطلب', true), // Correct answer
+                _buildDoor(context, 'حذف جميع الملفات الشخصية', false),
+                _buildDoor(context, 'إعادة تثبيت التطبيقات المفضلة', false),
+                _buildDoor(context, 'حذف البرامج غير المعروفة أو المشبوهة',
+                    true), // Correct answer
               ],
             ),
           ),

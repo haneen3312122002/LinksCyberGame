@@ -74,11 +74,10 @@ class _DoorsScreen5State extends State<DoorsScreen5> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDoor(context, 'إرسال الطلب', false),
-                _buildDoor(
-                    context, 'إضافة بيانات الطلب', true), // Correct answer
-                _buildDoor(
-                    context, 'التعامل مع الأخطاء وإعادة المحاولة', false),
+                _buildDoor(context, 'إغلاق البرامج المفتوحة', false),
+                _buildDoor(context, 'تشغيل برنامج مكافحة الفيروسات',
+                    true), // Correct answer
+                _buildDoor(context, 'تثبيت ألعاب جديدة', false),
               ],
             ),
           ),
