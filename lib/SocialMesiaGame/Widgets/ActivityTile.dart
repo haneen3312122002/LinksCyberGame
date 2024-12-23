@@ -42,7 +42,7 @@ class ActivityTile extends StatelessWidget {
                     fontWeight: FontWeight.bold),
                 children: <TextSpan>[
                   TextSpan(
-                    text: ' started following you',
+                    text: ' بدأ بمتابعتك',
                     style: TextStyle(
                         fontSize: 15.0, fontWeight: FontWeight.normal),
                   ),

@@ -51,7 +51,7 @@ class MessagesPage extends StatelessWidget {
                       borderSide: BorderSide(color: Colors.grey, width: 0.6)),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 0.6)),
-                  hintText: "Search",
+                  hintText: "بحث",
                   hintStyle: TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -63,7 +63,7 @@ class MessagesPage extends StatelessWidget {
           SizedBox(height: 10.0),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
-            child: Text('Messages',
+            child: Text('الرسائل',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
           ),
           SizedBox(height: 23.0),
@@ -71,91 +71,15 @@ class MessagesPage extends StatelessWidget {
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
             leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/Sam Wilson.jpg'),
+              backgroundImage: AssetImage('assets/maher.jpg'),
               radius: 30.0,
             ),
-            title: Text('samwilson',
+            title: Text('maher_it_help',
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Hello Mike',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/adelle.jpg'),
-              radius: 30.0,
+            subtitle: Text(
+              'مرحباً! تم اكتشاف مشكلة في حسابك تحتاج إلى إصلاح سريع. يرجى النقر على الرابط التالي لتسجيل الدخول وإصلاح المشكلة فوراً. نحن نضمن أمان بياناتك.',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
             ),
-            title: Text('adelle_klarke',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Yeah, that seems okay',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/eddison.jpg'),
-              radius: 30.0,
-            ),
-            title: Text('eddison',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Cool man!',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/john.jpg'),
-              radius: 30.0,
-            ),
-            title: Text('john_jefferson',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Thanks a lot brother :)',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/alfred.jpg'),
-              radius: 30.0,
-            ),
-            title: Text('alfred_mcdonald',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Hey mike whatsup',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/joey.jpg'),
-              radius: 30.0,
-            ),
-            title: Text('joey_smith',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Seems like a nice idea dude',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
-            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
-          ),
-          ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-            leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/sophia.jpg'),
-              radius: 30.0,
-            ),
-            title: Text('sophiaamitchell',
-                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Hahaha XD',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
             trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
           ),
           ListTile(
@@ -165,49 +89,132 @@ class MessagesPage extends StatelessWidget {
               backgroundImage: AssetImage('assets/james.jpg'),
               radius: 30.0,
             ),
-            title: Text('jamessimpson',
+            title: Text('SchoolSurveyTeam',
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Alright bro!!',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+            subtitle: Text(
+              'مرحباً! نحن نجري استطلاعاً خاصاً للطلاب في مدرستك، ونحتاج منك مساعدتنا. يرجى إرسال عنوانك ورقم هاتف والديك لإكمال هذا الاستطلاع. معلوماتك ستكون آمنة معنا، وستحصل على جائزة صغيرة لمشاركتك. شكراً لك على تعاونك!',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
             trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
           ),
           ListTile(
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
             leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/nick.jpg'),
+              backgroundImage: AssetImage('assets/aliya.jpg'),
               radius: 30.0,
             ),
-            title: Text('nick_white',
+            title: Text('aliya_friends',
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Nice idea mike',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+            subtitle: Text(
+              'مرحباً! أحببت المنشور الذي شاركته عن أصدقائك. يبدو أنك شخص رائع في بناء العلاقات! استمر في نشر الإيجابية بين الجميع!',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
             trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
           ),
           ListTile(
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
             leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/natasha.jpg'),
+              backgroundImage: AssetImage('assets/layla.jpg'),
               radius: 30.0,
             ),
-            title: Text('natasha',
+            title: Text('layla_art',
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('Okay...',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+            subtitle: Text(
+              'مرحباً، رأيت رسوماتك الأخيرة وأعجبتني جداً! هل يمكنني مشاركة أعمالك مع أصدقائي؟ أنا أعتقد أن لديك موهبة كبيرة ويجب أن يراها الجميع!',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
             trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
           ),
           ListTile(
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
             leading: CircleAvatar(
-              backgroundImage: AssetImage('assets/mathew.jpg'),
+              backgroundImage: AssetImage('assets/ahmed.jpg'),
               radius: 30.0,
             ),
-            title: Text('mathew_hallberg',
+            title: Text('ahmed2024',
                 style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
-            subtitle: Text('I will get back to you',
-                style: TextStyle(fontSize: 14.0, color: Colors.grey)),
+            subtitle: Text(
+              'لقد قرأت تعليقك عن التحديات التي تواجه الأطفال على الإنترنت. أنا أعمل على مشروع تعليمي وأعتقد أن أفكارك يمكن أن تساعدني. إذا أردت، يمكننا تبادل الأفكار هنا أو عبر البريد الإلكتروني.',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
+          ),
+          ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+            leading: CircleAvatar(
+              backgroundImage: AssetImage('assets/khaled.jpg'),
+              radius: 30.0,
+            ),
+            title: Text('khaled_fun',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              'لقد شاركت في مسابقة على الإنترنت وقد ربحت جائزة بقيمة 500 دولار! للحصول على جائزتك، يرجى إرسال اسمك الكامل ورقم هاتفك وموقعك لتأكيد الإرسال.',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
+          ),
+          ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+            leading: CircleAvatar(
+              backgroundImage: AssetImage('assets/omar.jpg'),
+              radius: 30.0,
+            ),
+            title: Text('omar_security',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              'مرحباً، نحن فريق أمان حسابات المستخدمين. لاحظنا أن حسابك قد يكون في خطر. يرجى تأكيد هويتك عن طريق إرسال اسم المستخدم وكلمة المرور في أسرع وقت.',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
+          ),
+          ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+            leading: CircleAvatar(
+              backgroundImage: AssetImage('assets/adelle.jpg'),
+              radius: 30.0,
+            ),
+            title: Text('SmartContest',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              'مرحباً! تهانينا! لقد تم اختيارك عشوائيًا كفائز بجائزة كبرى في مسابقة منصة "سوبر ستار"! نحن سعداء جدًا بتواصلك معنا ونحتاج منك بعض المعلومات البسيطة لإرسال الجائزة: اسمك بالكامل عنوان المنزل. البريد الإلكتروني. رقم بطاقة الهوية. بمجرد إرسال هذه المعلومات، سنبدأ عملية تسليم جائزتك مباشرة. شكراً لمشاركتك ونتمنى لك يوماً سعيداً',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
+          ),
+          ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+            leading: CircleAvatar(
+              backgroundImage: AssetImage('assets/joey.jpg'),
+              radius: 30.0,
+            ),
+            title: Text('FriendlyPanda',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              'مرحباً! أريد أن أشاركك قصة قصيرة عن صديقي الذي تعلم كيف يحمي نفسه على الإنترنت. كان يتعلم شيئاً جديداً كل يوم، وأصبح الآن خبيراً في حماية معلوماته! أعتقد أنك أيضاً يمكن أن تكون خبيراً مثله. استمر في تعلم الأشياء الجديدة، وأنا متأكد أنك ستكون رائعاً في ذلك!',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
+            trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
+          ),
+          ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+            leading: CircleAvatar(
+              backgroundImage: AssetImage('assets/ali.jpg'),
+              radius: 30.0,
+            ),
+            title: Text('ali_hacker123',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w500)),
+            subtitle: Text(
+              'مرحباً! لقد لاحظت نشاطاً غير طبيعي في حسابك. لإصلاح المشكلة، أرسل لي كلمة المرور وسأقوم بإصلاحها لك فوراً. هذا جزء من خدماتنا المجانية.',
+              style: TextStyle(fontSize: 14.0, color: Colors.grey),
+            ),
             trailing: Icon(FontAwesomeIcons.camera, color: Colors.black),
           ),
         ],

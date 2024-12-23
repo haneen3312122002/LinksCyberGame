@@ -17,7 +17,7 @@ class ActivityTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Activity', style: TextStyle(color: Colors.black)),
+        title: Text('النشاطات', style: TextStyle(color: Colors.black)),
         elevation: 2.0,
         backgroundColor: Colors.white,
       ),
@@ -25,7 +25,7 @@ class ActivityTab extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0.0, 5.0),
-            child: Text('Today',
+            child: Text('اليوم',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ),
           ActivityTileAlt(
@@ -49,7 +49,7 @@ class ActivityTab extends StatelessWidget {
               image: 'assets/story18.jpg'),
           Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0.0, 5.0),
-            child: Text('This Month',
+            child: Text('هذا الشهر',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ),
           ActivityTileAlt(
@@ -75,7 +75,7 @@ class ActivityTab extends StatelessWidget {
               image: 'assets/story8.jpg'),
           Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0.0, 5.0),
-            child: Text('Earlier',
+            child: Text('في وقت سابق',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ),
           ActivityTileAlt(
@@ -97,7 +97,7 @@ class ActivityTab extends StatelessWidget {
               image: 'assets/story8.jpg'),
           Padding(
             padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0.0, 5.0),
-            child: Text('Suggestions for you',
+            child: Text('اقتراحات لك',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ),
           SuggestionsTile(

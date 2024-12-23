@@ -49,9 +49,7 @@ class ActivityTileAlt extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                     children: <TextSpan>[
                       TextSpan(
-                        text: mention
-                            ? ' mentioned you in a comment'
-                            : ' liked your post',
+                        text: mention ? ' قام بذكرك في تعليق' : ' أعجب بمنشورك',
                         style: TextStyle(
                             fontSize: 15.0, fontWeight: FontWeight.normal),
                       ),

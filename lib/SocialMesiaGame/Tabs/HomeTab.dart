@@ -36,7 +36,7 @@ class HomeTab extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               GestureDetector(
-                onTap: _pickImage, // Replaced _launchCamera with _pickImage
+                onTap: _pickImage,
                 child: Icon(
                   FontAwesomeIcons.camera,
                   color: Colors.black,
@@ -45,7 +45,7 @@ class HomeTab extends StatelessWidget {
               ),
               SizedBox(width: 30.0),
               Text(
-                'Instagram',
+                'CYBRT GAME',
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: 'Billabong',
@@ -77,39 +77,49 @@ class HomeTab extends StatelessWidget {
           children: <Widget>[
             StoriesWidget(),
             FeedPost(
-              username: 'samwilson',
+              username: 'samwilson', // من الرسائل الموجودة
               likes: 102,
               time: '2 hours',
               profilePicture: 'assets/Sam Wilson.jpg',
               image: 'assets/story1.jpg',
+              text:
+                  "مرحبًا يا أصدقاء! 🌟 اليوم كنت في ورشة عمل عن كيفية استخدام التكنولوجيا بأمان، تعلمت الكثير وأريد أن أشارككم هذه النصيحة: لا تشاركوا معلوماتكم الشخصية على الإنترنت. دائمًا احموا أنفسكم! 😊",
             ),
             FeedPost(
-              username: 'eddisonalfred',
+              username: '__jeremy__', // من الرسائل الموجودة
               likes: 156,
               time: '6 hours',
-              profilePicture: 'assets/eddison.jpg',
+              profilePicture: 'assets/jeremy.jpg',
               image: 'assets/story2.jpg',
+              text:
+                  "هذا الحساب لا يقدم أي محتوى مثير للاهتمام. لماذا يتابعه أي شخص؟ يبدو كأنه لا يعرف كيف يستخدم الإنترنت بشكل صحيح. 😒",
             ),
             FeedPost(
-              username: 'adelle_klarke',
+              username: 'adelle', // من الرسائل الموجودة
               likes: 56,
               time: '2 days',
               profilePicture: 'assets/adelle.jpg',
               image: 'assets/story3.jpg',
+              text:
+                  "أحببت هذا المكان الذي زرته اليوم مع عائلتي! الطبيعة مذهلة، وأعتقد أن الجميع يجب أن يقضي وقتًا أقل على الإنترنت وأكثر مع الطبيعة. 💚🌳",
             ),
             FeedPost(
-              username: 'matthewsimpson',
+              username: 'chris_john', // من الرسائل الموجودة
               likes: 224,
               time: '1 week',
-              profilePicture: 'assets/mathew.jpg',
+              profilePicture: 'assets/chris.jpg',
               image: 'assets/story4.jpg',
+              text:
+                  "هل شاهدتم منشور هذا الشخص؟ إنه دائمًا ينشر أشياء غبية! لماذا لا يتوقف عن استخدام الإنترنت؟ 🤦‍♂️",
             ),
             FeedPost(
-              username: 'ryanconnor',
+              username: 'dan_smith94', // من الرسائل الموجودة
               likes: 112,
               time: '2 weeks',
-              profilePicture: 'assets/ryan.jpg',
+              profilePicture: 'assets/dan.jpg',
               image: 'assets/story8.jpg',
+              text:
+                  "أنا ممتن جدًا لدعمكم المستمر لي! ❤️ أعدكم أن أشارك محتوى إيجابيًا ومفيدًا دائمًا. لا تنسوا أن تكونوا لطفاء مع الجميع. 🌈",
             ),
           ],
         ),
