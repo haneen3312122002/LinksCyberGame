@@ -13,11 +13,14 @@ import 'package:cybergame/SocialMesiaGame/Widgets/Stories.dart';
 import 'package:cybergame/SocialMesiaGame/Widgets/Suggestion.dart';
 
 class ProfileTab extends StatelessWidget {
+  Map<String, String> personalInfo;
+
+  ProfileTab({required this.personalInfo});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('mike_tyler',
+          title: Text(personalInfo['name'] ?? 'Unknown User',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -87,7 +90,7 @@ class ProfileTab extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 5.0, vertical: 10.0),
-                      child: Text('Mike Tyler',
+                      child: Text(personalInfo['name'] ?? 'Unknown User',
                           style: TextStyle(
                               fontSize: 15.0, fontWeight: FontWeight.bold)),
                     ),

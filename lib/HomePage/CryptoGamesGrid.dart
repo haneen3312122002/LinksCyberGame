@@ -36,12 +36,8 @@ class CryptoGamesGrid extends StatelessWidget {
     'لعبة جديدة: تعرف على الأمن', // Add the new title
   ];
 
-  final Map<String, String> personalInfo = {
-    'name': 'John Doe',
-    'email': 'johndoe@example.com',
-    'phone': '1234567890',
-    'dob': '01-01-1990',
-  }; // Example personal info
+  Map<String, String> personalInfo; // Example personal info
+  CryptoGamesGrid({required this.personalInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +55,11 @@ class CryptoGamesGrid extends StatelessWidget {
       itemCount: partsTitles.length,
       itemBuilder: (context, index) {
         return GamePartsCard(
+          personalInfo: personalInfo,
           partTitle: partsTitles[index],
           imagePath: imagesPaths[index],
           partNumber: index + 1,
-          personalInfo: personalInfo, // Pass the personal info to each card
+          // Pass the personal info to each card
         );
       },
     );
