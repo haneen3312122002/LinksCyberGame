@@ -130,3 +130,30 @@ class MarioApiService {
     }
   }
 }
+//..........................
+
+Future<String> analyzeComment(String comment) async {
+  final url = Uri.parse(
+      'http://127.0.0.1:5000/analyze'); // تأكد من أن الرابط صحيح ويشير إلى خادم Python
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'comment': comment}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['sentiment']; // النتيجة تكون إيجابي، سلبي أو محايد
+    } else {
+      // عرض رسالة الخطأ
+      print("Error: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+      throw Exception('Failed to analyze comment');
+    }
+  } catch (e) {
+    print("Error during HTTP request: $e");
+    throw Exception('Failed to connect to the server.');
+  }
+}

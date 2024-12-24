@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cybergame/connection.dart';
 
 class FeedPost extends StatefulWidget {
   final String username;
@@ -97,49 +98,7 @@ class _FeedPostState extends State<FeedPost> {
                                 ),
                               ],
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(comment.content),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          comment.isLiked = !comment.isLiked;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        comment.isLiked
-                                            ? FontAwesomeIcons.solidHeart
-                                            : FontAwesomeIcons.heart,
-                                        size: 15,
-                                        color: comment.isLiked
-                                            ? Colors.red
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Handle reply functionality
-                                        debugPrint(
-                                          "Reply to ${comment.username}",
-                                        );
-                                      },
-                                      child: const Text(
-                                        'رد',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                            subtitle: Text(comment.content),
                           );
                         },
                       ),
@@ -162,20 +121,111 @@ class _FeedPostState extends State<FeedPost> {
                             Icons.send,
                             color: Colors.blue,
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_commentController.text.isNotEmpty) {
-                              setState(() {
-                                widget.comments.add(
-                                  Comment(
-                                    username: widget.personalInfo[
-                                        'name'], // Replace with actual username
-                                    profilePicture:
-                                        'assets/your_profile.png', // Replace with actual profile picture
-                                    content: _commentController.text,
-                                  ),
-                                );
-                              });
+                              final userComment = _commentController.text;
                               _commentController.clear();
+
+                              // إرسال التعليق إلى خادم Python لتحليله
+                              try {
+                                final result =
+                                    await analyzeComment(userComment);
+
+                                if (result == "إيجابي") {
+                                  // إذا كان التعليق إيجابيًا، أضفه إلى القائمة
+                                  setState(() {
+                                    widget.comments.add(
+                                      Comment(
+                                        username: widget.personalInfo[
+                                            'name'], // اسم المستخدم
+                                        profilePicture:
+                                            'assets/your_profile.png', // صورة المستخدم
+                                        content: userComment,
+                                      ),
+                                    );
+                                  });
+
+                                  // عرض رسالة نجاح
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('تمت الإضافة'),
+                                        content: const Text(
+                                            'تم إضافة تعليقك بنجاح.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('حسنًا'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else if (result == "سلبي") {
+                                  // إذا كان التعليق سلبيًا، عرض رسالة تحذيرية
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('تعليق سلبي'),
+                                        content: const Text(
+                                            'تعليقك سلبي، يرجى تعديله ليكون أكثر إيجابية.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('حسنًا'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // إذا كانت النتيجة محايدة، يمكن اختيار الإجراء المناسب
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('تعليق محايد'),
+                                        content: const Text(
+                                            'تعليقك محايد، يمكنك تحسينه ليكون أكثر وضوحًا.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('حسنًا'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              } catch (e) {
+                                // عرض خطأ إذا فشل التحليل
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('خطأ'),
+                                      content: Text(
+                                          'فشل في تحليل التعليق. الخطأ: $e'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('حسنًا'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             }
                           },
                         ),
