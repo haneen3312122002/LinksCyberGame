@@ -20,18 +20,19 @@ class ImageData {
 }
 
 class _DesktopScreen3State extends State<DesktopScreen> {
-  bool _isWifiOn = false;
+  // نجعل الحالة الافتراضية للواي فاي شغّالة
+  bool _isWifiOn = true;
 
-  // قائمة بيانات الصور لعرضها في الشبكة مع تحديد العرض والارتفاع لكل صورة
+  // تم وضع عرض وارتفاع 24 كقيمة افتراضية
   final List<ImageData> _images = [
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
-    ImageData(path: 'assets/child_file.png', width: 5, height: 5),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
+    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
   ];
 
   @override
@@ -48,7 +49,7 @@ class _DesktopScreen3State extends State<DesktopScreen> {
               ),
             ),
           ),
-          // شبكة الصور المبعثرة محاذاة إلى اليسار وتخصيص نصف عرض الشاشة
+          // شبكة الصور في النصف الأيسر من الشاشة
           Positioned.fill(
             top: 5,
             left: 0,
@@ -58,20 +59,23 @@ class _DesktopScreen3State extends State<DesktopScreen> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: FractionallySizedBox(
-                  widthFactor: 0.5, // تخصيص نصف عرض الشاشة للشبكة
+                  widthFactor: 0.5, // نصف عرض الشاشة للشبكة
                   child: GridView.builder(
                     itemCount: _images.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, // ثلاث أعمدة فقط
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.0, // نسبة العرض إلى الارتفاع مربعة
+                      crossAxisCount: 4, // جرّب زيادة/تقليل الأعمدة
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                      childAspectRatio: 1.0, // مربّع
                     ),
                     itemBuilder: (context, index) {
                       final image = _images[index];
-                      return SizedBox(
-                        width: image.width,
-                        height: image.height,
+                      return Container(
+                        // تقييد العنصر ليكون 24x24
+                        constraints: BoxConstraints.tightFor(
+                          width: image.width,
+                          height: image.height,
+                        ),
                         child: Image.asset(
                           image.path,
                           fit: BoxFit.contain,
@@ -93,13 +97,25 @@ class _DesktopScreen3State extends State<DesktopScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // زر للتنقل إلى DoorsScreen4
+                  // زر للانتقال إلى DoorsScreen3
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DoorsScreen3()),
-                      );
+                      if (_isWifiOn) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('عليك فصل الإنترنت أولاً!'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.redAccent,
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DoorsScreen3(),
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 115, 157, 208),
@@ -108,8 +124,9 @@ class _DesktopScreen3State extends State<DesktopScreen> {
                     ),
                     child: Text(
                       'المرحلة التالية',
-                      style:
-                          TextStyle(color: const Color.fromARGB(255, 9, 0, 40)),
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 9, 0, 40),
+                      ),
                     ),
                   ),
                   // أيقونة الواي فاي

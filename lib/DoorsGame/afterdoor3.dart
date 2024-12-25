@@ -22,17 +22,17 @@ class ImageData {
 class _DesktopScreen3State extends State<DesktopScreen3> {
   bool _isWifiOn = false;
 
-  // قائمة بيانات الصور لعرضها في الشبكة مع تحديد العرض والارتفاع لكل صورة
+  // قائمة بيانات الصور
   final List<ImageData> _images = [
-    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file_infected.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
-    ImageData(path: 'assets/child_file.png', width: 15, height: 15),
+    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
+    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
   ];
 
   @override
@@ -49,38 +49,76 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
               ),
             ),
           ),
-          // شبكة الصور المبعثرة محاذاة إلى اليسار وتخصيص نصف عرض الشاشة
+          // شبكة الصور المبعثرة
           Positioned.fill(
             top: 5,
             left: 0,
             bottom: 60, // ترك مساحة لشريط المهام في الأسفل
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: FractionallySizedBox(
-                  widthFactor: 0.5, // تخصيص نصف عرض الشاشة للشبكة
-                  child: GridView.builder(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // تحديد عدد الأعمدة بناءً على عرض الشاشة
+                  double screenWidth = constraints.maxWidth;
+                  int crossAxisCount;
+
+                  if (screenWidth < 400) {
+                    crossAxisCount = 2;
+                  } else if (screenWidth < 700) {
+                    crossAxisCount = 3;
+                  } else if (screenWidth < 1000) {
+                    crossAxisCount = 4;
+                  } else {
+                    crossAxisCount = 5;
+                  }
+
+                  return GridView.builder(
                     itemCount: _images.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3, // ثلاث أعمدة فقط
+                      crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.0, // نسبة العرض إلى الارتفاع مربعة
+                      childAspectRatio: 1.0,
                     ),
                     itemBuilder: (context, index) {
                       final image = _images[index];
-                      return SizedBox(
-                        width: image.width,
-                        height: image.height,
-                        child: Image.asset(
-                          image.path,
-                          fit: BoxFit.contain,
+                      return InkWell(
+                        onTap: () {
+                          // إذا كانت الصورة مصابة
+                          if (image.path.contains('child_file_infected')) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(
+                                  'تنبيه',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                content: Text('لا تقم بفتح الملفات المشبوهة'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('إغلاق'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                        child: SizedBox(
+                          width: image.width,
+                          height: image.height,
+                          child: Image.asset(
+                            image.path,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       );
                     },
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           ),
@@ -109,8 +147,9 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
                     ),
                     child: Text(
                       'المرحلة التالية',
-                      style:
-                          TextStyle(color: const Color.fromARGB(255, 9, 0, 40)),
+                      style: TextStyle(
+                        color: const Color.fromARGB(255, 9, 0, 40),
+                      ),
                     ),
                   ),
                   // أيقونة الواي فاي

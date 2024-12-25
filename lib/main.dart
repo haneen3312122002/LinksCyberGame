@@ -13,6 +13,7 @@ import 'GalaxyGame/GalaxyGameScreen.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 import 'SocialMesiaGame/Login.dart';
+import 'DoorsGame/afterdoor5.dart';
 
 void main() {
   // Ensure widget binding is initialized
@@ -62,7 +63,7 @@ class LinkClassificationGame extends StatelessWidget {
           },
           home: Scaffold(
             backgroundColor: const Color.fromARGB(255, 52, 126, 253),
-            body: HomePage(),
+            body: LoginPage(),
           ),
           builder: (context, widget) {
             // Force RTL layout direction
