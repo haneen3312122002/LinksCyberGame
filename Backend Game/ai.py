@@ -8,14 +8,15 @@ CORS(app)
 
 translator = Translator()
 
-# تحليل المشاعر باستخدام TextBlob مع الترجمة
 def analyze_sentiment(comment):
+    # Translate Arabic to English for sentiment analysis
     translated_text = translator.translate(comment, src="ar", dest="en").text
     blob = TextBlob(translated_text)
-    sentiment = blob.sentiment.polarity  # قيمة بين -1 و 1
-    if sentiment > 0:
+    polarity = blob.sentiment.polarity  # Range: -1 (negative) to +1 (positive)
+
+    if polarity > 0:
         return "إيجابي"
-    elif sentiment < 0:
+    elif polarity < 0:
         return "سلبي"
     else:
         return "محايد"
@@ -28,7 +29,9 @@ def analyze():
         if not comment:
             return jsonify({"error": "No comment provided"}), 400
 
+        # Perform sentiment analysis
         result = analyze_sentiment(comment)
+        # Return JSON with a 'sentiment' key
         return jsonify({"sentiment": result})
     except Exception as e:
         print(f"Error: {e}")

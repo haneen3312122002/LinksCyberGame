@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart'; // For debugPrint (optional)
 
 //link game:
 class ApiService {
@@ -133,8 +134,7 @@ class MarioApiService {
 //..........................
 
 Future<String> analyzeComment(String comment) async {
-  final url = Uri.parse(
-      'http://127.0.0.1:5000/analyze'); // تأكد من أن الرابط صحيح ويشير إلى خادم Python
+  final url = Uri.parse('http://127.0.0.1:5000/analyze');
 
   try {
     final response = await http.post(
@@ -145,15 +145,17 @@ Future<String> analyzeComment(String comment) async {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['sentiment']; // النتيجة تكون إيجابي، سلبي أو محايد
+      debugPrint('Raw analyzeComment response: $data');
+      final sentiment = (data['sentiment'] ?? '').toString().trim();
+      debugPrint('Final sentiment value: "$sentiment"');
+      return sentiment;
     } else {
-      // عرض رسالة الخطأ
       print("Error: ${response.statusCode}");
       print("Response Body: ${response.body}");
-      throw Exception('Failed to analyze comment');
+      throw Exception('Failed to analyze comment (status != 200).');
     }
   } catch (e) {
     print("Error during HTTP request: $e");
-    throw Exception('Failed to connect to the server.');
+    throw Exception('Failed to connect to the server or parse response.');
   }
 }
