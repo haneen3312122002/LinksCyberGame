@@ -72,8 +72,7 @@ class _ConversationPageState extends State<ConversationPage> {
         messageText.contains('أرسل اسمك الكامل') ||
         messageText.contains('أرسل كلمة المرور') ||
         messageText.contains('تحديث بياناتك') ||
-        messageText.contains('ربحت جائزة') ||
-        messageText.contains('رقم حسابك')) {
+        messageText.contains('ربحت جائزة')) {
       // إذا كانت الرسالة ذات محتوى "احتيالي" أو "تصيد"
       correctIndex = 0; // الاحتيال الإلكتروني
     } else if (messageText.contains('غبي') ||
@@ -96,7 +95,7 @@ class _ConversationPageState extends State<ConversationPage> {
       // إذا كانت الرسالة تتعلق بانتحال الشخصية
       correctIndex = 3; // انتحال الشخصية
     }
-    // الشرط الخاص بالإزعاج:
+    // أضفنا الشرط الخاص بالإزعاج:
     else if (messageText.contains('لماذا لا ترد؟') ||
         messageText.contains('رد علي فورًا') ||
         messageText.contains('أرسل لي ردك الآن') ||
@@ -330,169 +329,3 @@ class _ConversationPageState extends State<ConversationPage> {
 
 // ============ الصفحة الرئيسية: MessagesPage ============
 //  فيها قائمة الرسائل وعند الضغط على أي رسالة يتم الانتقال إلى ConversationPage
-class MessagesPage extends StatefulWidget {
-  @override
-  _MessagesPageState createState() => _MessagesPageState();
-}
-
-class _MessagesPageState extends State<MessagesPage> {
-  // قائمة تمثل الرسائل
-  // تم تعديلها لتشمل 5 رسائل (كما طلبت) من أنواع مختلفة:
-  // 1) احتيال إلكتروني
-  // 2) تحرش/تهديد
-  // 3) تنمر وتهديد مبطن
-  // 4) إزعاج
-  // 5) انتحال شخصية
-  List<Map<String, String>> messages = [
-    // 1) احتيال إلكتروني
-    {
-      "avatar": "assets/james.jpg",
-      "username": "ScammerPro",
-      "message":
-          "مرحبًا! هناك مفاجأة كبرى بانتظارك. جائزة نقدية ضخمة قريبًا. أرسل رقم حسابك البنكي فورًا لتحصل عليها.",
-    },
-    // 2) تحرش / تهديد
-    {
-      "avatar": "assets/aliya.jpg",
-      "username": "HarasserGuy",
-      "message":
-          "دعنا نلتقي بالحديقة، لدي هدية سرية لك. ولا تحاول إخبار أهلك وإلا قد ألجأ للتحرش أو التهديد.",
-    },
-    // 3) تنمر وتهديد مبطن
-    {
-      "avatar": "assets/omar.jpg",
-      "username": "BullyingThreat",
-      "message":
-          "يا غبي، لا تتباهى كثيرًا بما تفعل. أنت تافه بالفعل، وسأعرف قريبًا كيف أجعلك تندم.",
-    },
-    // 4) إزعاج
-    {
-      "avatar": "assets/adelle.jpg",
-      "username": "AnnoyingUser",
-      "message":
-          "أين اختفيت؟ لماذا لا ترد؟ أرسل لي ردك الآن أو فسأواصل مراسلتك بلا توقف!",
-    },
-    // 5) انتحال شخصية
-    {
-      "avatar": "assets/layla.jpg",
-      "username": "ImpersonatorX",
-      "message":
-          "مرحبًا، أنا الشخص المسؤول عن حسابك. هل تعلم أنني أستخدم اسم مزيف؟ لا تقلق على هويتك.",
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'mike_tyler',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            fontSize: 19.0,
-          ),
-        ),
-        elevation: 2.0,
-        backgroundColor: Colors.white,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop(); // أو تنفيذ أي منطق آخر
-          },
-          child: Icon(Icons.arrow_back, color: Colors.black, size: 30.0),
-        ),
-        actions: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Icon(
-              FontAwesomeIcons.video,
-              color: Colors.black,
-              size: 22.0,
-            ),
-          ),
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          // حقل البحث
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-            child: TextField(
-              decoration: InputDecoration(
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 0.6),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 0.6),
-                ),
-                hintText: "بحث",
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                ),
-                border: InputBorder.none,
-                prefixIcon: const Icon(Icons.search, size: 23.0),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10.0),
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0),
-            child: Text(
-              'الرسائل',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-            ),
-          ),
-          const SizedBox(height: 23.0),
-
-          // عرض الرسائل
-          ...List.generate(messages.length, (index) {
-            final msg = messages[index];
-            return ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: CircleAvatar(
-                backgroundImage: AssetImage(msg["avatar"]!),
-                radius: 30.0,
-              ),
-              title: Text(
-                msg["username"]!,
-                style: const TextStyle(
-                    fontSize: 15.0, fontWeight: FontWeight.w500),
-              ),
-              subtitle: Text(
-                msg["message"]!,
-                style: const TextStyle(fontSize: 14.0, color: Colors.grey),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              // الانتقال لصفحة المحادثة ConversationPage
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ConversationPage(
-                      username: msg["username"]!,
-                      avatar: msg["avatar"]!,
-                      initialMessage: msg["message"]!,
-                    ),
-                  ),
-                );
-              },
-              // زر حذف الرسالة
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  setState(() {
-                    messages.removeAt(index);
-                  });
-                },
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}

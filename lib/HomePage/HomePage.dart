@@ -3,6 +3,9 @@ import 'GamePartsCard.dart';
 import 'CryptoGamesGrid.dart';
 
 class HomePage extends StatelessWidget {
+  final Map<String, String> personalInfo;
+
+  HomePage({required this.personalInfo});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +93,7 @@ class HomePage extends StatelessWidget {
             bottom: 0,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: CryptoGamesGrid(),
+              child: CryptoGamesGrid(personalInfo: personalInfo),
             ),
           ),
         ],

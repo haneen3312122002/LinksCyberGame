@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart'; // For debugPrint (optional)
 
 //link game:
 class ApiService {
@@ -127,6 +128,70 @@ class MarioApiService {
     } catch (e) {
       // Handle network error
       throw Exception('Network error: $e');
+    }
+  }
+}
+//..........................
+
+Future<String> analyzeComment(String comment) async {
+  final url = Uri.parse('http://127.0.0.1:5000/analyze');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'comment': comment}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      debugPrint('Raw analyzeComment response: $data');
+      final sentiment = (data['sentiment'] ?? '').toString().trim();
+      debugPrint('Final sentiment value: "$sentiment"');
+      return sentiment;
+    } else {
+      print("Error: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+      throw Exception('Failed to analyze comment (status != 200).');
+    }
+  } catch (e) {
+    print("Error during HTTP request: $e");
+    throw Exception('Failed to connect to the server or parse response.');
+  }
+}
+//............................
+
+class ReportApiService {
+  final String baseUrl;
+
+  // Constructor: Pass the API base URL
+  ReportApiService({required this.baseUrl});
+
+  // Method to classify a message
+  Future<String> classifyMessage(String message) async {
+    final url = Uri.parse('$baseUrl/classify_message');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'message': message,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['category']; // Return the classified category
+      } else {
+        print('Error Response: ${response.body}');
+        return 'Error: ${response.statusCode} - ${response.body}';
+      }
+    } catch (e) {
+      print('Connection Error: $e');
+      return 'Error: Failed to connect to the API. $e';
     }
   }
 }

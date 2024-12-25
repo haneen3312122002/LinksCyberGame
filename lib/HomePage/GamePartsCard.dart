@@ -20,14 +20,13 @@ class GamePartsCard extends StatelessWidget {
   final String partTitle; // Game part title
   final String imagePath; // Image path for the game part
   final int partNumber; // Part number to differentiate between screens
-  final Map<String, String>
-      personalInfo; // Personal info passed to certain screens
+  Map<String, String> personalInfo; // Personal info passed to certain screens
 
   GamePartsCard({
+    required this.personalInfo,
     required this.partTitle,
     required this.imagePath,
     required this.partNumber,
-    required this.personalInfo,
   });
 
   // Determines the appropriate game screen based on `partNumber`
@@ -109,7 +108,8 @@ class GamePartsCard extends StatelessWidget {
       case 14:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => InstaHomePage()),
+          MaterialPageRoute(
+              builder: (context) => InstaHomePage(personalInfo: personalInfo)),
         );
         break;
       default:

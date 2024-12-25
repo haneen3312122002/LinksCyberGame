@@ -15,6 +15,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class InstaHomePage extends StatefulWidget {
+  Map<String, String> personalInfo;
+  InstaHomePage({required this.personalInfo});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -22,17 +25,16 @@ class InstaHomePage extends StatefulWidget {
 class _HomePageState extends State<InstaHomePage> {
   int _currentTab = 0;
   dynamic _tabs = [];
-
   @override
   void initState() {
     super.initState();
     setState(() {
       _tabs = [
-        HomeTab(),
+        HomeTab(personalInfo: widget.personalInfo),
         SearchTab(),
         UploadTab(),
         ActivityTab(),
-        ProfileTab(),
+        ProfileTab(personalInfo: widget.personalInfo),
       ];
     });
   }
