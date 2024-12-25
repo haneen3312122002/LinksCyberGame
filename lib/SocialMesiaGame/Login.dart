@@ -20,25 +20,27 @@ class LoginPage extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/LogInBack.png'),
+                image: AssetImage('assets/LoginBack.png'), // Use your image
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          // Form
+          // Form Container
           Center(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color:
+                        const Color.fromARGB(255, 153, 0, 255).withOpacity(0.5),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
+                        color: const Color.fromARGB(255, 125, 173, 255)
+                            .withOpacity(0.4),
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
                       ),
                     ],
                   ),
@@ -46,61 +48,54 @@ class LoginPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Title
                       Text(
                         'البيانات الأساسية',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: Colors.purple,
+                          color: Colors.cyanAccent,
+                          fontFamily: 'RobotoMono',
                         ),
                       ),
                       SizedBox(height: 20),
                       // Name Field
-                      TextField(
+                      _buildCyberField(
                         controller: nameController,
-                        decoration: InputDecoration(
-                          labelText: 'الاسم',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.person, color: Colors.purple),
-                        ),
+                        labelText: 'الاسم',
+                        icon: Icons.person,
+                        color: Colors.cyanAccent,
                       ),
                       SizedBox(height: 15),
                       // Email Field
-                      TextField(
+                      _buildCyberField(
                         controller: emailController,
-                        decoration: InputDecoration(
-                          labelText: 'البريد الإلكتروني',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.email, color: Colors.purple),
-                        ),
+                        labelText: 'البريد الإلكتروني',
+                        icon: Icons.email,
+                        color: Colors.greenAccent,
                       ),
                       SizedBox(height: 15),
                       // Phone Field
-                      TextField(
+                      _buildCyberField(
                         controller: phoneController,
-                        decoration: InputDecoration(
-                          labelText: 'رقم الهاتف',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.phone, color: Colors.purple),
-                        ),
+                        labelText: 'رقم الهاتف',
+                        icon: Icons.phone,
+                        color: Colors.blueAccent,
                         keyboardType: TextInputType.phone,
                       ),
                       SizedBox(height: 15),
                       // Date of Birth Field
-                      TextField(
+                      _buildCyberField(
                         controller: dobController,
-                        decoration: InputDecoration(
-                          labelText: 'تاريخ الميلاد',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.cake, color: Colors.purple),
-                        ),
+                        labelText: 'تاريخ الميلاد',
+                        icon: Icons.cake,
+                        color: Colors.orangeAccent,
                         keyboardType: TextInputType.datetime,
                       ),
                       SizedBox(height: 20),
                       // Next Button
                       ElevatedButton.icon(
                         onPressed: () {
-                          // Collect user data and navigate to SecondPage
                           final personalInfo = {
                             'name': nameController.text,
                             'email': emailController.text,
@@ -121,12 +116,15 @@ class LoginPage extends StatelessWidget {
                         icon: Icon(Icons.arrow_forward, color: Colors.white),
                         label: Text(
                           'التالي',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
+                          backgroundColor:
+                              const Color.fromARGB(255, 132, 0, 255),
                           padding: EdgeInsets.symmetric(
-                              horizontal: 30.0, vertical: 15.0),
+                            horizontal: 30.0,
+                            vertical: 15.0,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
@@ -142,9 +140,33 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-}
 
-//....................................
+// Reusable Cyber-Themed Text Field
+  Widget _buildCyberField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    required Color color,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: color),
+        prefixIcon: Icon(icon, color: color),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: color),
+        ),
+        filled: true,
+        fillColor: const Color.fromARGB(255, 197, 144, 255).withOpacity(0.5),
+      ),
+      style: TextStyle(color: Colors.white),
+    );
+  }
+}
 
 class SecondPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
@@ -163,37 +185,42 @@ class SecondPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Set the first TextField
     passwordController.text = password;
-    // ALSO set the second TextField to display the passed password
     confirmPasswordController.text = password;
 
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
+          // Futuristic Background
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/LogInBack.png'),
+                image: AssetImage('assets/LoginBack.png'), // Use your image
                 fit: BoxFit.cover,
+              ),
+              gradient: LinearGradient(
+                colors: [Colors.black, Colors.blueGrey.shade900],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
           ),
-          // Form
+          // Tech-style Form
           Center(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(16),
+                    color: const Color.fromARGB(255, 141, 154, 255)
+                        .withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                        offset: Offset(0, 5),
+                        color: const Color.fromARGB(255, 171, 202, 255)
+                            .withOpacity(0.5),
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
                       ),
                     ],
                   ),
@@ -201,16 +228,19 @@ class SecondPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Title with futuristic font
                       Text(
-                        'إنشاء كلمة المرور',
+                        'انشاء كلمة مرور',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.purple,
+                          color: Colors.cyanAccent,
+                          fontFamily: 'RobotoMono',
                         ),
                       ),
                       SizedBox(height: 20),
-                      // Password Field with color
+
+                      // Password Field
                       GestureDetector(
                         onTap: () {
                           // Navigate to PassVideoScreen with personalInfo
@@ -228,34 +258,52 @@ class SecondPage extends StatelessWidget {
                             controller: passwordController,
                             decoration: InputDecoration(
                               labelText: 'كلمة المرور',
+                              labelStyle: TextStyle(color: Colors.cyanAccent),
                               border: OutlineInputBorder(
-                                borderSide: BorderSide(color: passwordColor),
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide:
+                                    BorderSide(color: Colors.cyanAccent),
                               ),
                               prefixIcon:
-                                  Icon(Icons.lock, color: Colors.purple),
+                                  Icon(Icons.lock, color: Colors.cyanAccent),
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(255, 197, 144, 255)
+                                      .withOpacity(0.5),
                             ),
-                            style: TextStyle(color: passwordColor),
+                            style: TextStyle(color: Colors.white),
                             obscureText: true,
                           ),
                         ),
                       ),
                       SizedBox(height: 15),
+
                       // Confirm Password Field
                       TextField(
                         controller: confirmPasswordController,
                         decoration: InputDecoration(
-                          labelText: 'كلمة المرور',
-                          border: OutlineInputBorder(),
-                          prefixIcon:
-                              Icon(Icons.lock_outline, color: Colors.purple),
+                          labelText: 'كلمة مرورك',
+                          labelStyle: TextStyle(color: Colors.cyanAccent),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Colors.cyanAccent),
+                          ),
+                          prefixIcon: Icon(Icons.lock_outline,
+                              color: Colors.cyanAccent),
+                          filled: true,
+                          fillColor: const Color.fromARGB(255, 197, 144, 255)
+                              .withOpacity(0.5),
                         ),
-                        obscureText: false,
+                        obscureText: true,
+                        style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 20),
-                      // Back Button AND NEW "Login" button
+
+                      // Action Buttons Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Back Button
                           ElevatedButton.icon(
                             onPressed: () {
                               Navigator.pop(context);
@@ -266,38 +314,31 @@ class SecondPage extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
+                              backgroundColor: Colors.blueGrey,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 20.0,
                                 vertical: 15.0,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
                             ),
                           ),
 
-                          // NEW: Login button
+                          // Login Button
                           ElevatedButton.icon(
                             onPressed: () async {
-                              // Store user data (personal info + password) in shared preferences
                               final prefs =
                                   await SharedPreferences.getInstance();
 
-                              // Example of storing the personal info
                               prefs.setString(
                                   'name', personalInfo['name'] ?? '');
                               prefs.setString(
                                   'email', personalInfo['email'] ?? '');
                               prefs.setString('dob', personalInfo['dob'] ?? '');
-                              // If you also want to store phone, do likewise:
-                              // prefs.setString('phone', personalInfo['phone'] ?? '');
-
-                              // Store the password from the text field
                               prefs.setString(
                                   'password', passwordController.text);
 
-                              // Navigate to HomePage()
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -309,17 +350,18 @@ class SecondPage extends StatelessWidget {
                             },
                             icon: Icon(Icons.login, color: Colors.white),
                             label: Text(
-                              'تسجيل الدخول',
+                              'تسجيل',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 145, 2, 255),
                               padding: EdgeInsets.symmetric(
                                 horizontal: 20.0,
                                 vertical: 15.0,
                               ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(15.0),
                               ),
                             ),
                           ),

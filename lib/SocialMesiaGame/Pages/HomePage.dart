@@ -93,7 +93,7 @@ class _HomePageState extends State<InstaHomePage> {
                     Icon(FontAwesomeIcons.solidHeart, color: Colors.black)),
             BottomNavigationBarItem(
                 icon: CircleAvatar(
-                    backgroundImage: AssetImage('assets/Mike Tyler.jpg'),
+                    backgroundImage: AssetImage('assets/MyPro.png'),
                     radius: 15.0),
                 label: '')
           ]),
