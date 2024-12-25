@@ -159,3 +159,39 @@ Future<String> analyzeComment(String comment) async {
     throw Exception('Failed to connect to the server or parse response.');
   }
 }
+//............................
+
+class ReportApiService {
+  final String baseUrl;
+
+  // Constructor: Pass the API base URL
+  ReportApiService({required this.baseUrl});
+
+  // Method to classify a message
+  Future<String> classifyMessage(String message) async {
+    final url = Uri.parse('$baseUrl/classify_message');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'message': message,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['category']; // Return the classified category
+      } else {
+        print('Error Response: ${response.body}');
+        return 'Error: ${response.statusCode} - ${response.body}';
+      }
+    } catch (e) {
+      print('Connection Error: $e');
+      return 'Error: Failed to connect to the API. $e';
+    }
+  }
+}
