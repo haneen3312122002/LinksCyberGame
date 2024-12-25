@@ -19,7 +19,7 @@ class StoriesWidget extends StatelessWidget {
                 height: 70.0,
                 child: ClipOval(
                     child: Image.asset(
-                  "assets/Mike Tyler.jpg",
+                  "st1.png",
                   fit: BoxFit.cover,
                   width: 70.0,
                 )),
@@ -56,7 +56,7 @@ class StoriesWidget extends StatelessWidget {
               ),
               ClipOval(
                 child: Image.asset(
-                  "assets/eddison.jpg",
+                  "st2.png",
                   fit: BoxFit.cover,
                   width: 60.0,
                 ),
@@ -81,7 +81,7 @@ class StoriesWidget extends StatelessWidget {
               ),
               ClipOval(
                 child: Image.asset(
-                  "assets/ryan.jpg",
+                  "st3.png",
                   fit: BoxFit.cover,
                   width: 60.0,
                 ),
@@ -91,42 +91,42 @@ class StoriesWidget extends StatelessWidget {
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/nick.jpg",
+            "st8.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/mathew.jpg",
+            "st7.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/sophia.jpg",
+            "st3.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/joey.jpg",
+            "st4.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/adelle.jpg",
+            "st5.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),
           SizedBox(width: 20.0),
           ClipOval(
               child: Image.asset(
-            "assets/natasha.jpg",
+            "st6.png",
             fit: BoxFit.cover,
             width: 70.0,
           )),

@@ -193,6 +193,25 @@ flutter:
     - assets/insta.png 
     - assets/word.png
     - assets/photoshop.png
+     #socialGame:
+    - assets/st1.png
+    - assets/st2.png  
+    - assets/st3.png
+    - assets/st4.png
+    - assets/st5.png
+    - assets/st6.png
+    - assets/st7.png
+    - assets/st8.png
+    - assets/st9.png
+    - assets/post1.png
+    - assets/post2.png
+    - assets/post3.png
+    - assets/post4.png
+    - assets/post5.png
+    
+    
+    
+
     
     
     

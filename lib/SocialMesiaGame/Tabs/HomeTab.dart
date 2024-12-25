@@ -116,7 +116,8 @@ class _HomeTabState extends State<HomeTab> {
               time: '2 ساعات',
               profilePicture: 'assets/profile1.png',
               image: 'assets/post1.png',
-              text: 'انظروا لهذا الشخص، انه معاق ولا يفقه شيئا ',
+              text:
+                  'انظروا لهذا الشخص، انه معاق ولا يستطيع المشي اكيد انه فاشل  ',
               comments: [
                 Comment(
                   username: 'sara_99',
@@ -138,7 +139,7 @@ class _HomeTabState extends State<HomeTab> {
               likes: 156,
               time: '6 hours',
               profilePicture: 'assets/jeremy.jpg',
-              image: 'assets/story2.jpg',
+              image: 'assets/post2.png',
               text:
                   "هذا الحساب لا يقدم أي محتوى مثير للاهتمام. لماذا يتابعه أي شخص؟ يبدو كأنه لا يعرف كيف يستخدم الإنترنت بشكل صحيح. 😒",
               comments: [
@@ -162,7 +163,7 @@ class _HomeTabState extends State<HomeTab> {
               username: 'adelle',
               likes: 56,
               time: '2 days',
-              profilePicture: 'assets/adelle.jpg',
+              profilePicture: 'assets/post3.png',
               image: 'assets/story3.jpg',
               text:
                   "أحببت هذا المكان الذي زرته اليوم مع عائلتي! الطبيعة مذهلة، وأعتقد أن الجميع يجب أن يقضي وقتًا أقل على الإنترنت وأكثر مع الطبيعة. 💚🌳",
@@ -186,7 +187,7 @@ class _HomeTabState extends State<HomeTab> {
               likes: 224,
               time: '1 week',
               profilePicture: 'assets/chris.jpg',
-              image: 'assets/story4.jpg',
+              image: 'assets/post4.png',
               text:
                   "هل شاهدتم منشور هذا الشخص؟ إنه دائمًا ينشر أشياء غبية! لماذا لا يتوقف عن استخدام الإنترنت؟ 🤦‍♂️",
               comments: [
@@ -203,7 +204,7 @@ class _HomeTabState extends State<HomeTab> {
               username: 'dana_p_0',
               likes: 112,
               time: '2 weeks',
-              profilePicture: 'assets/dan.jpg',
+              profilePicture: 'assets/post5.png',
               image: 'assets/story8.jpg',
               text:
                   "أنا ممتن جدًا لدعمكم المستمر لي! ❤️ أعدكم أن أشارك محتوى إيجابيًا ومفيدًا دائمًا. لا تنسوا أن تكونوا لطفاء مع الجميع. 🌈",
