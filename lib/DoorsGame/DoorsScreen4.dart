@@ -78,7 +78,7 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
                 _buildDoor(context, 'تنزيل تطبيقات جديدة لحل المشكلة', false),
                 _buildDoor(
                     context,
-                    'إغلاق جميع التطبيقات أو البرامج المفتوحة التي قد تكون متأثرة.',
+                    '    إغلاق جميع التطبيقات أو البرامج المفتوحة',
                     true), // Correct answer triggers door4.mp4
               ],
             ),
@@ -144,7 +144,7 @@ class _DoorsScreen4State extends State<DoorsScreen4> {
           Navigator.pop(context); // إغلاق الـ Dialog بعد انتهاء الفيديو
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AfterDoor4()),
+            MaterialPageRoute(builder: (context) => DesktopScreen4()),
           );
         }
       });

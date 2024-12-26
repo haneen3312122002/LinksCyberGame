@@ -9,13 +9,11 @@ class DesktopScreen extends StatefulWidget {
 // كلاس لتخزين بيانات الصورة
 class ImageData {
   final String path;
-  final double width;
-  final double height;
+  final double size; // استخدام حجم واحد للأبعاد
 
   ImageData({
     required this.path,
-    required this.width,
-    required this.height,
+    required this.size,
   });
 }
 
@@ -23,20 +21,36 @@ class _DesktopScreen3State extends State<DesktopScreen> {
   // نجعل الحالة الافتراضية للواي فاي شغّالة
   bool _isWifiOn = true;
 
-  // تم وضع عرض وارتفاع 24 كقيمة افتراضية
-  final List<ImageData> _images = [
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-    ImageData(path: 'assets/child_file.png', width: 24, height: 24),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // الحصول على أبعاد الشاشة
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // تحديد حجم الأيقونات بناءً على عرض الشاشة
+    double iconSize = screenWidth * 0.05; // 5% من عرض الشاشة
+
+    // تحديد عدد الأعمدة بناءً على عرض الشاشة
+    int crossAxisCount = 4;
+    if (screenWidth < 600) {
+      crossAxisCount = 2;
+    } else if (screenWidth < 1200) {
+      crossAxisCount = 3;
+    }
+
+    // قائمة الصور بالحجم الجديد
+    final List<ImageData> _images = [
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+    ];
+
     return Scaffold(
       body: Stack(
         children: [
@@ -53,29 +67,29 @@ class _DesktopScreen3State extends State<DesktopScreen> {
           Positioned.fill(
             top: 5,
             left: 0,
-            bottom: 60, // ترك مساحة لشريط المهام في الأسفل
+            bottom: screenHeight * 0.1, // ترك مساحة لشريط المهام في الأسفل
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Align(
                 alignment: Alignment.topLeft,
                 child: FractionallySizedBox(
-                  widthFactor: 0.5, // نصف عرض الشاشة للشبكة
+                  widthFactor: screenWidth > 1200
+                      ? 0.3
+                      : 0.5, // تعديل عرض الشبكة بناءً على عرض الشاشة
                   child: GridView.builder(
                     itemCount: _images.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4, // جرّب زيادة/تقليل الأعمدة
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
+                      crossAxisCount: crossAxisCount, // عدد الأعمدة الديناميكي
+                      crossAxisSpacing: 9.0, // زيادة المسافة الأفقية بين الصور
+                      mainAxisSpacing: 9.0, // زيادة المسافة الرأسية بين الصور
                       childAspectRatio: 1.0, // مربّع
                     ),
                     itemBuilder: (context, index) {
                       final image = _images[index];
                       return Container(
-                        // تقييد العنصر ليكون 24x24
-                        constraints: BoxConstraints.tightFor(
-                          width: image.width,
-                          height: image.height,
-                        ),
+                        // تقييد العنصر ليكون بالحجم المحدد
+                        width: image.size,
+                        height: image.size,
                         child: Image.asset(
                           image.path,
                           fit: BoxFit.contain,
@@ -91,9 +105,12 @@ class _DesktopScreen3State extends State<DesktopScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 60,
+              height:
+                  screenHeight * 0.08, // ارتفاع ديناميكي (8% من ارتفاع الشاشة)
               color: const Color.fromARGB(255, 4, 23, 73),
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, // 5% من عرض الشاشة كحشو
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -101,12 +118,30 @@ class _DesktopScreen3State extends State<DesktopScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_isWifiOn) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('عليك فصل الإنترنت أولاً!'),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: Colors.redAccent,
-                          ),
+                        // عرض مربع حوار في وسط الشاشة
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Row(
+                                children: [
+                                  Icon(Icons.warning, color: Colors.red),
+                                  SizedBox(width: 10),
+                                  Text('تنبيه'),
+                                ],
+                              ),
+                              content: Text('عليك فصل الإنترنت أولاً!'),
+                              actions: [
+                                TextButton(
+                                  child: Text('حسنًا'),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // إغلاق مربع الحوار
+                                  },
+                                ),
+                              ],
+                            );
+                          },
                         );
                       } else {
                         Navigator.push(
@@ -133,8 +168,8 @@ class _DesktopScreen3State extends State<DesktopScreen> {
                   IconButton(
                     icon: Image.asset(
                       _isWifiOn ? 'assets/wifigreen.png' : 'assets/wifired.png',
-                      width: 60,
-                      height: 60,
+                      width: screenWidth * 0.06, // 6% من عرض الشاشة
+                      height: screenWidth * 0.06, // 6% من عرض الشاشة
                     ),
                     onPressed: () {
                       setState(() {

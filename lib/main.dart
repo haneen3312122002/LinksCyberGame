@@ -13,7 +13,7 @@ import 'GalaxyGame/GalaxyGameScreen.dart';
 import 'package:flame/collisions.dart';
 import 'package:flutter/material.dart';
 import 'SocialMesiaGame/Login.dart';
-import 'DoorsGame/afterdoor5.dart';
+import 'DoorsGame/afterdoor4.dart';
 
 void main() {
   // Ensure widget binding is initialized
