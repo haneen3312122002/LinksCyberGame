@@ -25,24 +25,19 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
-          // Form Container
-          Center(
+          // Neon Text on the left
+
+          // Form Container aligned to the right
+          Align(
+            alignment: Alignment.centerRight, // Align to the right
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                    right: 160.0), // Adjust padding if needed
                 child: Container(
                   decoration: BoxDecoration(
-                    color:
-                        const Color.fromARGB(255, 153, 0, 255).withOpacity(0.5),
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 125, 173, 255)
-                            .withOpacity(0.4),
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
                   ),
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
@@ -52,10 +47,22 @@ class LoginPage extends StatelessWidget {
                       Text(
                         'البيانات الأساسية',
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.cyanAccent,
+                          color: Colors.white, // White color for neon effect
                           fontFamily: 'RobotoMono',
+                          shadows: [
+                            Shadow(
+                              blurRadius: 10.0,
+                              color: Colors.white,
+                              offset: Offset(0, 0),
+                            ),
+                            Shadow(
+                              blurRadius: 20.0,
+                              color: Colors.white,
+                              offset: Offset(0, 0),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 20),
@@ -149,21 +156,26 @@ class LoginPage extends StatelessWidget {
     required Color color,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: TextStyle(color: color),
-        prefixIcon: Icon(icon, color: color),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: color),
+    return SizedBox(
+      width: 300, // Set your desired width here
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: const TextStyle(color: Colors.white),
+          prefixIcon: Icon(icon, color: Colors.white),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.white, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Colors.white, width: 2),
+          ),
         ),
-        filled: true,
-        fillColor: const Color.fromARGB(255, 197, 144, 255).withOpacity(0.5),
+        style: const TextStyle(color: Colors.white),
       ),
-      style: TextStyle(color: Colors.white),
     );
   }
 }
@@ -198,11 +210,6 @@ class SecondPage extends StatelessWidget {
                 image: AssetImage('assets/LoginBack.png'), // Use your image
                 fit: BoxFit.cover,
               ),
-              gradient: LinearGradient(
-                colors: [Colors.black, Colors.blueGrey.shade900],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
             ),
           ),
           // Tech-style Form
@@ -212,160 +219,213 @@ class SecondPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 141, 154, 255)
-                        .withOpacity(0.5),
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(255, 171, 202, 255)
-                            .withOpacity(0.5),
-                        blurRadius: 20,
-                        offset: Offset(0, 10),
-                      ),
-                    ],
                   ),
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Title with futuristic font
-                      Text(
-                        'انشاء كلمة مرور',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.cyanAccent,
-                          fontFamily: 'RobotoMono',
+                      SizedBox(
+                        width: 250, // Set a smaller width for the text
+                        child: Text(
+                          'إنشاء كلمة مرور',
+                          textAlign: TextAlign.center, // Center-align the text
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // White color for neon effect
+                            fontFamily: 'RobotoMono',
+                            shadows: [
+                              Shadow(
+                                blurRadius: 10.0,
+                                color: Colors.white,
+                                offset: Offset(0, 0),
+                              ),
+                              Shadow(
+                                blurRadius: 20.0,
+                                color: Colors.white,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),
 
                       // Password Field
-                      GestureDetector(
-                        onTap: () {
-                          // Navigate to PassVideoScreen with personalInfo
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PassVideoScreen(
-                                personalInfo: personalInfo,
+                      SizedBox(
+                        width: 250, // Set a smaller width for the field
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigate to PassVideoScreen with personalInfo
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PassVideoScreen(
+                                  personalInfo: personalInfo,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: AbsorbPointer(
-                          child: TextField(
-                            controller: passwordController,
-                            decoration: InputDecoration(
-                              labelText: 'كلمة المرور',
-                              labelStyle: TextStyle(color: Colors.cyanAccent),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide:
-                                    BorderSide(color: Colors.cyanAccent),
+                            );
+                          },
+                          child: AbsorbPointer(
+                            child: TextField(
+                              controller: passwordController,
+                              decoration: InputDecoration(
+                                labelText: 'كلمة المرور',
+                                labelStyle: TextStyle(
+                                    color: Colors.white), // White for text
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: Colors.white, // White neon border
+                                    width: 2.0,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: Colors
+                                        .white, // White neon border for enabled state
+                                    width: 2.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                  borderSide: BorderSide(
+                                    color: Colors
+                                        .white, // White neon border for focused state
+                                    width: 2.0,
+                                  ),
+                                ),
+                                prefixIcon: Icon(Icons.lock,
+                                    color: Colors.white), // White icon
+                                filled: false, // Transparent background
                               ),
-                              prefixIcon:
-                                  Icon(Icons.lock, color: Colors.cyanAccent),
-                              filled: true,
-                              fillColor:
-                                  const Color.fromARGB(255, 197, 144, 255)
-                                      .withOpacity(0.5),
+                              style: TextStyle(
+                                  color: Colors.white), // White text color
+                              obscureText: true,
                             ),
-                            style: TextStyle(color: Colors.white),
-                            obscureText: true,
                           ),
                         ),
                       ),
                       SizedBox(height: 15),
 
                       // Confirm Password Field
-                      TextField(
-                        controller: confirmPasswordController,
-                        decoration: InputDecoration(
-                          labelText: 'كلمة مرورك',
-                          labelStyle: TextStyle(color: Colors.cyanAccent),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(color: Colors.cyanAccent),
+                      SizedBox(
+                        width: 250, // Set a smaller width for the field
+                        child: TextField(
+                          controller: confirmPasswordController,
+                          decoration: InputDecoration(
+                            labelText: 'تأكيد كلمة المرور',
+                            labelStyle: TextStyle(
+                                color: Colors.white), // White for text
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                color: Colors.white, // White neon border
+                                width: 2.0,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                color: Colors
+                                    .white, // White neon border for enabled state
+                                width: 2.0,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(
+                                color: Colors
+                                    .white, // White neon border for focused state
+                                width: 2.0,
+                              ),
+                            ),
+                            prefixIcon: Icon(Icons.lock_outline,
+                                color: Colors.white), // White icon
+                            filled: false, // Transparent background
                           ),
-                          prefixIcon: Icon(Icons.lock_outline,
-                              color: Colors.cyanAccent),
-                          filled: true,
-                          fillColor: const Color.fromARGB(255, 197, 144, 255)
-                              .withOpacity(0.5),
+                          obscureText: true,
+                          style: TextStyle(
+                              color: Colors.white), // White text color
                         ),
-                        obscureText: true,
-                        style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 20),
 
                       // Action Buttons Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Back Button
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: Icon(Icons.arrow_back, color: Colors.white),
-                            label: Text(
-                              'رجوع',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueGrey,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                                vertical: 15.0,
+                      SizedBox(
+                        width: 250, // Make the row match the fields' width
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Back Button
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              label: Text(
+                                'رجوع',
+                                style: TextStyle(color: Colors.white),
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                            ),
-                          ),
-
-                          // Login Button
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-
-                              prefs.setString(
-                                  'name', personalInfo['name'] ?? '');
-                              prefs.setString(
-                                  'email', personalInfo['email'] ?? '');
-                              prefs.setString('dob', personalInfo['dob'] ?? '');
-                              prefs.setString(
-                                  'password', passwordController.text);
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HomePage(
-                                    personalInfo: personalInfo,
-                                  ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueGrey,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15.0,
+                                  vertical: 10.0,
                                 ),
-                              );
-                            },
-                            icon: Icon(Icons.login, color: Colors.white),
-                            label: Text(
-                              'تسجيل',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 145, 2, 255),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                                vertical: 15.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+
+                            // Login Button
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+
+                                prefs.setString(
+                                    'name', personalInfo['name'] ?? '');
+                                prefs.setString(
+                                    'email', personalInfo['email'] ?? '');
+                                prefs.setString(
+                                    'dob', personalInfo['dob'] ?? '');
+                                prefs.setString(
+                                    'password', passwordController.text);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      personalInfo: personalInfo,
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: Icon(Icons.login, color: Colors.white),
+                              label: Text(
+                                'تسجيل',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 145, 2, 255),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 15.0,
+                                  vertical: 10.0,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
