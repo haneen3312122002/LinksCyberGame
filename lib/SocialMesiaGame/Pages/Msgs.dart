@@ -346,36 +346,36 @@ class _MessagesPageState extends State<MessagesPage> {
   List<Map<String, String>> messages = [
     // 1) احتيال إلكتروني
     {
-      "avatar": "assets/james.jpg",
+      "avatar": "assets/st6.png",
       "username": "ScammerPro",
       "message":
           "مرحبًا! هناك مفاجأة كبرى بانتظارك. جائزة نقدية ضخمة قريبًا. أرسل رقم حسابك البنكي فورًا لتحصل عليها.",
     },
     // 2) تحرش / تهديد
     {
-      "avatar": "assets/aliya.jpg",
+      "avatar": "assets/st4.png",
       "username": "HarasserGuy",
       "message":
           "دعنا نلتقي بالحديقة، لدي هدية سرية لك. ولا تحاول إخبار أهلك وإلا قد ألجأ للتحرش أو التهديد.",
     },
     // 3) تنمر وتهديد مبطن
     {
-      "avatar": "assets/omar.jpg",
+      "avatar": "assets/st5.png",
       "username": "BullyingThreat",
       "message":
           "يا غبي، لا تتباهى كثيرًا بما تفعل. أنت تافه بالفعل، وسأعرف قريبًا كيف أجعلك تندم.",
     },
     // 4) إزعاج
     {
-      "avatar": "assets/adelle.jpg",
+      "avatar": "assets/st9.png",
       "username": "AnnoyingUser",
       "message":
           "أين اختفيت؟ لماذا لا ترد؟ أرسل لي ردك الآن أو فسأواصل مراسلتك بلا توقف!",
     },
     // 5) انتحال شخصية
     {
-      "avatar": "assets/layla.jpg",
-      "username": "ImpersonatorX",
+      "avatar": "assets/st1.png",
+      "username": "leen",
       "message":
           "مرحبًا، أنا الشخص المسؤول عن حسابك. هل تعلم أنني أستخدم اسم مزيف؟ لا تقلق على هويتك.",
     },
@@ -386,7 +386,7 @@ class _MessagesPageState extends State<MessagesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'mike_tyler',
+          '',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,

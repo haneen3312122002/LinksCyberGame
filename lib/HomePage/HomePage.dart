@@ -23,71 +23,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 40,
-            right: 20,
-            child: ElevatedButton(
-              onPressed: () {
-                // Add start journey functionality here
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 98, 210, 255),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
-              child: Text(
-                "ابدا الرحلة",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 5.0,
-                      color: Colors.greenAccent,
-                      offset: Offset(0, 0),
-                    ),
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.greenAccent.withOpacity(0.7),
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 180,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text(
-                "WELCOME TO THE KIDS TRIP",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  color: Colors.cyanAccent,
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.cyanAccent,
-                      offset: Offset(0, 0),
-                    ),
-                    Shadow(
-                      blurRadius: 30.0,
-                      color: Colors.cyanAccent.withOpacity(0.5),
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 250,
+            top: 150,
             left: 0,
             right: 0,
             bottom: 0,
