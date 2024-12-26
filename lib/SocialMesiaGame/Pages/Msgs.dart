@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 // ============ الصفحة الثانية: ConversationPage ============
 //  فيها منطق المحادثة والإبلاغ عن الرسائل
@@ -55,142 +56,123 @@ class _ConversationPageState extends State<ConversationPage> {
 
   // دالة لإظهار خيارات الإبلاغ
   void _showReportDialog(String messageText) async {
-    // أمثلة على أنواع الإبلاغ
     final reportOptions = <String>[
       'الاحتيال الإلكتروني',
       'التنمر الإلكتروني',
       'التحرش أو التهديد',
       'انتحال الشخصية',
-      'إزعاج', // تمّت إضافة خيار "إزعاج" هنا
+      'إزعاج',
     ];
 
-    // منطق بسيط لتحديد الخيار الصحيح بناءً على نص الرسالة.
-    int correctIndex = -1; // افتراض عدم وجود تطابق في البداية
+    int correctIndex = -1;
 
     if (messageText.contains('إصلاح حسابك') ||
         messageText.contains('جائزة') ||
         messageText.contains('أرسل اسمك الكامل') ||
         messageText.contains('أرسل كلمة المرور') ||
         messageText.contains('تحديث بياناتك') ||
-        messageText.contains('ربحت جائزة') ||
-        messageText.contains('رقم حسابك')) {
-      // إذا كانت الرسالة ذات محتوى "احتيالي" أو "تصيد"
-      correctIndex = 0; // الاحتيال الإلكتروني
+        messageText.contains('ربحت جائزة')) {
+      correctIndex = 0;
     } else if (messageText.contains('غبي') ||
         messageText.contains('معاق') ||
         messageText.contains('سخيف') ||
         messageText.contains('تافه') ||
         messageText.contains('أحمق')) {
-      // إذا كانت الرسالة فيها تنمر
-      correctIndex = 1; // التنمر الإلكتروني
+      correctIndex = 1;
     } else if (messageText.contains('سوف أؤذيك') ||
         messageText.contains('سوف أجدك') ||
         messageText.contains('تهديد') ||
         messageText.contains('تحرش')) {
-      // رسالة تتضمن تهديد أو تحرش
-      correctIndex = 2; // التحرش أو التهديد
+      correctIndex = 2;
     } else if (messageText.contains('انتحال') ||
         messageText.contains('اسم مزيف') ||
         messageText.contains('هويتك') ||
         messageText.contains('أنت شخص مزيف')) {
-      // إذا كانت الرسالة تتعلق بانتحال الشخصية
-      correctIndex = 3; // انتحال الشخصية
-    }
-    // الشرط الخاص بالإزعاج:
-    else if (messageText.contains('لماذا لا ترد؟') ||
+      correctIndex = 3;
+    } else if (messageText.contains('لماذا لا ترد؟') ||
         messageText.contains('رد علي فورًا') ||
         messageText.contains('أرسل لي ردك الآن') ||
         messageText.contains('لماذا تتجاهلني؟')) {
-      correctIndex = 4; // إزعاج
+      correctIndex = 4;
     }
 
-    int _selectedOption = -1; // لحفظ خيار الطفل
+    int _selectedOption = -1;
 
-    await showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text(
-            'الإبلاغ عن الرسالة',
+      dialogType: DialogType.question,
+      animType: AnimType.scale,
+      title: 'الإبلاغ عن الرسالة',
+      body: Column(
+        children: [
+          Text(
+            'نص الرسالة:\n\n$messageText\n',
+            style: const TextStyle(fontSize: 14),
+          ),
+          const Text(
+            'اختر التصنيف القانوني المناسب للإبلاغ:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: StatefulBuilder(
-            builder: (BuildContext context, setStateDialog) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'نص الرسالة:\n\n$messageText\n',
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    const Text(
-                      'اختر التصنيف القانوني المناسب للإبلاغ:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    // عرض الخيارات كـ RadioListTile
-                    ...List.generate(reportOptions.length, (index) {
-                      return RadioListTile<int>(
-                        title: Text(reportOptions[index]),
-                        value: index,
-                        groupValue: _selectedOption,
-                        onChanged: (value) {
-                          setStateDialog(() {
-                            _selectedOption = value!;
-                          });
-                        },
-                      );
-                    }),
-                  ],
-                ),
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('إلغاء'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (_selectedOption == -1) {
-                  _showDialogMessage(
-                    context,
-                    title: 'تنبيه',
-                    content: 'الرجاء اختيار نوع الإبلاغ أولاً.',
-                  );
-                  return;
-                }
-                Navigator.of(ctx).pop(); // إغلاق الـ Dialog
-
-                if (_selectedOption == correctIndex && correctIndex != -1) {
-                  // اختيار صحيح
-                  setState(() {
-                    _points += 10; // كمثال: +10 نقاط
-                  });
-                  _showDialogMessage(
-                    context,
-                    title: 'رائع!',
-                    content:
-                        'أحسنت! لقد اخترت تصنيف الإبلاغ الصحيح وحصلت على 10 نقاط.\n\nنقاطك الحالية: $_points',
-                  );
-                } else {
-                  // اختيار خاطئ
-                  _showDialogMessage(
-                    context,
-                    title: 'تحذير',
-                    content:
-                        'يبدو أنك اخترت تصنيفًا غير مناسب.\nحاول التركيز أكثر على محتوى الرسالة.',
-                  );
-                }
+          const SizedBox(height: 10),
+          ...List.generate(reportOptions.length, (index) {
+            return RadioListTile<int>(
+              title: Text(reportOptions[index]),
+              value: index,
+              groupValue: _selectedOption,
+              onChanged: (value) {
+                setState(() {
+                  _selectedOption = value!;
+                });
               },
-              child: const Text('إبلاغ'),
-            ),
-          ],
-        );
-      },
-    );
+            );
+          }),
+        ],
+      ),
+      btnCancel: TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: const Text('إلغاء'),
+      ),
+      btnOk: TextButton(
+        onPressed: () {
+          if (_selectedOption == -1) {
+            _showDialogMessage(
+              context,
+              title: 'تنبيه',
+              content: 'الرجاء اختيار نوع الإبلاغ أولاً.',
+              dialogType: DialogType
+                  .warning, // Warning dialog type for missing selection
+            );
+            return;
+          }
+          Navigator.of(context).pop();
+
+          if (_selectedOption == correctIndex && correctIndex != -1) {
+            setState(() {
+              _points += 10;
+            });
+            _showDialogMessage(
+              context,
+              title: 'رائع!',
+              content:
+                  'أحسنت! لقد اخترت تصنيف الإبلاغ الصحيح وحصلت على 10 نقاط.\n\nنقاطك الحالية: $_points',
+              dialogType:
+                  DialogType.success, // Success dialog for correct answer
+            );
+          } else {
+            _showDialogMessage(
+              context,
+              title: 'تحذير',
+              content:
+                  'يبدو أنك اخترت تصنيفًا غير مناسب.\nحاول التركيز أكثر على محتوى الرسالة.',
+              dialogType: DialogType.error, // Error dialog for incorrect answer
+            );
+          }
+        },
+        child: const Text('إبلاغ'),
+      ),
+    ).show();
   }
 
   // نافذة رسالة سريعة
@@ -198,22 +180,17 @@ class _ConversationPageState extends State<ConversationPage> {
     BuildContext context, {
     required String title,
     required String content,
+    required DialogType dialogType, // Pass the dialog type
   }) {
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('موافق'),
-            ),
-          ],
-        );
-      },
-    );
+      dialogType: dialogType, // Use success for correct and error for incorrect
+      animType: AnimType.scale,
+      title: title,
+      desc: content,
+      btnOkText: 'موافق',
+      btnOkOnPress: () {},
+    ).show();
   }
 
   @override
@@ -399,14 +376,15 @@ class _MessagesPageState extends State<MessagesPage> {
           onTap: () {
             Navigator.of(context).pop(); // أو تنفيذ أي منطق آخر
           },
-          child: Icon(Icons.arrow_back, color: Colors.black, size: 30.0),
+          child: Icon(Icons.arrow_back,
+              color: const Color.fromARGB(255, 140, 0, 255), size: 30.0),
         ),
         actions: <Widget>[
           Container(
             padding: const EdgeInsets.only(right: 20.0),
             child: Icon(
               FontAwesomeIcons.video,
-              color: Colors.black,
+              color: const Color.fromARGB(255, 127, 95, 255),
               size: 22.0,
             ),
           ),

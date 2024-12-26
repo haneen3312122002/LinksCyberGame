@@ -62,7 +62,7 @@ class _HomeTabState extends State<HomeTab> {
             const Text(
               'SECURE ASVENTURES GAME',
               style: TextStyle(
-                color: Colors.black,
+                color: Color.fromARGB(255, 136, 44, 255),
                 fontFamily: 'Billabong',
                 fontSize: 30.0,
               ),
@@ -76,13 +76,35 @@ class _HomeTabState extends State<HomeTab> {
           Center(
             child: Padding(
               padding: const EdgeInsets.only(left: 500.0),
-              child: Text(
-                'نقاطي $_points',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'نقاطي ',
+                    style: const TextStyle(
+                      color: Colors.blue, // لون مرح
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      fontFamily:
+                          'ComicSans', // خط طفولي (تأكد من إضافة الخط إلى المشروع)
+                    ),
+                  ),
+                  Text(
+                    '$_points',
+                    style: const TextStyle(
+                      color: Colors.red, // لون مختلف للتمييز
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24.0,
+                      fontFamily: 'ComicSans',
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Icon(
+                    Icons.star, // أيقونة نجمة مرحة
+                    color: Colors.yellow, // لون أصفر مشرق
+                    size: 24.0,
+                  ),
+                ],
               ),
             ),
           ),

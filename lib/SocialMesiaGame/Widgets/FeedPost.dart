@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cybergame/connection.dart'; // For analyzeComment()
 
 // ----------------------------
@@ -74,8 +75,6 @@ class _FeedPostState extends State<FeedPost> {
   @override
   void initState() {
     super.initState();
-    // We can't remove or alter widget.comments = const [],
-    // so we'll copy them into a mutable list here.
     _localComments = _deepCopyComments(widget.comments);
   }
 
@@ -100,40 +99,29 @@ class _FeedPostState extends State<FeedPost> {
   // HELPER METHODS
   // ----------------------------
   bool _isTextNegative(String text) {
-    // ----------------------------------------------------------------
-    // ADDED MORE KEYWORDS for negative detection
-    // ----------------------------------------------------------------
-    // Convert text to lowercase just in case
     final lowerText = text.toLowerCase();
-
     if (lowerText.contains('غبي') ||
-            lowerText.contains('معاق') ||
-            lowerText.contains('سلبي') ||
-            lowerText.contains('كريه') || // ADDED
-            lowerText.contains('سيء') || // ADDED
-            lowerText.contains('مزعج') || // ADDED
-            lowerText.contains('كره') // ADDED
-        ) {
+        lowerText.contains('معاق') ||
+        lowerText.contains('سلبي') ||
+        lowerText.contains('كريه') ||
+        lowerText.contains('سيء') ||
+        lowerText.contains('مزعج') ||
+        lowerText.contains('كره')) {
       return true;
     }
     return false;
   }
 
   bool _isTextPositive(String text) {
-    // ----------------------------------------------------------------
-    // ADDED MORE KEYWORDS for positive detection
-    // ----------------------------------------------------------------
     final lowerText = text.toLowerCase();
-
     if (lowerText.contains('💚') ||
-            lowerText.contains('إيجابي') ||
-            lowerText.contains('❤️') ||
-            lowerText.contains('رائع') || // ADDED
-            lowerText.contains('جميل') || // ADDED
-            lowerText.contains('احب') || // ADDED
-            lowerText.contains('احبك') || // ADDED
-            lowerText.contains('ممتاز') // ADDED
-        ) {
+        lowerText.contains('إيجابي') ||
+        lowerText.contains('❤️') ||
+        lowerText.contains('رائع') ||
+        lowerText.contains('جميل') ||
+        lowerText.contains('احب') ||
+        lowerText.contains('احبك') ||
+        lowerText.contains('ممتاز')) {
       return true;
     }
     return false;
@@ -149,6 +137,169 @@ class _FeedPostState extends State<FeedPost> {
   }
 
   // ----------------------------
+  // DIALOG METHODS USING AWESOME_DIALOG
+  // ----------------------------
+
+  /// Displays an AwesomeDialog with specified parameters
+  void _showAwesomeDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required DialogType dialogType,
+  }) {
+    AwesomeDialog(
+      context: context,
+      dialogType: dialogType,
+      animType: AnimType.scale, // You can customize the animation
+      title: title,
+      desc: content,
+      btnOkOnPress: () {},
+      btnOkText: 'موافق',
+    ).show();
+  }
+
+  /// Shows a success dialog
+  void _showSuccessDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+  }) {
+    _showAwesomeDialog(
+      context: context,
+      title: title,
+      content: content,
+      dialogType: DialogType.success,
+    );
+  }
+
+  /// Shows an error dialog
+  void _showErrorDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+  }) {
+    _showAwesomeDialog(
+      context: context,
+      title: title,
+      content: content,
+      dialogType: DialogType.error,
+    );
+  }
+
+  /// Shows a warning dialog
+  void _showWarningDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+  }) {
+    _showAwesomeDialog(
+      context: context,
+      title: title,
+      content: content,
+      dialogType: DialogType.warning,
+    );
+  }
+
+  // ----------------------------
+  // HANDLE REPLY
+  // ----------------------------
+  void _handleReply({
+    required BuildContext context,
+    required Comment parentComment,
+    required String replyText,
+    required StateSetter localSetState,
+  }) async {
+    try {
+      final result = await analyzeComment(replyText);
+      if (result == "إيجابي") {
+        widget.onPointsChanged(5);
+        localSetState(() {
+          parentComment.replies.add(
+            Comment(
+              username: widget.personalInfo['name'],
+              profilePicture: 'assets/your_profile.png',
+              content: replyText,
+            ),
+          );
+        });
+        _showSuccessDialog(
+          context: context,
+          title: 'تمت الإضافة',
+          content: 'تم إضافة ردك الإيجابي بنجاح.',
+        );
+      } else if (result == "سلبي") {
+        widget.onPointsChanged(-5);
+        _showErrorDialog(
+          context: context,
+          title: 'رد سلبي',
+          content: 'ردك سلبي، يرجى تعديله ليكون أكثر إيجابية.',
+        );
+      } else {
+        _showWarningDialog(
+          context: context,
+          title: 'رد محايد',
+          content: 'ردك محايد، يمكنك تحسينه ليكون أكثر إيجابية.',
+        );
+      }
+    } catch (e) {
+      _showErrorDialog(
+        context: context,
+        title: 'خطأ',
+        content: 'فشل في تحليل الرد. الخطأ: $e',
+      );
+    }
+  }
+
+  // ----------------------------
+  // HANDLE ADD COMMENT
+  // ----------------------------
+  void _handleAddComment({
+    required BuildContext context,
+    required String commentText,
+    required StateSetter localSetState,
+  }) async {
+    try {
+      final result = await analyzeComment(commentText);
+      if (result == "إيجابي") {
+        widget.onPointsChanged(5);
+        localSetState(() {
+          _localComments.add(
+            Comment(
+              username: widget.personalInfo['name'],
+              profilePicture: 'assets/your_profile.png',
+              content: commentText,
+            ),
+          );
+        });
+        _showSuccessDialog(
+          context: context,
+          title: 'تمت الإضافة',
+          content: 'تم إضافة تعليقك الإيجابي بنجاح.',
+        );
+      } else if (result == "سلبي") {
+        widget.onPointsChanged(-5);
+        _showErrorDialog(
+          context: context,
+          title: 'تعليق سلبي',
+          content: 'تعليقك سلبي، يرجى تعديله ليكون أكثر إيجابية.',
+        );
+      } else {
+        _showWarningDialog(
+          context: context,
+          title: 'تعليق محايد',
+          content: 'تعليقك محايد، يمكنك تحسينه ليكون أكثر إيجابية.',
+        );
+      }
+    } catch (e) {
+      _showErrorDialog(
+        context: context,
+        title: 'خطأ',
+        content: 'فشل في تحليل التعليق. الخطأ: $e',
+      );
+    }
+  }
+
+  // ----------------------------
   // SHOW COMMENTS / REPLIES
   // ----------------------------
   void _showCommentsPopup(BuildContext context) {
@@ -160,54 +311,6 @@ class _FeedPostState extends State<FeedPost> {
       builder: (BuildContext dialogContext) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter localSetState) {
-            final TextEditingController _replyController =
-                TextEditingController();
-
-            void _handleReply({
-              required Comment parentComment,
-              required String replyText,
-            }) async {
-              try {
-                final result = await analyzeComment(replyText);
-                if (result == "إيجابي") {
-                  widget.onPointsChanged(5);
-                  localSetState(() {
-                    parentComment.replies.add(
-                      Comment(
-                        username: widget.personalInfo['name'],
-                        profilePicture: 'assets/your_profile.png',
-                        content: replyText,
-                      ),
-                    );
-                  });
-                  _showDialogMessage(
-                    dialogContext,
-                    title: 'تمت الإضافة',
-                    content: 'تم إضافة ردك الإيجابي بنجاح.',
-                  );
-                } else if (result == "سلبي") {
-                  widget.onPointsChanged(-5);
-                  _showDialogMessage(
-                    dialogContext,
-                    title: 'رد سلبي',
-                    content: 'ردك سلبي، يرجى تعديله ليكون أكثر إيجابية.',
-                  );
-                } else {
-                  _showDialogMessage(
-                    dialogContext,
-                    title: 'رد محايد',
-                    content: 'ردك محايد، يمكنك تحسينه ليكون أكثر إيجابية.',
-                  );
-                }
-              } catch (e) {
-                _showDialogMessage(
-                  dialogContext,
-                  title: 'خطأ',
-                  content: 'فشل في تحليل الرد. الخطأ: $e',
-                );
-              }
-            }
-
             return AlertDialog(
               title: const Text(
                 'التعليقات',
@@ -228,8 +331,10 @@ class _FeedPostState extends State<FeedPost> {
                             localSetState: localSetState,
                             onReply: (String replyText) {
                               _handleReply(
+                                context: dialogContext,
                                 parentComment: comment,
                                 replyText: replyText,
+                                localSetState: localSetState,
                               );
                             },
                           );
@@ -250,55 +355,15 @@ class _FeedPostState extends State<FeedPost> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.send, color: Colors.blue),
-                          onPressed: () async {
-                            if (_commentController.text.isNotEmpty) {
-                              final userComment = _commentController.text;
+                          onPressed: () {
+                            final commentText = _commentController.text.trim();
+                            if (commentText.isNotEmpty) {
                               _commentController.clear();
-
-                              try {
-                                final result =
-                                    await analyzeComment(userComment);
-
-                                if (result == "إيجابي") {
-                                  widget.onPointsChanged(5);
-                                  localSetState(() {
-                                    _localComments.add(
-                                      Comment(
-                                        username: widget.personalInfo['name'],
-                                        profilePicture:
-                                            'assets/your_profile.png',
-                                        content: userComment,
-                                      ),
-                                    );
-                                  });
-                                  _showDialogMessage(
-                                    dialogContext,
-                                    title: 'تمت الإضافة',
-                                    content: 'تم إضافة تعليقك الإيجابي بنجاح.',
-                                  );
-                                } else if (result == "سلبي") {
-                                  widget.onPointsChanged(-5);
-                                  _showDialogMessage(
-                                    dialogContext,
-                                    title: 'تعليق سلبي',
-                                    content:
-                                        'تعليقك سلبي، يرجى تعديله ليكون أكثر إيجابية.',
-                                  );
-                                } else {
-                                  _showDialogMessage(
-                                    dialogContext,
-                                    title: 'تعليق محايد',
-                                    content:
-                                        'تعليقك محايد، يمكنك تحسينه ليكون أكثر إيجابية.',
-                                  );
-                                }
-                              } catch (e) {
-                                _showDialogMessage(
-                                  dialogContext,
-                                  title: 'خطأ',
-                                  content: 'فشل في تحليل التعليق. الخطأ: $e',
-                                );
-                              }
+                              _handleAddComment(
+                                context: dialogContext,
+                                commentText: commentText,
+                                localSetState: localSetState,
+                              );
                             }
                           },
                         ),
@@ -322,7 +387,9 @@ class _FeedPostState extends State<FeedPost> {
     );
   }
 
-  /// Builds a single comment tile (with like, report, reply)
+  // ----------------------------
+  // BUILD COMMENT TILE
+  // ----------------------------
   Widget _buildCommentTile({
     required Comment comment,
     required StateSetter localSetState,
@@ -382,6 +449,12 @@ class _FeedPostState extends State<FeedPost> {
                     onPressed: () {
                       if (_isTextNegative(comment.content)) {
                         widget.onPointsChanged(10);
+                        _showAwesomeDialog(
+                          context: context,
+                          title: 'تم الإبلاغ',
+                          content: 'تم الإبلاغ عن التعليق السلبي بنجاح.',
+                          dialogType: DialogType.warning,
+                        );
                       }
                     },
                   ),
@@ -393,41 +466,8 @@ class _FeedPostState extends State<FeedPost> {
                       size: 20,
                     ),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) {
-                          return AlertDialog(
-                            title: const Text('الرد على التعليق'),
-                            content: TextField(
-                              controller: _replyToCommentController,
-                              decoration: const InputDecoration(
-                                hintText: 'اكتب ردك هنا...',
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(ctx).pop();
-                                },
-                                child: const Text('إغلاق'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  final replyText =
-                                      _replyToCommentController.text;
-                                  _replyToCommentController.clear();
-                                  Navigator.of(ctx).pop();
-
-                                  if (replyText.isNotEmpty) {
-                                    onReply(replyText);
-                                  }
-                                },
-                                child: const Text('إرسال'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      _showReplyDialog(
+                          context, _replyToCommentController, onReply);
                     },
                   ),
                 ],
@@ -453,6 +493,44 @@ class _FeedPostState extends State<FeedPost> {
           ),
       ],
     );
+  }
+
+  /// Shows the reply dialog using AwesomeDialog
+  void _showReplyDialog(BuildContext context, TextEditingController controller,
+      Function(String) onReply) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.noHeader,
+      animType: AnimType.bottomSlide,
+      title: 'الرد على التعليق',
+      desc: '',
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'اكتب ردك هنا...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+      ),
+      btnCancelText: 'إغلاق',
+      btnCancelOnPress: () {},
+      btnOkText: 'إرسال',
+      btnOkOnPress: () {
+        final replyText = controller.text.trim();
+        if (replyText.isNotEmpty) {
+          onReply(replyText);
+        } else {
+          // Optionally, show a warning dialog if reply is empty
+          _showWarningDialog(
+            context: context,
+            title: 'تنبيه',
+            content: 'الرجاء كتابة رد قبل الإرسال.',
+          );
+        }
+      },
+    ).show();
   }
 
   /// Builds a tile for a sub-reply
@@ -506,6 +584,12 @@ class _FeedPostState extends State<FeedPost> {
                 onPressed: () {
                   if (_isTextNegative(reply.content)) {
                     widget.onPointsChanged(10);
+                    _showAwesomeDialog(
+                      context: context,
+                      title: 'تم الإبلاغ',
+                      content: 'تم الإبلاغ عن الرد السلبي بنجاح.',
+                      dialogType: DialogType.warning,
+                    );
                   }
                 },
               ),
@@ -514,29 +598,6 @@ class _FeedPostState extends State<FeedPost> {
         ],
       ),
       subtitle: Text(reply.content),
-    );
-  }
-
-  /// Utility method to show a simple dialog
-  void _showDialogMessage(
-    BuildContext context, {
-    required String title,
-    required String content,
-  }) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('حسنًا'),
-            ),
-          ],
-        );
-      },
     );
   }
 

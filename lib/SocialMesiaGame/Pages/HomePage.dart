@@ -31,7 +31,7 @@ class _HomePageState extends State<InstaHomePage> {
     setState(() {
       _tabs = [
         HomeTab(personalInfo: widget.personalInfo),
-        SearchTab(),
+        // SearchTab(),
         UploadTab(),
         ActivityTab(),
         ProfileTab(personalInfo: widget.personalInfo),
@@ -58,7 +58,8 @@ class _HomePageState extends State<InstaHomePage> {
       body: _tabs.length == 0
           ? Center(
               child: CircularProgressIndicator(
-                  backgroundColor: Colors.grey, strokeWidth: 1.0))
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  strokeWidth: 1.0))
           : _tabs[_currentTab],
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
@@ -70,27 +71,27 @@ class _HomePageState extends State<InstaHomePage> {
           },
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home, color: Colors.grey, size: 30.0),
+                icon: Icon(Icons.home,
+                    color: const Color.fromARGB(255, 124, 0, 181), size: 30.0),
                 label: '',
-                activeIcon: Icon(Icons.home, color: Colors.black, size: 30.0)),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search, color: Colors.grey, size: 30.0),
-                label: '',
-                activeIcon:
-                    Icon(Icons.search, color: Colors.black, size: 30.0)),
+                activeIcon: Icon(Icons.home, color: Colors.blue)),
             BottomNavigationBarItem(
                 icon: GestureDetector(
                     onTap: _pickImage,
                     child: Icon(Icons.add_circle_outline,
-                        color: Colors.grey, size: 30.0)),
+                        color: Color.fromARGB(255, 124, 0, 181), size: 30.0)),
                 label: '',
                 activeIcon: Icon(Icons.add_circle_outline,
-                    color: Colors.black, size: 30.0)),
+                    color: Colors.blue, size: 30.0)),
             BottomNavigationBarItem(
-                icon: Icon(FontAwesomeIcons.heart, color: Colors.grey),
+                icon: Icon(FontAwesomeIcons.heart,
+                    color: Color.fromARGB(255, 124, 0, 181), size: 30.0),
                 label: '',
-                activeIcon:
-                    Icon(FontAwesomeIcons.solidHeart, color: Colors.black)),
+                activeIcon: Icon(
+                  FontAwesomeIcons.solidHeart,
+                  color: Colors.red,
+                  size: 30,
+                )),
             BottomNavigationBarItem(
                 icon: CircleAvatar(
                     backgroundImage: AssetImage('assets/MyPro.png'),
