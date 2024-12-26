@@ -78,9 +78,7 @@ class _DoorsScreen3State extends State<DoorsScreen3> {
                 _buildDoor(context, 'إرسال رسائل إلى جميع جهات الاتصال', false),
                 _buildDoor(context,
                     'مشاركة معلوماتك الشخصية عبر البريد الإلكتروني', false),
-                _buildDoor(
-                    context,
-                    'تجنب فتح أي رسائل أو نوافذ مشبوهة  على الجهاز.',
+                _buildDoor(context, 'تجنب فتح أي ملفات مشبوهة',
                     true), // Correct answer triggers door3.mp4
               ],
             ),

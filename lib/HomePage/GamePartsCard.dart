@@ -5,7 +5,7 @@ import 'package:cybergame/PasswordGame/PassVideo.dart';
 import 'package:cybergame/SocialMesiaGame/Pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:cybergame/CarGame/CarMain.dart';
-import 'package:cybergame/DoorsGame/DoorsMainVideo.dart';
+import 'package:cybergame/DoorsGame/DoorsScreen.dart';
 import 'package:cybergame/LinksGame/LinksVideoScreen.dart';
 import 'package:cybergame/NetworkCreateGame/NetworkGameScreen.dart';
 import 'package:cybergame/TrojanHorse/TrojanHorseGame.dart';
@@ -49,7 +49,7 @@ class GamePartsCard extends StatelessWidget {
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DoorsVideoScreen()),
+          MaterialPageRoute(builder: (context) => DoorsScreen()),
         );
         break;
       case 4:

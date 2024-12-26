@@ -1,42 +1,57 @@
 import 'package:flutter/material.dart';
-import 'DoorsScreen4.dart';
+import 'DoorsScreen4.dart'; // تأكد من أن هذا المسار صحيح أو قم بتعديله إذا لزم الأمر
 
 class DesktopScreen3 extends StatefulWidget {
   @override
   _DesktopScreen3State createState() => _DesktopScreen3State();
 }
 
-// كلاس لتخزين بيانات الصورة
+// كلاس لتخزين بيانات الصورة باستخدام حجم واحد
 class ImageData {
   final String path;
-  final double width;
-  final double height;
+  final double size; // حجم واحد للأبعاد
 
   ImageData({
     required this.path,
-    required this.width,
-    required this.height,
+    required this.size,
   });
 }
 
 class _DesktopScreen3State extends State<DesktopScreen3> {
   bool _isWifiOn = false;
 
-  // قائمة بيانات الصور
-  final List<ImageData> _images = [
-    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file_infected.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
-    ImageData(path: 'assets/child_file.png', width: 40, height: 40),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // الحصول على أبعاد الشاشة
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // تحديد حجم الأيقونات بناءً على عرض الشاشة (5% من عرض الشاشة)
+    double iconSize = screenWidth * 0.05;
+
+    // تحديد عدد الأعمدة بناءً على عرض الشاشة
+    int crossAxisCount;
+    if (screenWidth < 600) {
+      crossAxisCount = 2;
+    } else if (screenWidth < 1200) {
+      crossAxisCount = 3;
+    } else {
+      crossAxisCount = 4;
+    }
+
+    // قائمة الصور بالحجم الجديد
+    final List<ImageData> _images = [
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file_infected.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+      ImageData(path: 'assets/child_file.png', size: iconSize),
+    ];
+
     return Scaffold(
       body: Stack(
         children: [
@@ -49,36 +64,26 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
               ),
             ),
           ),
-          // شبكة الصور المبعثرة
+          // شبكة الصور في النصف الأيسر من الشاشة
           Positioned.fill(
             top: 5,
             left: 0,
-            bottom: 60, // ترك مساحة لشريط المهام في الأسفل
+            bottom: screenHeight * 0.1, // ترك مساحة لشريط المهام في الأسفل
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  // تحديد عدد الأعمدة بناءً على عرض الشاشة
-                  double screenWidth = constraints.maxWidth;
-                  int crossAxisCount;
-
-                  if (screenWidth < 400) {
-                    crossAxisCount = 2;
-                  } else if (screenWidth < 700) {
-                    crossAxisCount = 3;
-                  } else if (screenWidth < 1000) {
-                    crossAxisCount = 4;
-                  } else {
-                    crossAxisCount = 5;
-                  }
-
-                  return GridView.builder(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: FractionallySizedBox(
+                  widthFactor: screenWidth > 1200
+                      ? 0.3
+                      : 0.5, // تعديل عرض الشبكة بناءً على عرض الشاشة
+                  child: GridView.builder(
                     itemCount: _images.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 1.0,
+                      crossAxisCount: crossAxisCount, // عدد الأعمدة الديناميكي
+                      crossAxisSpacing: 9.0, // زيادة المسافة الأفقية بين الصور
+                      mainAxisSpacing: 9.0, // زيادة المسافة الرأسية بين الصور
+                      childAspectRatio: 1.0, // مربّع
                     ),
                     itemBuilder: (context, index) {
                       final image = _images[index];
@@ -89,12 +94,18 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text(
-                                  'تنبيه',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                  ),
+                                title: Row(
+                                  children: [
+                                    Icon(Icons.warning, color: Colors.red),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'تنبيه',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 content: Text('لا تقم بفتح الملفات المشبوهة'),
                                 actions: [
@@ -107,9 +118,9 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
                             );
                           }
                         },
-                        child: SizedBox(
-                          width: image.width,
-                          height: image.height,
+                        child: Container(
+                          width: image.size,
+                          height: image.size,
                           child: Image.asset(
                             image.path,
                             fit: BoxFit.contain,
@@ -117,8 +128,8 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
                         ),
                       );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
@@ -126,9 +137,12 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 60,
+              height:
+                  screenHeight * 0.08, // ارتفاع ديناميكي (8% من ارتفاع الشاشة)
               color: const Color.fromARGB(255, 4, 23, 73),
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, // 5% من عرض الشاشة كحشو
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -156,8 +170,8 @@ class _DesktopScreen3State extends State<DesktopScreen3> {
                   IconButton(
                     icon: Image.asset(
                       _isWifiOn ? 'assets/wifigreen.png' : 'assets/wifired.png',
-                      width: 60,
-                      height: 60,
+                      width: screenWidth * 0.08, // 6% من عرض الشاشة
+                      height: screenWidth * 0.08, // 6% من عرض الشاشة
                     ),
                     onPressed: () {
                       setState(() {

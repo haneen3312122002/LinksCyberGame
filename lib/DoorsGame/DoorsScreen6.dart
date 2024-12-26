@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'DoorsScreen7.dart'; // تأكد من وجود هذه الشاشة
+import 'afterdoor6.dart'; // تأكد من وجود هذه الشاشة
 import 'stage.dart'; // استدعاء كلاس Stage
 import 'SoundManager.dart'; // استدعاء كلاس SoundManager
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -139,7 +139,7 @@ class _DoorsScreen6State extends State<DoorsScreen6> {
         Navigator.pop(context); // Close the dialog after the video ends
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoorsScreen7()),
+          MaterialPageRoute(builder: (context) => DesktopScreen6()),
         );
       }
     });
