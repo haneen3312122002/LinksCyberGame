@@ -227,14 +227,14 @@ class _GameScreenState extends State<GameScreen> {
               Positioned(
                 bottom: 20,
                 left: playerXPosition,
-                child:
-                    Image.asset('assets/SpaceCraft.png', width: 70, height: 70),
+                child: Image.asset('assets/SpaceCraft.png',
+                    width: 100, height: 100),
               ),
               ...targets.map((target) => Positioned(
                     top: target.position.dy,
                     left: target.position.dx,
                     child: target.type == TargetType.virus
-                        ? Image.asset(target.imagePath, width: 40, height: 40)
+                        ? Image.asset(target.imagePath, width: 80, height: 80)
                         : Icon(Icons.insert_drive_file,
                             color: const Color.fromARGB(255, 24, 161, 24),
                             size: 40),

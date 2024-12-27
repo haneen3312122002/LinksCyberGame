@@ -4,30 +4,28 @@ import 'GamePartsCard.dart';
 class CryptoGamesGrid extends StatelessWidget {
   final List<String> imagesPaths = [
     'assets/netWorkPart.png',
-    'assets/PartsPage.png',
-    'assets/doorback.png',
     'assets/linkback.png',
     'assets/fiveback.png',
     'assets/viros.png',
     'assets/eightback.png',
-    'assets/10back.png',
+    'assets/nineback.png',
     'assets/ports.png',
-    'assets/carback.png',
-    'assets/newGameImage.png', // Add the new image
+    'assets/19back.png',
+    'assets/doorback.png', // Add the new image
   ];
 
   final List<String> partsTitles = [
-    'ما هي الشبكات؟',
-    'دعنا نضع كلمة سر قوية للشبكة',
-    'الان لنطلب موقع على الويب',
-    'الان لنتصفح الويب بامان',
-    'لنلقي نظرة على اساسيات التشفير',
-    'تعرف وانتبه من خطر الفايروسات',
-    'الان، كافح الفايروسات',
-    'ميز بين انواع الفايروسات',
+    'رحلة في عالم الشبكات',
+    'هل كل الروابط امنة؟',
+    'شارع الحروف الامنة',
+    'لنتعرف على الفايروسات معا',
+    'هل يمكن مكافحة الفايروسات؟',
+    'انواع الفايروسات',
     'ما هي البروتوكولات والمنافذ؟',
-    'بروتوكولات نقل البيانات',
-    'لعبة جديدة: تعرف على الأمن', // Add the new title
+    ' تحدي التواصل',
+    'لنرى كيف ستتعامل مع حوادث الاختراق',
+
+    // Add the new title
   ];
 
   Map<String, String> personalInfo; // Example personal info

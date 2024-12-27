@@ -38,53 +38,51 @@ class GamePartsCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) => NetworkGameScreen()),
         );
         break;
-      case 2:
+      case 8:
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PassVideoScreen(personalInfo: personalInfo),
+            builder: (context) => InstaHomePage(personalInfo: personalInfo),
           ),
         );
         break;
-      case 3:
+      case 9:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DoorsScreen()),
         );
         break;
-      case 4:
+      case 2:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LinksVideoScreen()),
         );
         break;
-      case 5:
+      case 3:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MarioGameScreen()),
         );
         break;
-
-        break;
-      case 6:
+      case 4:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => TrojanHorseGame()),
         );
         break;
-      case 7:
+      case 5:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AntiGameScreen()),
         );
         break;
-      case 8:
+      case 6:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ConnectDotsGame()),
         );
         break;
-      case 9:
+      case 7:
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => port_game()),
