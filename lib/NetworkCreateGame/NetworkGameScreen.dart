@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart'; // Import just_audio for background
 import 'NetNodes.dart';
 import 'Slider.dart';
 import 'package:flutter/services.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class NetworkGameScreen extends StatefulWidget {
   @override
@@ -196,80 +197,16 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }
 
   void _showMessage(String message) {
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        // تعديل خلفية النافذة الحوارية لجعلها ملونة وشفافة
-        backgroundColor:
-            Colors.pinkAccent.withOpacity(0.9), // خلفية زاهية وشفافة
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // زوايا مستديرة
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.warning,
-              color: Colors.yellowAccent,
-              size: 28,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'تنبيه',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // لون النص أبيض ليتباين مع الخلفية الزاهية
-                fontSize: 22, // حجم خط أكبر للنص
-              ),
-            ),
-          ],
-        ),
-        content: Row(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: Colors.white,
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                message,
-                style: TextStyle(
-                  color: Colors.white, // لون النص أبيض
-                  fontSize: 18, // حجم خط أكبر للنص
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.close,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 5),
-                Text(
-                  'إغلاق',
-                  style: TextStyle(
-                    color: Colors.white, // لون النص داخل الزر أبيض
-                    fontSize: 18, // حجم خط أكبر للنص
-                  ),
-                ),
-              ],
-            ),
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.orangeAccent, // خلفية الزر زاهية
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+      dialogType: DialogType.warning,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      title: 'تنبيه',
+      desc: message,
+      btnOkOnPress: () {},
+      btnOkColor: Colors.orangeAccent,
+    ).show();
   }
 
   void checkCentralDevices() {
@@ -294,7 +231,6 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   // دالة للتعامل مع الضغط على جهاز معين لإدخال عنوان IP
   void _onDeviceTap(int index) {
     String? currentIP = deviceIPs[index];
-    // استخراج الخانة الرابعة من عنوان IP الحالي إذا كانت موجودة
     String currentLastOctet = '';
     if (currentIP != null && currentIP.startsWith(fixedIPPart)) {
       currentLastOctet = currentIP.substring(fixedIPPart.length);
@@ -302,136 +238,58 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     TextEditingController _ipController =
         TextEditingController(text: currentLastOctet);
 
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor:
-              Colors.lightGreenAccent.withOpacity(0.9), // خلفية زاهية وشفافة
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20), // زوايا مستديرة
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      title: 'إدخال عنوان IP',
+      body: Row(
+        children: [
+          Text(
+            fixedIPPart,
+            style: TextStyle(color: Colors.black87, fontSize: 18),
           ),
-          title: Row(
-            children: [
-              Icon(
-                Icons.network_check,
-                color: Colors.blueAccent,
-                size: 28,
+          Expanded(
+            child: TextField(
+              controller: _ipController,
+              decoration: InputDecoration(
+                hintText: 'الخانة الرابعة',
+                hintStyle: TextStyle(color: Colors.grey),
               ),
-              SizedBox(width: 10),
-              Text(
-                'إدخال عنوان IP',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87, // لون النص داكن ليتباين مع الخلفية
-                  fontSize: 22, // حجم خط أكبر للنص
-                ),
-              ),
-            ],
-          ),
-          content: Row(
-            children: [
-              Text(
-                fixedIPPart,
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _ipController,
-                  decoration: InputDecoration(
-                    hintText: 'الخانة الرابعة',
-                    hintStyle: TextStyle(color: Colors.grey),
-                  ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(3),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.cancel,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    'إلغاء',
-                    style: TextStyle(
-                      color: Colors.white, // لون النص داخل الزر أبيض
-                      fontSize: 18, // حجم خط أكبر للنص
-                    ),
-                  ),
-                ],
-              ),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.redAccent, // خلفية الزر زاهية
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
-                ),
-              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(3),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                String enteredLastOctet = _ipController.text.trim();
-                String fullIP = fixedIPPart + enteredLastOctet;
-                if (!_validateLastOctet(enteredLastOctet)) {
-                  _showMessage(
-                      'الخانة الرابعة غير صالحة. يجب أن تكون بين 0 و 255.');
-                  return;
-                }
-                if (usedIPs.contains(fullIP) && deviceIPs[index] != fullIP) {
-                  _showMessage('هذا عنوان IP مستخدم بالفعل.');
-                  return;
-                }
-                setState(() {
-                  if (deviceIPs.containsKey(index)) {
-                    usedIPs.remove(deviceIPs[index]!);
-                  }
-                  deviceIPs[index] = fullIP;
-                  usedIPs.add(fullIP);
-                });
-                Navigator.of(context).pop();
-                _checkWinCondition(); // فحص شروط الفوز بعد تعيين IP
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.save,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    'حفظ',
-                    style: TextStyle(
-                      color: Colors.white, // لون النص داخل الزر أبيض
-                      fontSize: 18, // حجم خط أكبر للنص
-                    ),
-                  ),
-                ],
-              ),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.green, // خلفية الزر زاهية
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
-                ),
-              ),
-            ),
-          ],
-        );
+          ),
+        ],
+      ),
+      btnOkText: 'حفظ',
+      btnOkOnPress: () {
+        String enteredLastOctet = _ipController.text.trim();
+        String fullIP = fixedIPPart + enteredLastOctet;
+        if (!_validateLastOctet(enteredLastOctet)) {
+          _showMessage('الخانة الرابعة غير صالحة. يجب أن تكون بين 0 و 255.');
+          return;
+        }
+        if (usedIPs.contains(fullIP) && deviceIPs[index] != fullIP) {
+          _showMessage('هذا عنوان IP مستخدم بالفعل.');
+          return;
+        }
+        setState(() {
+          if (deviceIPs.containsKey(index)) {
+            usedIPs.remove(deviceIPs[index]!);
+          }
+          deviceIPs[index] = fullIP;
+          usedIPs.add(fullIP);
+        });
+        _checkWinCondition(); // Check win condition after setting IP
       },
-    );
+      btnCancelText: 'إلغاء',
+      btnCancelOnPress: () {},
+    ).show();
   }
 
   // دالة للتحقق من صحة عنوان IP
@@ -765,83 +623,19 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
 
   // دالة لعرض مربع حوار الفوز
   void _showWinDialog() {
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor:
-            Colors.yellowAccent.withOpacity(0.9), // خلفية زاهية وشفافة
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20), // زوايا مستديرة
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.emoji_events,
-              color: Colors.orange,
-              size: 28,
-            ),
-            SizedBox(width: 10),
-            Text(
-              'تهانينا!',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87, // لون النص داكن ليتباين مع الخلفية
-                fontSize: 22, // حجم خط أكبر للنص
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              color: Colors.green,
-              size: 60,
-            ),
-            SizedBox(height: 10),
-            Text(
-              'لقد فزت في اللعبة!',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 18,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _resetGame(); // إعادة ضبط اللعبة إذا رغبت بذلك
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.refresh,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 5),
-                Text(
-                  'إعادة',
-                  style: TextStyle(
-                    color: Colors.white, // لون النص داخل الزر أبيض
-                    fontSize: 18, // حجم خط أكبر للنص
-                  ),
-                ),
-              ],
-            ),
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.blueAccent, // خلفية الزر زاهية
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10), // زوايا مستديرة للزر
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+      dialogType: DialogType.success,
+      animType: AnimType.scale,
+      headerAnimationLoop: false,
+      title: 'تهانينا!',
+      desc: 'لقد فزت في اللعبة!',
+      btnOkText: 'إعادة',
+      btnOkOnPress: () {
+        _resetGame();
+      },
+      btnOkColor: Colors.blueAccent,
+    ).show();
   }
 
   // دالة لإعادة ضبط اللعبة بعد الفوز
