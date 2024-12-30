@@ -49,7 +49,8 @@ class LoginPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, // White color for neon effect
+                          color: const Color.fromARGB(255, 190, 186,
+                              186), // White color for neon effect
                           fontFamily: 'RobotoMono',
                           shadows: [
                             Shadow(
@@ -115,19 +116,21 @@ class LoginPage extends StatelessWidget {
                               builder: (context) => SecondPage(
                                 personalInfo: personalInfo,
                                 password: '',
-                                passwordColor: Colors.grey,
+                                passwordColor:
+                                    const Color.fromARGB(255, 122, 117, 117),
                               ),
                             ),
                           );
                         },
-                        icon: Icon(Icons.arrow_forward, color: Colors.white),
+                        icon: Icon(Icons.arrow_forward,
+                            color: const Color.fromARGB(255, 201, 193, 193)),
                         label: Text(
                           'التالي',
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              const Color.fromARGB(255, 132, 0, 255),
+                              const Color.fromARGB(255, 11, 16, 78),
                           padding: EdgeInsets.symmetric(
                             horizontal: 30.0,
                             vertical: 15.0,
@@ -235,7 +238,8 @@ class SecondPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white, // White color for neon effect
+                            color: const Color.fromARGB(255, 182, 178,
+                                178), // White color for neon effect
                             fontFamily: 'RobotoMono',
                             shadows: [
                               Shadow(
@@ -414,7 +418,7 @@ class SecondPage extends StatelessWidget {
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    const Color.fromARGB(255, 145, 2, 255),
+                                    const Color.fromARGB(255, 11, 16, 78),
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 15.0,
                                   vertical: 10.0,
