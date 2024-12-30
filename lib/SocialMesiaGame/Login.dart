@@ -49,8 +49,8 @@ class LoginPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 190, 186,
-                              186), // White color for neon effect
+                          color: const Color.fromARGB(255, 241, 238,
+                              238), // White color for neon effect
                           fontFamily: 'RobotoMono',
                           shadows: [
                             Shadow(
