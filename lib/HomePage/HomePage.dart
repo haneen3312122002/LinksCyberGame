@@ -31,10 +31,17 @@ class HomePage extends StatelessWidget {
 class BackgroundImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // IMPORTANT: Verify that 'assets/BackGround1.png' (or 'assets/background.png' if that's the one causing error)
+    // exists at the correct path in your project and is correctly listed in pubspec.yaml under the assets section.
+    // E.g., in pubspec.yaml:
+    // flutter:
+    //   assets:
+    //     - assets/
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/BackGround1.png'),
+          image: AssetImage(
+              'assets/BackGround1.png'), // Ensure this path is correct
           fit: BoxFit.cover,
         ),
       ),

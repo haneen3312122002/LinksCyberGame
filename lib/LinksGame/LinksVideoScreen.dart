@@ -16,6 +16,11 @@ class _VideoScreenState extends State<LinksVideoScreen> {
   @override
   void initState() {
     super.initState();
+    // IMPORTANT: Ensure 'assets/the_char.mp4' exists and is listed in pubspec.yaml
+    // Example in pubspec.yaml:
+    // flutter:
+    //   assets:
+    //     - assets/
     _controller = VideoPlayerController.asset("assets/the_char.mp4")
       ..initialize().then((_) {
         setState(() {});
@@ -37,6 +42,11 @@ class _VideoScreenState extends State<LinksVideoScreen> {
 
   Future<void> _playBackgroundMusic() async {
     try {
+      // IMPORTANT: Ensure 'assets/LinkSong.mp3' exists and is listed in pubspec.yaml
+      // Example in pubspec.yaml:
+      // flutter:
+      //   assets:
+      //     - assets/
       await _backgroundMusicPlayer.setAsset('assets/LinkSong.mp3');
       _backgroundMusicPlayer.setVolume(0.3);
       _backgroundMusicPlayer.setLoopMode(LoopMode.one); // تكرار الموسيقى
@@ -54,12 +64,12 @@ class _VideoScreenState extends State<LinksVideoScreen> {
     super.dispose();
   }
 
-  void _skipVideo() {
+  void _skipVideo(BuildContext contextForNavigation) {
     _controller.pause();
     _backgroundMusicPlayer
         .stop(); // إيقاف موسيقى الخلفية عند الانتقال للشاشة التالية
     Navigator.push(
-      context,
+      contextForNavigation, // Use the provided context for navigation
       MaterialPageRoute(builder: (context) => GameScreen()),
     );
   }
@@ -107,12 +117,16 @@ class _VideoScreenState extends State<LinksVideoScreen> {
                     size: 40.0,
                   ),
                 ),
-                IconButton(
-                  onPressed: _skipVideo,
-                  icon: Icon(
-                    Icons.skip_next,
-                    color: Colors.green,
-                    size: 40.0,
+                // MODIFIED: Wrap IconButton with Builder to ensure correct Navigator context
+                Builder(
+                  builder: (innerContext) => IconButton(
+                    onPressed: () =>
+                        _skipVideo(innerContext), // Pass innerContext
+                    icon: Icon(
+                      Icons.skip_next,
+                      color: Colors.green,
+                      size: 40.0,
+                    ),
                   ),
                 ),
               ],

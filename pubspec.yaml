@@ -1,7 +1,7 @@
 name: cybergame
 description: "A new Flutter project."
 
-publish_to: 'none' 
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -20,7 +20,7 @@ dependencies:
   video_player: ^2.9.1
   cached_network_image: ^3.4.0
   audioplayers: ^6.1.0
-  just_audio: ^0.9.40
+  just_audio: ^0.9.32
   flutter_screenutil: ^5.9.3
   http: ^1.2.2
   flame: 1.19.0
@@ -30,6 +30,9 @@ dependencies:
   shared_preferences: ^2.3.4
   image_picker: ^1.1.2
   font_awesome_flutter: ^10.8.0
+
+dependency_overrides:
+  just_audio_web: 0.4.8
 
 dev_dependencies:
   flutter_test:
@@ -194,7 +197,6 @@ flutter:
     - assets/insta.png 
     - assets/word.png
     - assets/photoshop.png
-     #socialGame:
     - assets/st1.png
     - assets/st2.png  
     - assets/st3.png
@@ -211,10 +213,3 @@ flutter:
     - assets/post5.png
     - assets/MyPro.png
     - assets/LoginBack.png
-    
-    
-    
-
-    
-    
-    

@@ -171,6 +171,29 @@ class _TrojanHorseGameState extends State<TrojanHorseGame> {
                       ),
                     ),
                   ),
+                  // -- بداية الإضافة --
+                  SizedBox(width: constraints.maxWidth * 0.02),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isAuthenticated = true;
+                      });
+                    },
+                    child: Text(
+                      'تخطي إلى اللعبة',
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  // -- نهاية الإضافة --
                 ],
               ),
             ],

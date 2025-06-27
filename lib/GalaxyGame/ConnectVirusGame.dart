@@ -136,7 +136,8 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87, // خلفية داكنة للتباين
+      backgroundColor: const Color.fromARGB(255, 14, 81, 136),
+      // خلفية داكنة للتباين
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -168,6 +169,30 @@ class _GameScreenState extends State<GameScreen> {
                         horizontal: 10.0, vertical: 10.0),
                   ),
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (widget.levelIndex == 1) const SizedBox(height: 10),
+                if (widget.levelIndex == 1 || widget.levelIndex == 0)
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      // الانتقال مباشرة إلى لعبة الفضاء
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => GalaxyAttackGame(),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.skip_next),
+                    label: Text('تخطي'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.greenAccent, // لون مميز لزر التخطي
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                    ),
+                  ),
+                // -- نهاية الإضافة --
               ],
             ),
             const SizedBox(width: 10),

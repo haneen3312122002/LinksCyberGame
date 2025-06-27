@@ -12,6 +12,7 @@ class NetworkGameScreen extends StatefulWidget {
 }
 
 class _NetworkGameScreenState extends State<NetworkGameScreen> {
+  Map<int, String> placedDevices = {};
   final AudioPlayer _backgroundAudioPlayer =
       AudioPlayer(); // Background music player
   // الجزء الثابت من عنوان IP
@@ -147,28 +148,110 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     });
   }
 
+  // --- بداية التعديل: منطق جديد لإضافة التوصيلات ---
   void endDraggingLine(Offset end, String? deviceType, bool wifiStatus) {
-    if (startDragPosition != null && canConnectDevice(deviceType ?? '')) {
-      Color lineColor = const Color.fromARGB(255, 221, 111, 255);
-      if (deviceType == 'Tab' && wifiStatus) {
-        lineColor = const Color.fromARGB(
-            255, 12, 220, 19); // لون أخضر إذا كان من تابلت مع WiFi مفعل
-      }
+    if (startDragPosition == null) return;
 
+    // البحث عن الجهاز الهدف الذي تم إفلات الخط فوقه
+    int? targetIndex = _getDeviceIndexAtPosition(end);
+
+    // إذا لم يتم الإفلات على جهاز صالح، أو إذا كان الجهاز الهدف هو نفس المصدر، قم بإلغاء العملية
+    int? sourceIndex = _getDeviceIndexAtPosition(startDragPosition!);
+    if (targetIndex == null ||
+        sourceIndex == null ||
+        sourceIndex == targetIndex) {
       setState(() {
-        connections.add({
-          'start': startDragPosition!,
-          'end': end,
-          'color': lineColor,
-        });
         startDragPosition = null;
         currentDragPosition = null;
-        addConnection(deviceType ?? '');
       });
-      checkCentralDevices();
-      _checkWinCondition(); // فحص شروط الفوز بعد إضافة التوصيلة
+      return;
     }
+
+    // التحقق من صلاحية التوصيل المنطقي
+    String? errorMessage = _isConnectionValid(sourceIndex, targetIndex);
+
+    if (errorMessage == null) {
+      // التوصيل صالح، قم بإضافته
+      setState(() {
+        connections.add({
+          // استخدم إحداثيات مركز الجهاز المصدر والهدف
+          'start': _generateDevicePositions(context)[sourceIndex],
+          'end': _generateDevicePositions(context)[targetIndex],
+          'color': const Color.fromARGB(255, 114, 224, 249),
+        });
+      });
+      _checkWinCondition();
+    } else {
+      // التوصيل غير صالح، أظهر رسالة خطأ
+      _showMessage(errorMessage);
+    }
+
+    // إعادة تعيين متغيرات السحب في كل الحالات
+    setState(() {
+      startDragPosition = null;
+      currentDragPosition = null;
+    });
   }
+
+  String? _isConnectionValid(int sourceIndex, int targetIndex) {
+    String sourceType = _getDeviceTypeByIndex(sourceIndex);
+    String targetType = _getDeviceTypeByIndex(targetIndex);
+
+    var connectionPair = {sourceType, targetType};
+    var indexedPair = {sourceIndex, targetIndex};
+
+    // منع إنشاء توصيلة موجودة بالفعل
+    for (var conn in connections) {
+      int? s = _getDeviceIndexAtPosition(conn['start']);
+      int? e = _getDeviceIndexAtPosition(conn['end']);
+      if (s != null && e != null && ({s, e} == indexedPair)) {
+        return "هذان الجهازان متصلان بالفعل.";
+      }
+    }
+
+    int sourceConnections = _countConnectionsForDevice(sourceIndex);
+
+    // القاعدة 1: الإنترنت (Wi-Fi) يتصل بالراوتر فقط
+    if (sourceType == 'internet' || targetType == 'internet') {
+      if (!connectionPair.contains('router'))
+        return "يجب توصيل الإنترنت (Wi-Fi) بالراوتر فقط.";
+      if (_countConnectionsForDevice(0) >= 1) return "الإنترنت متصل بالفعل.";
+    }
+    // القاعدة 2: الراوتر يتصل بالإنترنت والسويتشات
+    else if (sourceType == 'router' || targetType == 'router') {
+      if (!connectionPair.contains('switch') &&
+          !connectionPair.contains('internet'))
+        return "يجب توصيل الراوتر بالإنترنت أو بالسويتشات.";
+      if (_countConnectionsForDevice(1) >= 3)
+        return "الراوتر ممتلئ (يقبل توصيلة من الإنترنت وتوصيلتين للسويتشات).";
+    }
+    // القاعدة 3: السويتش يتصل بالراوتر والأجهزة الطرفية
+    else if (sourceType == 'switch' || targetType == 'switch') {
+      if (!connectionPair.contains('router') &&
+          !_isEndDevice(sourceType) &&
+          !_isEndDevice(targetType)) {
+        return "يجب توصيل السويتش بالراوتر أو بالأجهزة الطرفية.";
+      }
+      int switchIndex = sourceType == 'switch' ? sourceIndex : targetIndex;
+      if (_countConnectionsForDevice(switchIndex) >= 4)
+        return "هذا السويتش ممتلئ."; // 1 للراوتر + 3 أجهزة
+    }
+    // القاعدة 4: الأجهزة الطرفية تتصل بالسويتشات فقط
+    else if (_isEndDevice(sourceType) || _isEndDevice(targetType)) {
+      if (!connectionPair.contains('switch'))
+        return "يجب توصيل الأجهزة الطرفية بالسويتش فقط.";
+      if (_isEndDevice(sourceType) && sourceConnections >= 1)
+        return "هذا الجهاز متصل بالفعل.";
+      if (_isEndDevice(targetType) &&
+          _countConnectionsForDevice(targetIndex) >= 1)
+        return "هذا الجهاز متصل بالفعل.";
+    } else {
+      return "توصيلة غير معروفة.";
+    }
+
+    return null; // التوصيل صالح
+  }
+// --- نهاية التعديل ---
 
   bool canConnectDevice(String deviceType) {
     if (deviceType == 'router' && deviceConnectionsCount['router']! >= 1) {
@@ -228,6 +311,61 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     }
   }
 
+// --- دوال مساعدة جديدة ---
+  int? _getDeviceIndexAtPosition(Offset position) {
+    final positions = _generateDevicePositions(context);
+    for (int i = 0; i < positions.length; i++) {
+      if ((position - positions[i]).distance < 35) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  String _getDeviceTypeByIndex(int index) {
+    if (index == 0) return 'internet';
+    if (index == 1) return 'router';
+    if (index == 2 || index == 3) return 'switch';
+    // بالنسبة للأجهزة الطرفية، استخدم النوع من الخريطة
+    return placedDevices[index] ?? 'device_placeholder'; // Placeholder type
+  }
+
+  bool _isEndDevice(String type) {
+    return type == 'Computer1' ||
+        type == 'Computer2' ||
+        type == 'Computer3' ||
+        type == 'Printer' ||
+        type == 'Tab' ||
+        type == 'device_placeholder';
+  }
+
+  int _countConnectionsForDevice(int deviceIndex) {
+    int count = 0;
+    for (var conn in connections) {
+      int? startIndex = _getDeviceIndexAtPosition(conn['start']);
+      int? endIndex = _getDeviceIndexAtPosition(conn['end']);
+      if (startIndex == deviceIndex || endIndex == deviceIndex) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  bool _isConnected(int index1, int index2) {
+    var targetPair = {index1, index2};
+    for (var conn in connections) {
+      int? startIndex = _getDeviceIndexAtPosition(conn['start']);
+      int? endIndex = _getDeviceIndexAtPosition(conn['end']);
+      if (startIndex != null && endIndex != null) {
+        if ({startIndex, endIndex} == targetPair) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+// --- نهاية الدوال المساعدة الجديدة ---
   // دالة للتعامل مع الضغط على جهاز معين لإدخال عنوان IP
   void _onDeviceTap(int index) {
     String? currentIP = deviceIPs[index];
@@ -363,8 +501,8 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
                       }
 
                       return Positioned(
-                        left: position.dx,
-                        top: position.dy,
+                        left: position.dx - 35, // اطرح نصف عرض الجهاز
+                        top: position.dy - 35,
                         child: Column(
                           children: [
                             GestureDetector(
@@ -460,124 +598,39 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }
 
   // دالة لفحص شروط الفوز
-  void _checkWinConditionA() {
-    // 1. التأكد من وجود جميع الأجهزة في الطبقات الصحيحة
-    bool correctLayer = true;
-    if (devicePositions.length != 9) {
-      correctLayer = false;
-    } else {
-      // طبقة 1: الإنترنت
-      String? internetType = _getDeviceTypeAtLayer(0);
-      if (internetType != 'internet') {
-        correctLayer = false;
-      }
-
-      // طبقة 2: الراوتر
-      String? routerType = _getDeviceTypeAtLayer(1);
-      if (routerType != 'router') {
-        correctLayer = false;
-      }
-
-      // طبقة 3: السويتشين
-      String? switch1Type = _getDeviceTypeAtLayer(2);
-      String? switch2Type = _getDeviceTypeAtLayer(3);
-      if (switch1Type != 'switch' || switch2Type != 'switch') {
-        correctLayer = false;
-      }
-
-      // طبقة 4: الكمبيوتر، التابلت والطابعة
-      List<String?> layer4Types = [
-        _getDeviceTypeAtLayer(4),
-        _getDeviceTypeAtLayer(5),
-        _getDeviceTypeAtLayer(6),
-        _getDeviceTypeAtLayer(7),
-        _getDeviceTypeAtLayer(8),
-      ];
-      for (var type in layer4Types) {
-        if (type != 'Computer1' &&
-            type != 'Computer2' &&
-            type != 'Computer3' &&
-            type != 'Printer' &&
-            type != 'Tab') {
-          correctLayer = false;
-          break;
-        }
-      }
-    }
-
-    if (!correctLayer) {
-      return; // الشروط غير مستوفاة
-    }
-
-    // 2. التأكد من أن كل جهاز له عنوان IP فريد
+  // --- بداية التعديل: منطق جديد للتحقق من الفوز ---
+// --- بداية التعديل: منطق جديد للتحقق من الفوز ---
+  void _checkWinCondition() {
+    // الشرط 1: يجب أن يكون لجميع الأجهزة التسعة عناوين IP فريدة
     if (deviceIPs.length != 9 || usedIPs.length != 9) {
-      return; // بعض الأجهزة ليس لها IP أو هناك تكرار
+      return;
     }
 
-    // 3. التأكد من التوصيلات الصحيحة
-    // تعريف الخريطة لتتبع التوصيلات
-    Map<String, List<String>> connectionsMap = {};
+    // الشرط 2: التحقق من التوصيلات الصحيحة
+    bool internetToRouter = _isConnected(0, 1);
+    int routerToSwitchCount =
+        (_isConnected(1, 2) ? 1 : 0) + (_isConnected(1, 3) ? 1 : 0);
 
-    for (var connection in connections) {
-      String startDevice = _getDeviceTypeByPosition(connection['start']);
-      String endDevice = _getDeviceTypeByPosition(connection['end']);
-
-      if (startDevice.isEmpty || endDevice.isEmpty) continue;
-
-      if (!connectionsMap.containsKey(startDevice)) {
-        connectionsMap[startDevice] = [];
-      }
-      connectionsMap[startDevice]!.add(endDevice);
-    }
-
-    // التوصيل الصحيح:
-    // الراوتر متصل بالإنترنت
-    // السويتشين متصلين بالراوتر
-    // باقي الأجهزة متصلة بالسويتشين
-
-    bool correctConnections = true;
-
-    // 3.1. الراوتر متصل بالإنترنت
-    if (!(connectionsMap.containsKey('router') &&
-        connectionsMap['router']!.contains('internet'))) {
-      correctConnections = false;
-    }
-
-    // 3.2. السويتشين متصلين بالراوتر
-    if (!(connectionsMap.containsKey('switch') &&
-        connectionsMap['switch']!.contains('router'))) {
-      correctConnections = false;
-    }
-
-    // 3.3. باقي الأجهزة متصلة بالسويتشين
-    List<String> layer4Devices = [
-      'Computer1',
-      'Computer2',
-      'Computer3',
-      'Printer',
-      'Tab'
-    ];
-    for (var device in layer4Devices) {
-      bool connectedToSwitch = false;
-      if (connectionsMap.containsKey(device)) {
-        for (var connectedDevice in connectionsMap[device]!) {
-          if (connectedDevice == 'switch') {
-            connectedToSwitch = true;
-            break;
-          }
-        }
-      }
-      if (!connectedToSwitch) {
-        correctConnections = false;
-        break;
+    int connectedEndDevicesCount = 0;
+    for (int i = 4; i <= 8; i++) {
+      if (_isConnected(i, 2) || _isConnected(i, 3)) {
+        connectedEndDevicesCount++;
       }
     }
 
-    if (correctConnections) {
+    // شروط الفوز:
+    // 1. الإنترنت متصل بالراوتر.
+    // 2. الراوتر متصل بالسويتشين.
+    // 3. كل الأجهزة الطرفية الخمسة متصلة.
+    if (internetToRouter &&
+        routerToSwitchCount == 2 &&
+        connectedEndDevicesCount == 5) {
       _showWinDialog();
     }
   }
 
+// --- نهاية التعديل ---
+// --- نهاية التعديل ---
   // دالة للحصول على نوع الجهاز بناءً على موقع التوصيل
   String _getDeviceTypeByPosition(Offset position) {
     for (int index = 0;
@@ -653,123 +706,6 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   }
 
   // دالة لفحص شروط الفوز
-  void _checkWinCondition() {
-    // 1. التأكد من وجود جميع الأجهزة في الطبقات الصحيحة
-    bool correctLayer = true;
-    if (devicePositions.length != 9) {
-      correctLayer = false;
-    } else {
-      // طبقة 1: الإنترنت
-      String? internetType = _getDeviceTypeAtLayer(0);
-      if (internetType != 'internet') {
-        correctLayer = false;
-      }
-
-      // طبقة 2: الراوتر
-      String? routerType = _getDeviceTypeAtLayer(1);
-      if (routerType != 'router') {
-        correctLayer = false;
-      }
-
-      // طبقة 3: السويتشين
-      String? switch1Type = _getDeviceTypeAtLayer(2);
-      String? switch2Type = _getDeviceTypeAtLayer(3);
-      if (switch1Type != 'switch' || switch2Type != 'switch') {
-        correctLayer = false;
-      }
-
-      // طبقة 4: الكمبيوتر، التابلت والطابعة
-      List<String?> layer4Types = [
-        _getDeviceTypeAtLayer(4),
-        _getDeviceTypeAtLayer(5),
-        _getDeviceTypeAtLayer(6),
-        _getDeviceTypeAtLayer(7),
-        _getDeviceTypeAtLayer(8),
-      ];
-      for (var type in layer4Types) {
-        if (type != 'Computer1' &&
-            type != 'Computer2' &&
-            type != 'Computer3' &&
-            type != 'Printer' &&
-            type != 'Tab') {
-          correctLayer = false;
-          break;
-        }
-      }
-    }
-
-    if (!correctLayer) {
-      return; // الشروط غير مستوفاة
-    }
-
-    // 2. التأكد من أن كل جهاز له عنوان IP فريد
-    if (deviceIPs.length != 9 || usedIPs.length != 9) {
-      return; // بعض الأجهزة ليس لها IP أو هناك تكرار
-    }
-
-    // 3. التأكد من التوصيلات الصحيحة
-    // تعريف الخريطة لتتبع التوصيلات
-    Map<String, List<String>> connectionsMap = {};
-
-    for (var connection in connections) {
-      String startDevice = _getDeviceTypeByPosition(connection['start']);
-      String endDevice = _getDeviceTypeByPosition(connection['end']);
-
-      if (startDevice.isEmpty || endDevice.isEmpty) continue;
-
-      if (!connectionsMap.containsKey(startDevice)) {
-        connectionsMap[startDevice] = [];
-      }
-      connectionsMap[startDevice]!.add(endDevice);
-    }
-
-    // التوصيل الصحيح:
-    // الراوتر متصل بالإنترنت
-    // السويتشين متصلين بالراوتر
-    // باقي الأجهزة متصلة بالسويتشين
-
-    bool correctConnections = true;
-
-    // 3.1. الراوتر متصل بالإنترنت
-    if (!(connectionsMap.containsKey('router') &&
-        connectionsMap['router']!.contains('internet'))) {
-      correctConnections = false;
-    }
-
-    // 3.2. السويتشين متصلين بالراوتر
-    if (!(connectionsMap.containsKey('switch') &&
-        connectionsMap['switch']!.contains('router'))) {
-      correctConnections = false;
-    }
-
-    // 3.3. باقي الأجهزة متصلة بالسويتشين
-    List<String> layer4Devices = [
-      'Computer1',
-      'Computer2',
-      'Computer3',
-      'Printer',
-      'Tab'
-    ];
-    for (var device in layer4Devices) {
-      bool connectedToSwitch = false;
-      if (connectionsMap.containsKey(device)) {
-        for (var connectedDevice in connectionsMap[device]!) {
-          if (connectedDevice == 'switch') {
-            connectedToSwitch = true;
-            break;
-          }
-        }
-      }
-      if (!connectedToSwitch) {
-        correctConnections = false;
-        break;
-      }
-    }
-
-    if (correctConnections) {
-      _showWinDialog();
-    }
-  }
 }
 
 class LinePainter extends CustomPainter {

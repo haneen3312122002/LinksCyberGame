@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart'; // Adding this line
 import 'package:http/http.dart' as http; // For API calls
 import 'package:cybergame/connection.dart';
@@ -13,6 +14,8 @@ class MarioGameScreen extends StatefulWidget {
 }
 
 class _MarioGameScreenState extends State<MarioGameScreen> {
+  final FocusNode _focusNode = FocusNode();
+
   double _characterXPosition =
       0; // Initial horizontal position of the character
   double _characterYPosition = 0.0; // Start at the bottom
@@ -33,6 +36,7 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
   void initState() {
     super.initState();
     _generateRandomWordAndKey(); // Generate a random word and key at the start of the game
+    _focusNode.requestFocus();
   }
 
   // Function to generate a random word and key
@@ -51,6 +55,12 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       _moveCharacter(
           direction); // Repeated move at high frequency for smoothness
     });
+  }
+
+  void dispose() {
+    _focusNode.dispose(); // <--- أضف هذا السطر
+    _movementTimer?.cancel(); // <--- أضف هذا السطر
+    super.dispose();
   }
 
   // Function to stop continuous movement
@@ -261,6 +271,30 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
       });
     }
   }
+  // ... بعد دالة _submitWord
+
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (event is RawKeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+        _startMoving('forward');
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+        _startMoving('backward');
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        _startMoving('left'); // <-- ملاحظة: في أزرار الشاشة، هذا الاتجاه معكوس
+      } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        _startMoving('right'); // <-- ملاحظة: في أزرار الشاشة، هذا الاتجاه معكوس
+      } else if (event.logicalKey == LogicalKeyboardKey.enter) {
+        _collectCurrentLetter();
+      }
+    } else if (event is RawKeyUpEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp ||
+          event.logicalKey == LogicalKeyboardKey.arrowDown ||
+          event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        _stopMoving();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -272,312 +306,320 @@ class _MarioGameScreenState extends State<MarioGameScreen> {
     // Generate the letter tiles
     List<LetterTileData> letterTiles = _generateLetterTiles(context);
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          MarioBackground(),
-          GameGround(
-            characterXPosition: _characterXPosition,
-            characterYPosition: _characterYPosition,
-            characterDirection: _characterDirection,
-            letterTiles: letterTiles,
-          ),
-          // Display the random word at the top left corner with fun styling
-          Positioned(
-            top: 60,
-            left: 20,
-            child: Text(
-              _randomWord,
-              style: GoogleFonts.pangolin(
-                // Using font from the library
-                textStyle: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(
-                      255, 231, 98, 255), // Use a fun color
-                ),
+    return RawKeyboardListener(
+        // <--- أضف هذا الـ Widget
+        focusNode: _focusNode,
+        onKey: _handleKeyEvent,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              MarioBackground(),
+              GameGround(
+                characterXPosition: _characterXPosition,
+                characterYPosition: _characterYPosition,
+                characterDirection: _characterDirection,
+                letterTiles: letterTiles,
               ),
-            ),
-          ),
-          // Display the random key with a key icon on the top right corner
-          Positioned(
-            top: 60,
-            right: 40,
-            child: Row(
-              children: [
-                Icon(Icons.vpn_key,
-                    color: Colors.orange, size: fontSize * 0.8), // Key icon
-                SizedBox(width: 5),
-                Text(
-                  '$_randomKey',
+              // Display the random word at the top left corner with fun styling
+              Positioned(
+                top: 60,
+                left: 20,
+                child: Text(
+                  _randomWord,
                   style: GoogleFonts.pangolin(
                     // Using font from the library
                     textStyle: TextStyle(
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      color: const Color.fromARGB(
+                          255, 231, 98, 255), // Use a fun color
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Display the current letter at the top center
-          if (_currentLetter != null)
-            Positioned(
-              top: 150,
-              right: MediaQuery.of(context).size.width / 8.5 - fontSize * 2,
-              child: Text(
-                'الحرف الحالي: $_currentLetter',
-                style: GoogleFonts.pangolin(
-                  textStyle: TextStyle(
-                    fontSize: fontSize - 0.5,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
                   ),
                 ),
               ),
-            ),
-          // Control buttons arranged in a diamond shape
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.08,
-            right: MediaQuery.of(context).size.width * 0.05,
-            child: Column(
-              children: [
-                // Up Arrow
-                ArrowButton(
-                  icon: Icons.arrow_upward,
-                  onTapDown: (_) => _startMoving('forward'),
-                  onTapUp: (_) => _stopMoving(),
-                  onTapCancel: () => _stopMoving(),
-                  iconSize: iconSize,
-                  padding: buttonPadding,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              // Display the random key with a key icon on the top right corner
+              Positioned(
+                top: 60,
+                right: 40,
+                child: Row(
                   children: [
-                    // Left Arrow
-                    ArrowButton(
-                      icon: Icons.arrow_back,
-                      onTapDown: (_) => _startMoving('right'),
-                      onTapUp: (_) => _stopMoving(),
-                      onTapCancel: () => _stopMoving(),
-                      iconSize: iconSize,
-                      padding: buttonPadding,
-                    ),
-                    SizedBox(width: buttonPadding),
-                    ArrowButton(
-                      icon: Icons.arrow_forward,
-                      onTapDown: (_) => _startMoving('left'),
-                      onTapUp: (_) => _stopMoving(),
-                      onTapCancel: () => _stopMoving(),
-                      iconSize: iconSize,
-                      padding: buttonPadding,
-                    ),
-                    // Right Arrow
-                  ],
-                ),
-                // Down Arrow
-                ArrowButton(
-                  icon: Icons.arrow_downward,
-                  onTapDown: (_) => _startMoving('backward'),
-                  onTapUp: (_) => _stopMoving(),
-                  onTapCancel: () => _stopMoving(),
-                  iconSize: iconSize,
-                  padding: buttonPadding,
-                ),
-              ],
-            ),
-          ),
-          // Buttons and collected letters at the bottom left
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.2,
-            left: MediaQuery.of(context).size.width * 0.2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Buttons Row
-                Row(
-                  children: [
-                    // Display Collected Word Button
-                    IconButton(
-                      icon: Icon(Icons.text_snippet),
-                      color: const Color.fromARGB(
-                          255, 204, 0, 255), // Customize color as needed
-                      tooltip: 'اعرض الكلمة',
-                      onPressed: _displayCollectedWord,
-                    ),
-                    SizedBox(width: 10),
-                    // Collect Letter Button
-                    IconButton(
-                      icon: Icon(Icons.add_circle),
-                      color: _currentLetter != null
-                          ? const Color.fromARGB(255, 128, 255, 0)
-                          : Colors.grey,
-                      tooltip: 'خذ الحرف',
-                      onPressed:
-                          _currentLetter != null ? _collectCurrentLetter : null,
-                    ),
-                    SizedBox(width: 10),
-                    // Submit Button
-                    IconButton(
-                      icon: Icon(Icons.send),
-                      color: Colors.blue, // Customize color as needed
-                      tooltip: 'تحقق من النتيجة',
-                      onPressed: _submitWord,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                // Display collected letters from left to right
-                Row(
-                  children: _collectedLetters.map((letter) {
-                    return GestureDetector(
-                      onTap: () {
-                        // On tapping a collected letter, remove it from collected letters
-                        // It will then reappear in the display since it's no longer collected.
-                        setState(() {
-                          _collectedLetters.remove(letter);
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 4.0, vertical: 2.0),
-                        width: 50.0, // Fixed width for uniform circles
-                        height: 50.0, // Fixed height for uniform circles
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(
-                              255, 187, 67, 127), // Background color
-                          shape:
-                              BoxShape.circle, // Makes the container circular
-                          border: Border.all(
-                            color: const Color.fromARGB(
-                                255, 51, 5, 37), // Border color
-                            width: 1.0, // Border width
-                          ),
+                    Icon(Icons.vpn_key,
+                        color: Colors.orange, size: fontSize * 0.8), // Key icon
+                    SizedBox(width: 5),
+                    Text(
+                      '$_randomKey',
+                      style: GoogleFonts.pangolin(
+                        // Using font from the library
+                        textStyle: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
                         ),
-                        child: Center(
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Display the current letter at the top center
+              if (_currentLetter != null)
+                Positioned(
+                  top: 150,
+                  right: MediaQuery.of(context).size.width / 8.5 - fontSize * 2,
+                  child: Text(
+                    'الحرف الحالي: $_currentLetter',
+                    style: GoogleFonts.pangolin(
+                      textStyle: TextStyle(
+                        fontSize: fontSize - 0.5,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ),
+              // Control buttons arranged in a diamond shape
+              Positioned(
+                bottom: MediaQuery.of(context).size.height * 0.08,
+                right: MediaQuery.of(context).size.width * 0.05,
+                child: Column(
+                  children: [
+                    // Up Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_upward,
+                      onTapDown: (_) => _startMoving('forward'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Left Arrow
+                        ArrowButton(
+                          icon: Icons.arrow_back,
+                          onTapDown: (_) => _startMoving('right'),
+                          onTapUp: (_) => _stopMoving(),
+                          onTapCancel: () => _stopMoving(),
+                          iconSize: iconSize,
+                          padding: buttonPadding,
+                        ),
+                        SizedBox(width: buttonPadding),
+                        ArrowButton(
+                          icon: Icons.arrow_forward,
+                          onTapDown: (_) => _startMoving('left'),
+                          onTapUp: (_) => _stopMoving(),
+                          onTapCancel: () => _stopMoving(),
+                          iconSize: iconSize,
+                          padding: buttonPadding,
+                        ),
+                        // Right Arrow
+                      ],
+                    ),
+                    // Down Arrow
+                    ArrowButton(
+                      icon: Icons.arrow_downward,
+                      onTapDown: (_) => _startMoving('backward'),
+                      onTapUp: (_) => _stopMoving(),
+                      onTapCancel: () => _stopMoving(),
+                      iconSize: iconSize,
+                      padding: buttonPadding,
+                    ),
+                  ],
+                ),
+              ),
+              // Buttons and collected letters at the bottom left
+              Positioned(
+                bottom: MediaQuery.of(context).size.height * 0.2,
+                left: MediaQuery.of(context).size.width * 0.2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Buttons Row
+                    Row(
+                      children: [
+                        // Display Collected Word Button
+                        IconButton(
+                          icon: Icon(Icons.text_snippet),
+                          color: const Color.fromARGB(
+                              255, 204, 0, 255), // Customize color as needed
+                          tooltip: 'اعرض الكلمة',
+                          onPressed: _displayCollectedWord,
+                        ),
+                        SizedBox(width: 10),
+                        // Collect Letter Button
+                        IconButton(
+                          icon: Icon(Icons.add_circle),
+                          color: _currentLetter != null
+                              ? const Color.fromARGB(255, 128, 255, 0)
+                              : Colors.grey,
+                          tooltip: 'خذ الحرف',
+                          onPressed: _currentLetter != null
+                              ? _collectCurrentLetter
+                              : null,
+                        ),
+                        SizedBox(width: 10),
+                        // Submit Button
+                        IconButton(
+                          icon: Icon(Icons.send),
+                          color: Colors.blue, // Customize color as needed
+                          tooltip: 'تحقق من النتيجة',
+                          onPressed: _submitWord,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    // Display collected letters from left to right
+                    Row(
+                      children: _collectedLetters.map((letter) {
+                        return GestureDetector(
+                          onTap: () {
+                            // On tapping a collected letter, remove it from collected letters
+                            // It will then reappear in the display since it's no longer collected.
+                            setState(() {
+                              _collectedLetters.remove(letter);
+                            });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 4.0, vertical: 2.0),
+                            width: 50.0, // Fixed width for uniform circles
+                            height: 50.0, // Fixed height for uniform circles
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(
+                                  255, 187, 67, 127), // Background color
+                              shape: BoxShape
+                                  .circle, // Makes the container circular
+                              border: Border.all(
+                                color: const Color.fromARGB(
+                                    255, 51, 5, 37), // Border color
+                                width: 1.0, // Border width
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                letter,
+                                style: GoogleFonts.pangolin(
+                                  textStyle: TextStyle(
+                                    fontSize:
+                                        fontSize - 10, // Dynamic font size
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Colors.white, // Set text color to white
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Display API result in the center of the screen
+              if (_apiResult != null)
+                Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width *
+                        0.7, // Make the width shorter
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 0, 229, 255)
+                          .withOpacity(0.9), // Bright background
+                      borderRadius: BorderRadius.circular(
+                          20.0), // Rounded corners for fun shape
+                      border: Border.all(
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          width: 4), // Fun border color
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(66, 39, 7, 199),
+                          offset: Offset(5, 5),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.emoji_emotions, // Fun icon
+                          color: const Color.fromARGB(255, 0, 72, 255),
+                          size: 50,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          _apiResult!,
+                          style: GoogleFonts.pangolin(
+                            textStyle: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                            ),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 15),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                            iconColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _apiResult = null; // Hide the dialog when pressed
+                            });
+                          },
                           child: Text(
-                            letter,
+                            'حسناً!',
                             style: GoogleFonts.pangolin(
                               textStyle: TextStyle(
-                                fontSize: fontSize - 10, // Dynamic font size
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white, // Set text color to white
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                        SizedBox(height: 10),
+                        // Retry Button
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(184, 0, 255, 106),
+                            iconColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _collectedLetters.clear();
+                              _apiResult = null;
+                              _generateRandomWordAndKey(); // Generate a new word and key for a fresh start
+                            });
+                          },
+                          child: Text(
+                            'إعادة اللعب',
+                            style: GoogleFonts.pangolin(
+                              textStyle: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
+            ],
           ),
-
-          // Display API result in the center of the screen
-          if (_apiResult != null)
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width *
-                    0.7, // Make the width shorter
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 0, 229, 255)
-                      .withOpacity(0.9), // Bright background
-                  borderRadius: BorderRadius.circular(
-                      20.0), // Rounded corners for fun shape
-                  border: Border.all(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      width: 4), // Fun border color
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(66, 39, 7, 199),
-                      offset: Offset(5, 5),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.emoji_emotions, // Fun icon
-                      color: const Color.fromARGB(255, 0, 72, 255),
-                      size: 50,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      _apiResult!,
-                      style: GoogleFonts.pangolin(
-                        textStyle: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 15),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
-                        iconColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _apiResult = null; // Hide the dialog when pressed
-                        });
-                      },
-                      child: Text(
-                        'حسناً!',
-                        style: GoogleFonts.pangolin(
-                          textStyle: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    // Retry Button
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(184, 0, 255, 106),
-                        iconColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _collectedLetters.clear();
-                          _apiResult = null;
-                          _generateRandomWordAndKey(); // Generate a new word and key for a fresh start
-                        });
-                      },
-                      child: Text(
-                        'إعادة اللعب',
-                        style: GoogleFonts.pangolin(
-                          textStyle: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
