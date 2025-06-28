@@ -171,13 +171,14 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
     String? errorMessage = _isConnectionValid(sourceIndex, targetIndex);
 
     if (errorMessage == null) {
-      // التوصيل صالح، قم بإضافته
+      // ************* هذا هو التعديل الأساسي *************
+      // استخدم نقاط البداية والنهاية الفعلية التي رسمها المستخدم
+      // بدلاً من حساب مراكز أو حواف الأجهزة.
       setState(() {
         connections.add({
-          // استخدم إحداثيات مركز الجهاز المصدر والهدف
-          'start': _generateDevicePositions(context)[sourceIndex],
-          'end': _generateDevicePositions(context)[targetIndex],
-          'color': const Color.fromARGB(255, 255, 255, 255),
+          'start': startDragPosition!, // نقطة بداية السحب الأصلية
+          'end': end, // نقطة نهاية السحب/الإفلات الأصلية
+          'color': const Color.fromARGB(255, 255, 255, 255), // لون الخط
         });
       });
       _checkWinCondition();
