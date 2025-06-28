@@ -55,6 +55,9 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   // دالة لإظهار خيارات الإبلاغ
+  // ... (بقية الكود قبل الدالة)
+
+  // دالة لإظهار خيارات الإبلاغ
   void _showReportDialog(String messageText) async {
     final reportOptions = <String>[
       'الاحتيال الإلكتروني',
@@ -96,6 +99,9 @@ class _ConversationPageState extends State<ConversationPage> {
       correctIndex = 4;
     }
 
+    // ************* هذا هو المتغير الذي يجب أن يكون هنا *************
+    // _selectedOption يجب أن يتم تعريفه داخل الدالة _showReportDialog
+    // حتى تتمكن StatefulBuilder من الوصول إليه وتحديثه.
     int _selectedOption = -1;
 
     AwesomeDialog(
@@ -103,30 +109,36 @@ class _ConversationPageState extends State<ConversationPage> {
       dialogType: DialogType.question,
       animType: AnimType.scale,
       title: 'الإبلاغ عن الرسالة',
-      body: Column(
-        children: [
-          Text(
-            'نص الرسالة:\n\n$messageText\n',
-            style: const TextStyle(fontSize: 14),
-          ),
-          const Text(
-            'اختر التصنيف القانوني المناسب للإبلاغ:',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          ...List.generate(reportOptions.length, (index) {
-            return RadioListTile<int>(
-              title: Text(reportOptions[index]),
-              value: index,
-              groupValue: _selectedOption,
-              onChanged: (value) {
-                setState(() {
-                  _selectedOption = value!;
-                });
-              },
-            );
-          }),
-        ],
+      body: StatefulBuilder(
+        // <--- تأكد من وجود StatefulBuilder هنا!
+        builder: (BuildContext context, StateSetter setStateInDialog) {
+          return Column(
+            children: [
+              Text(
+                'نص الرسالة:\n\n$messageText\n',
+                style: const TextStyle(fontSize: 14),
+              ),
+              const Text(
+                'اختر التصنيف القانوني المناسب للإبلاغ:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ...List.generate(reportOptions.length, (index) {
+                return RadioListTile<int>(
+                  title: Text(reportOptions[index]),
+                  value: index,
+                  groupValue: _selectedOption,
+                  onChanged: (value) {
+                    // ************* هذا هو setStateInDialog اللي بيغير الحالة في الدايالوج *************
+                    setStateInDialog(() {
+                      _selectedOption = value!;
+                    });
+                  },
+                );
+              }),
+            ],
+          );
+        },
       ),
       btnCancel: TextButton(
         onPressed: () {
@@ -141,8 +153,7 @@ class _ConversationPageState extends State<ConversationPage> {
               context,
               title: 'تنبيه',
               content: 'الرجاء اختيار نوع الإبلاغ أولاً.',
-              dialogType: DialogType
-                  .warning, // Warning dialog type for missing selection
+              dialogType: DialogType.warning,
             );
             return;
           }
@@ -157,8 +168,7 @@ class _ConversationPageState extends State<ConversationPage> {
               title: 'رائع!',
               content:
                   'أحسنت! لقد اخترت تصنيف الإبلاغ الصحيح وحصلت على 10 نقاط.\n\nنقاطك الحالية: $_points',
-              dialogType:
-                  DialogType.success, // Success dialog for correct answer
+              dialogType: DialogType.success,
             );
           } else {
             _showDialogMessage(
@@ -166,7 +176,7 @@ class _ConversationPageState extends State<ConversationPage> {
               title: 'تحذير',
               content:
                   'يبدو أنك اخترت تصنيفًا غير مناسب.\nحاول التركيز أكثر على محتوى الرسالة.',
-              dialogType: DialogType.error, // Error dialog for incorrect answer
+              dialogType: DialogType.error,
             );
           }
         },
@@ -175,6 +185,7 @@ class _ConversationPageState extends State<ConversationPage> {
     ).show();
   }
 
+// ... (بقية الكود بعد الدالة)
   // نافذة رسالة سريعة
   void _showDialogMessage(
     BuildContext context, {

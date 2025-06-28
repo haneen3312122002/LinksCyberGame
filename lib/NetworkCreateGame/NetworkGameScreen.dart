@@ -177,7 +177,7 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
           // استخدم إحداثيات مركز الجهاز المصدر والهدف
           'start': _generateDevicePositions(context)[sourceIndex],
           'end': _generateDevicePositions(context)[targetIndex],
-          'color': const Color.fromARGB(255, 114, 224, 249),
+          'color': const Color.fromARGB(255, 255, 255, 255),
         });
       });
       _checkWinCondition();
@@ -315,8 +315,10 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
   int? _getDeviceIndexAtPosition(Offset position) {
     final positions = _generateDevicePositions(context);
     for (int i = 0; i < positions.length; i++) {
-      if ((position - positions[i]).distance < 35) {
-        return i;
+// Calculate the distance between the drag end position and the center of each device
+      const double detectionRadius = 65.0;
+      if ((position - positions[i]).distance < detectionRadius) {
+        return i; // Return the index of the detected device
       }
     }
     return null;
@@ -368,8 +370,12 @@ class _NetworkGameScreenState extends State<NetworkGameScreen> {
 // --- نهاية الدوال المساعدة الجديدة ---
   // دالة للتعامل مع الضغط على جهاز معين لإدخال عنوان IP
   void _onDeviceTap(int index) {
+    String deviceType = _getDeviceTypeByIndex(index);
     String? currentIP = deviceIPs[index];
     String currentLastOctet = '';
+    if (deviceType == 'internet') {
+      return; // توقف هنا، لا تظهر مربع الحوار.
+    }
     if (currentIP != null && currentIP.startsWith(fixedIPPart)) {
       currentLastOctet = currentIP.substring(fixedIPPart.length);
     }
@@ -719,8 +725,7 @@ class LinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     for (var connection in connections) {
       Paint paint = Paint()
-        ..color =
-            connection['color'] ?? const Color.fromARGB(255, 114, 224, 249)
+        ..color = connection['color'] ?? const Color.fromARGB(255, 59, 11, 11)
         ..strokeWidth = 10.0
         ..style = PaintingStyle.stroke;
       canvas.drawLine(connection['start'], connection['end'], paint);
