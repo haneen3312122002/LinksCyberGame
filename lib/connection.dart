@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart'; // For debugPrint (optional)
 //link game:
 class ApiService {
   static const String baseUrl =
-      'http://192.168.100.2:5000'; // Replace with your PC's local IP
+      'http://192.168.100.35:5000'; // Replace with your PC's local IP
 
   static Future<String> checkLink(String link) async {
     if (link.isEmpty) {
@@ -37,7 +37,7 @@ class ApiService {
 /// ---------------------------------------------------------------------------
 class ApiServicePasswordGame {
   // Replace with the actual IP/port of your Flask server
-  static const String baseUrl = 'http://192.168.100.100:5000';
+  static const String baseUrl = 'http://192.168.100.35:5000';
 
   // Send both the password and personal info to the backend for validation
   static Future<String> checkPasswordAndInfo(
@@ -96,6 +96,7 @@ class ApiServicePasswordGame {
 
 //......................mario game api
 
+
 // api_service.dart
 
 class MarioApiService {
@@ -112,7 +113,7 @@ class MarioApiService {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.2:5000'), // Replace with your API URL
+        Uri.parse('http://192.168.100.35:5000/compare_word'), // Replace with your API URL
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
@@ -134,19 +135,19 @@ class MarioApiService {
 //..........................
 
 Future<String> analyzeComment(String comment) async {
-  final url = Uri.parse('http://127.0.0.1:5000/analyze');
+  final url = Uri.parse('http://192.168.100.35:5000/classify_message');
 
   try {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'comment': comment}),
+      body: jsonEncode({'message': comment}),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       debugPrint('Raw analyzeComment response: $data');
-      final sentiment = (data['sentiment'] ?? '').toString().trim();
+      final sentiment = (data['category'] ?? '').toString().trim(); // ✅ الكلمة الصحيحة هي category
       debugPrint('Final sentiment value: "$sentiment"');
       return sentiment;
     } else {

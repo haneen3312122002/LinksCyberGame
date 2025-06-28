@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'Questions.dart';
-import 'dart:async';
-import 'dart:math';
 
 class AntivirusProgram {
   // القوائم الأصلية للأسئلة
