@@ -113,7 +113,7 @@ class MarioApiService {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.35:5000/compare_word'), // Replace with your API URL
+        Uri.parse('http://192.168.209.100.35/compare_word'), // Replace with your API URL
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
