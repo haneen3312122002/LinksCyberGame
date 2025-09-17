@@ -34,6 +34,8 @@ class _DeviceBaseState extends State<DeviceBase> {
   @override
   void initState() {
     super.initState();
+    // ضبط مستوى الصوت الافتراضي (أخفض قليلاً)
+    _audioPlayer.setVolume(0.2); // يمكن تغييره ل0.1 أو 0.3 حسب الرغبة
   }
 
   @override
@@ -55,6 +57,9 @@ class _DeviceBaseState extends State<DeviceBase> {
 
         // التحقق مما إذا كان الجهاز المسموح به
         if (widget.allowedDeviceTypes.contains(incomingDeviceType)) {
+          // قبل تغيير الملف الصوتي تأكد من إيقاف أي تشغيل سابق
+          await _audioPlayer.stop();
+
           setState(() {
             currentAsset = receivedData['asset'];
             currentIcon = receivedData['icon'];
@@ -65,14 +70,25 @@ class _DeviceBaseState extends State<DeviceBase> {
             showWifiControl = (deviceType == 'Tab');
           });
 
-          // Initialize the audio player based on device type
-          if (deviceType == 'router') {
-            await _audioPlayer.setAsset('assets/Router.mp3');
+          // تحميل ملف الصوت المناسب تبعًا لنوع الجهاز
+          try {
+            if (deviceType == 'router') {
+              await _audioPlayer.setAsset('assets/Router.mp3');
+              _audioPlayer.setVolume(0.2);
+            } else if (deviceType == 'networkbuild') {
+              await _audioPlayer.setAsset('assets/networkbuild.mp3');
+              _audioPlayer.setVolume(0.2);
+            } else if (deviceType == 'switch') {
+              // <-- هنا التحميل الخاص بالسويتش (تأكد أن اسم الملف موجود في assets)
+              await _audioPlayer.setAsset('assets/Switch.mp3');
+              _audioPlayer.setVolume(0.2);
+            } else {
+              // أجهزة أخرى: لا نحمّل صوتًا افتراضيًا
+            }
+          } catch (e) {
+            // خطأ في تحميل الملف الصوتي: يمكنك طباعته أو التعامل معه بهدوء
+            // print('Audio load error: $e');
           }
-          // إزالة تحميل Internet.mp3 لأنه لم يعد له فائدة
-          // else if (deviceType == 'internet') {
-          //   await _audioPlayer.setAsset('assets/Internet.mp3'); // تأكد من وجود هذا الملف
-          // }
         } else {
           // عرض رسالة تنبيه إذا كان الجهاز غير مسموح به في هذه الطبقة
           _showInvalidDeviceMessage();
@@ -167,9 +183,16 @@ class _DeviceBaseState extends State<DeviceBase> {
                   });
 
                   // Play or stop the audio based on device type
-                  if (deviceType == 'router') {
+                  // أضفت 'switch' هنا كي يعمل صوت السويتش أيضًا
+                  if (deviceType == 'router' ||
+                      deviceType == 'networkbuild' ||
+                      deviceType == 'switch') {
                     if (isVideoOpen) {
-                      await _audioPlayer.play();
+                      try {
+                        await _audioPlayer.play();
+                      } catch (e) {
+                        // print('Play error: $e');
+                      }
                     } else {
                       await _audioPlayer.stop();
                     }
